@@ -1,0 +1,1123 @@
+<title>Ellie's Animal Clinic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
+<style>
+/* One bright look on purpose: this is a kids' game, so it stays light in every theme. */
+:root{
+  --wall:#DDF3EE; --wall-tile:#CFEDE6; --floor:#9FD9CB;
+  --ink:#1F3A48; --ink-soft:#4E6B78;
+  --teal:#11807F; --teal-deep:#0B5E5E;
+  --sun:#FFC53D; --sun-deep:#E3A413;
+  --coral:#FF7563; --coral-deep:#D9503F;
+  --lilac:#8F7CEB; --lilac-deep:#6C58C9;
+  --card:#FFFFFF; --line:#B9DDD5;
+  --good:#23A55E; --good-soft:#DDF6E7;
+  --display:'Fredoka','Baloo 2','Arial Rounded MT Bold',system-ui,sans-serif;
+  --read:'Andika','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{
+  margin:0; background:var(--wall); color:var(--ink);
+  font-family:var(--read); font-size:20px; line-height:1.35;
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  background-image:
+    linear-gradient(transparent calc(100% - 90px), var(--floor) calc(100% - 90px)),
+    repeating-linear-gradient(0deg, transparent 0 58px, var(--wall-tile) 58px 60px),
+    repeating-linear-gradient(90deg, transparent 0 58px, var(--wall-tile) 58px 60px);
+  background-attachment:fixed;
+}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible{outline:4px solid var(--lilac);outline-offset:3px}
+#app{min-height:100%;display:flex;flex-direction:column;padding-inline:16px;box-sizing:border-box}
+
+/* ---------- top bar ---------- */
+.bar{display:flex;align-items:center;gap:12px;padding-block:12px;flex-wrap:wrap}
+.sign{display:flex;align-items:center;gap:10px;background:var(--card);border:3px solid var(--teal);border-radius:18px;padding:6px 16px 6px 8px;font:700 24px/1 var(--display);color:var(--teal-deep);box-shadow:0 5px 0 var(--teal)}
+.sign .cross{width:34px;height:34px;border-radius:10px;background:var(--coral);display:grid;place-items:center;color:#fff;font-size:26px;line-height:1}
+.bar .spacer{flex:1}
+.pill{display:flex;align-items:center;gap:6px;background:var(--card);border:3px solid var(--sun-deep);border-radius:999px;padding:6px 14px;font:700 22px/1 var(--display);box-shadow:0 4px 0 var(--sun-deep);font-variant-numeric:tabular-nums}
+.iconbtn{min-width:56px;height:56px;border-radius:16px;border:3px solid var(--line);background:var(--card);font-size:28px;box-shadow:0 4px 0 var(--line);display:grid;place-items:center;padding:0 10px}
+.iconbtn:active,.big:active,.choice:active,.tile:active,.coin:active,.arrow:active{transform:translateY(3px);box-shadow:none}
+
+.screen{flex:1;display:flex;flex-direction:column;gap:16px;padding-block:8px 24px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+.big{border:none;border-radius:22px;padding:18px 34px;font:700 30px/1 var(--display);background:var(--coral);color:#fff;box-shadow:0 7px 0 var(--coral-deep);min-height:72px}
+.big.teal{background:var(--teal);box-shadow:0 7px 0 var(--teal-deep)}
+.big.sun{background:var(--sun);color:var(--ink);box-shadow:0 7px 0 var(--sun-deep)}
+.big.small{font-size:24px;padding:12px 22px;min-height:60px}
+
+/* ---------- pet (photo or stand-in) ---------- */
+.pet{position:relative;width:var(--s,200px);height:var(--s,200px);max-width:100%;display:grid;place-items:center;flex:none}
+.pet img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 6px rgba(20,60,60,.28))}
+.pet .emo{font-size:calc(var(--s,200px)*.72);line-height:1;filter:drop-shadow(0 6px 4px rgba(20,60,60,.25))}
+.pet.sick img,.pet.sick .emo{filter:saturate(.45) brightness(.97) drop-shadow(0 8px 6px rgba(20,60,60,.28));transform:rotate(-4deg)}
+.pet.better img,.pet.better .emo{filter:saturate(.8) drop-shadow(0 8px 6px rgba(20,60,60,.28))}
+.pet .ail{position:absolute;right:2%;bottom:6%;font-size:calc(var(--s,200px)*.24);animation:bob 1.6s ease-in-out infinite}
+.pet.happy{animation:hop .7s ease-in-out infinite alternate}
+@keyframes bob{50%{transform:translateY(-6px) rotate(6deg)}}
+@keyframes hop{to{transform:translateY(-18px)}}
+
+/* ---------- title ---------- */
+.title-wrap{flex:1;display:grid;place-items:center;text-align:center}
+.title-card{display:flex;flex-direction:column;align-items:center;gap:18px;max-width:720px}
+.title-card h1{font-size:clamp(44px,8vw,84px);line-height:.95;color:var(--teal-deep)}
+.title-card h1 span{color:var(--coral)}
+.title-card p{font-size:24px;margin:0;color:var(--ink-soft)}
+.parade{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+.parade .pet:nth-child(2){margin-top:-24px}
+.badge-doc{display:inline-flex;align-items:center;gap:10px;background:var(--card);border:3px dashed var(--teal);border-radius:16px;padding:8px 18px;font:600 24px var(--display);color:var(--teal-deep)}
+.linkbtn{background:none;border:none;color:var(--ink-soft);font:600 18px var(--display);text-decoration:underline;padding:12px}
+
+/* ---------- waiting room ---------- */
+.room-head{display:flex;flex-direction:column;gap:4px}
+.room-head h2{font-size:34px}
+.room-head p{margin:0;color:var(--ink-soft)}
+.benches{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.patient{background:var(--card);border:4px solid var(--line);border-radius:28px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;box-shadow:0 8px 0 var(--line)}
+.patient h3{font-size:28px}
+.patient .what{margin:0;color:var(--ink-soft);min-height:2.7em}
+.patient .big{width:100%}
+
+/* ---------- exam ---------- */
+.exam{display:grid;grid-template-columns:minmax(260px,2fr) 3fr;gap:18px;align-items:start}
+.table{background:var(--card);border:4px solid var(--teal);border-radius:30px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 8px 0 var(--teal)}
+.mat{background:radial-gradient(ellipse at 50% 80%,#CDEFE7 0 55%,transparent 56%);width:100%;display:grid;place-items:center}
+.nametag{font:700 28px var(--display);background:var(--sun);border-radius:12px;padding:4px 16px;box-shadow:0 4px 0 var(--sun-deep)}
+.complaint{margin:0;text-align:center;color:var(--ink-soft)}
+.hearts{font-size:34px;letter-spacing:4px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;width:100%}
+.steps li{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;background:#F1F8F6;font-size:19px}
+.steps li .tool{font-size:26px}
+.steps li.now{background:#FFF3CF;outline:3px solid var(--sun)}
+.steps li.done{background:var(--good-soft);color:#1B6B42}
+.steps li.done::after{content:'✓';margin-left:auto;font:700 24px var(--display);color:var(--good)}
+
+.task{background:var(--card);border:4px solid var(--line);border-radius:30px;padding:18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 8px 0 var(--line);min-height:420px}
+.task-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.chip{font:600 17px var(--display);padding:5px 12px;border-radius:999px;color:#fff;letter-spacing:.02em}
+.chip.math{background:var(--sun-deep)}
+.chip.lang{background:var(--lilac)}
+.stepno{margin-left:auto;font:600 17px var(--display);color:var(--ink-soft)}
+.prompt{display:flex;align-items:center;gap:12px}
+.prompt p{margin:0;font-size:28px;font-weight:700;line-height:1.25}
+.speak{flex:none;width:60px;height:60px;border-radius:50%;border:3px solid var(--lilac);background:#F1EEFF;font-size:28px;box-shadow:0 4px 0 var(--lilac)}
+.work{display:flex;flex-direction:column;align-items:center;gap:16px;flex:1}
+.feedback{min-height:44px;text-align:center;font:700 28px var(--display);color:var(--good)}
+.feedback.try{color:var(--coral-deep)}
+
+.choices{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.choice{min-width:100px;min-height:100px;border-radius:22px;background:var(--card);border:4px solid var(--line);box-shadow:0 6px 0 var(--line);font:700 44px/1.1 var(--read);padding:10px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.choice .pic{font-size:60px;line-height:1}
+.choice .lbl{font-size:24px}
+.choice.word{font-size:40px;min-width:150px}
+.choice.right{border-color:var(--good);background:var(--good-soft);box-shadow:0 6px 0 var(--good)}
+.choice.nope{opacity:.45}
+.hint{animation:glow 1s ease-in-out infinite alternate}
+@keyframes glow{to{box-shadow:0 0 0 8px rgba(255,197,61,.7)}}
+.wobble{animation:wob .4s}
+@keyframes wob{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+.bigpic{font-size:110px;line-height:1}
+.bigword{font:700 64px/1 var(--read);letter-spacing:.04em;background:#FFFBEA;border:3px dashed var(--sun-deep);border-radius:18px;padding:14px 30px}
+.bigword .hl{color:var(--coral-deep)}
+.eq{font:700 40px var(--read);font-variant-numeric:tabular-nums}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}
+.group{display:flex;flex-wrap:wrap;gap:4px;max-width:260px;justify-content:center;font-size:40px;line-height:1;background:#F4FAF8;border-radius:18px;padding:10px}
+.gone{opacity:.25;position:relative}
+.gone::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;height:4px;background:var(--coral);transform:rotate(-30deg);border-radius:2px}
+.op{font:700 48px var(--display);color:var(--ink-soft)}
+
+/* ten frames */
+.frames{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.frame{display:grid;grid-template-columns:repeat(5,46px);grid-auto-rows:46px;border:3px solid var(--teal);border-radius:8px;background:var(--teal);gap:3px;overflow:hidden}
+.frame span{background:#fff;display:grid;place-items:center;font-size:30px;line-height:1}
+
+/* base-ten */
+.rods{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;justify-content:center}
+.rod{display:grid;grid-template-rows:repeat(10,20px);gap:2px;background:var(--teal-deep);padding:2px;border-radius:6px}
+.rod i,.unit{display:block;width:26px;height:20px;background:var(--sun);border-radius:3px}
+.units{display:grid;grid-template-columns:repeat(3,26px);gap:3px;align-content:end}
+.unit{box-shadow:0 0 0 2px var(--sun-deep) inset}
+
+/* count & feed */
+.tray,.bowl{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:12px;border-radius:22px;width:100%;box-sizing:border-box}
+.tray{background:#F4FAF8;border:3px dashed var(--line)}
+.bowl{background:#FFF3CF;border:4px solid var(--sun-deep);min-height:90px;border-radius:22px 22px 80px 80px}
+.tray button,.bowl button{font-size:42px;line-height:1;width:60px;height:60px;border:none;background:none;padding:0}
+.count-label{font:700 22px var(--display);color:var(--ink-soft)}
+
+/* jars / compare */
+.jar{min-width:150px}
+.jar .group{font-size:30px;max-width:180px;background:none;padding:0}
+.jar .num{font:700 54px var(--read)}
+
+/* pattern */
+.pattern{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;background:#FDF6E4;border:3px solid #EAD9AE;border-radius:40px;padding:10px 16px}
+.pattern span{font-size:44px;line-height:1;width:52px;text-align:center}
+.pattern .q{border:3px dashed var(--coral);border-radius:50%;color:var(--coral);font:700 34px/46px var(--display);height:46px}
+
+/* skip count bottles */
+.seq{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.seq span{min-width:74px;height:96px;border-radius:14px 14px 20px 20px;background:#E8F4FF;border:3px solid #7FB4E0;display:grid;place-items:center;font:700 36px var(--read);position:relative;font-variant-numeric:tabular-nums}
+.seq span::before{content:'';position:absolute;top:-12px;width:34px;height:12px;background:#7FB4E0;border-radius:4px 4px 0 0}
+.seq .q{background:#FFF3CF;border-color:var(--coral);color:var(--coral)}
+
+/* coins */
+.coin{border:none;border-radius:50%;display:grid;place-items:center;align-content:center;gap:0;padding:0;font:700 18px/1 var(--display);color:#3C4650;box-shadow:0 4px 0 rgba(0,0,0,.25), inset 0 0 0 4px rgba(255,255,255,.35)}
+.coin .ic{font-size:24px;line-height:1}
+.coin.c5{width:76px;height:76px;background:radial-gradient(circle at 35% 30%,#F4F6F8,#B7BFC6)}
+.coin.c10{width:64px;height:64px;background:radial-gradient(circle at 35% 30%,#F4F6F8,#AEB6BE);font-size:16px}
+.coin.c25{width:88px;height:88px;background:radial-gradient(circle at 35% 30%,#F7F8FA,#A9B2BA)}
+.coin.c100{width:92px;height:92px;border-radius:0;background:radial-gradient(circle at 35% 30%,#FFE9A3,#C99A28);clip-path:polygon(50% 0%,77% 8%,95% 29%,100% 56%,89% 80%,65% 97%,35% 97%,11% 80%,0% 56%,5% 29%,23% 8%);box-shadow:none}
+.coin.c200{width:98px;height:98px;background:radial-gradient(circle,#E8B84A 0 52%,#C9CFD5 53%);}
+.wallet{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center}
+.pricetag{font:700 40px var(--read);background:var(--card);border:3px solid var(--coral);border-radius:12px 40px 40px 12px;padding:8px 26px 8px 18px;color:var(--coral-deep)}
+
+/* coding grid */
+.grid{display:grid;gap:4px;background:#BFE3DA;padding:6px;border-radius:16px}
+.grid .cell{width:62px;height:62px;background:#F2FBF8;border-radius:10px;display:grid;place-items:center;font-size:40px;line-height:1;overflow:hidden}
+.grid .cell .pet{--s:58px}
+.grid .cell .pet .ail{display:none}
+.grid .cell.path{background:#FFF0BF}
+.grid .cell.bump{background:#FFD7D0}
+.program{display:flex;flex-wrap:wrap;gap:6px;min-height:58px;align-items:center;justify-content:center;background:#F4F0FF;border:3px dashed var(--lilac);border-radius:16px;padding:6px 10px;width:100%;box-sizing:border-box}
+.program span{font-size:36px;line-height:1}
+.program span.on{outline:3px solid var(--sun-deep);border-radius:8px}
+.program .empty{color:var(--ink-soft);font-size:18px}
+.arrows{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.arrow{width:72px;height:72px;border-radius:18px;border:3px solid var(--lilac);background:var(--card);font-size:38px;box-shadow:0 5px 0 var(--lilac)}
+
+/* spelling */
+.slots{display:flex;gap:10px}
+.slot{width:76px;height:88px;border-bottom:6px solid var(--teal);display:grid;place-items:center;font:700 58px var(--read)}
+.slot.given{color:var(--ink-soft)}
+.tiles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.tile{width:78px;height:78px;border-radius:18px;border:4px solid var(--lilac);background:#F4F0FF;font:700 44px var(--read);box-shadow:0 5px 0 var(--lilac)}
+.tile.used{visibility:hidden}
+
+/* syllable drum */
+.drum{width:150px;height:150px;border-radius:50%;border:none;background:radial-gradient(circle at 50% 40%,#FFE1A6,#F2A93B);box-shadow:0 10px 0 #B8741B, inset 0 -8px 0 rgba(0,0,0,.08);font:700 26px var(--display);color:#7A4A0F}
+.drum.tap{transform:scale(.94)}
+.claps{display:flex;gap:10px;min-height:40px}
+.claps i{width:34px;height:34px;border-radius:50%;background:var(--coral);display:block}
+
+/* sentence scenes */
+.scene{font-size:54px;line-height:1;min-width:170px;min-height:110px}
+
+/* ---------- healed ---------- */
+.healed{flex:1;display:grid;place-items:center;text-align:center;position:relative}
+.healed-card{display:flex;flex-direction:column;align-items:center;gap:14px}
+.healed h2{font-size:clamp(34px,6vw,56px);color:var(--teal-deep)}
+.healed p{margin:0;font-size:24px}
+.earned{font:700 28px var(--display);color:var(--sun-deep)}
+.btnrow{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.confetti i{position:absolute;top:-30px;font-style:normal;font-size:30px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+
+/* ---------- stickers ---------- */
+.book{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.sticker{background:var(--card);border-radius:24px;border:4px solid var(--line);padding:10px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.sticker .pet{--s:110px}
+.sticker.locked .pet{filter:grayscale(1) brightness(1.6) opacity(.35)}
+.sticker b{font-family:var(--display);font-size:20px}
+.sticker small{color:var(--ink-soft);font-size:15px}
+
+/* ---------- grown-ups ---------- */
+.parent{background:var(--card);border-radius:24px;border:3px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:16px;-webkit-user-select:text;user-select:text}
+.parent h2{font-size:30px}
+.parent p{margin:0;max-width:65ch;font-size:18px;color:var(--ink-soft)}
+.settings{display:flex;flex-wrap:wrap;gap:18px;align-items:center;font-size:18px}
+.settings label{display:flex;gap:8px;align-items:center}
+.settings input[type=text]{font:inherit;padding:6px 10px;border-radius:10px;border:2px solid var(--line);width:9em}
+.seg{display:flex;border:2px solid var(--teal);border-radius:12px;overflow:hidden}
+.seg button{border:none;background:var(--card);padding:8px 12px;font:600 16px var(--display)}
+.seg button.on{background:var(--teal);color:#fff}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:16px;font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #E1EEEA;vertical-align:middle}
+th{font:600 14px var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+td.n{font-variant-numeric:tabular-nums}
+.lv{display:flex;align-items:center;gap:6px}
+.lv button{width:34px;height:34px;border-radius:8px;border:2px solid var(--line);background:var(--card);font-weight:700}
+.hold{position:relative;overflow:hidden}
+.hold .fill{position:absolute;inset:0;background:rgba(255,255,255,.35);transform-origin:left;transform:scaleX(0)}
+.hold.go .fill{transition:transform 1.6s linear;transform:scaleX(1)}
+
+@media (max-width:860px){
+  .exam{grid-template-columns:1fr}
+  .table{flex-direction:row;flex-wrap:wrap;justify-content:center}
+  .table .pet{--s:150px!important}
+  .steps{flex-direction:row;flex-wrap:wrap}
+  .steps li{flex:1 1 180px}
+  .task{min-height:0}
+}
+@media (max-width:520px){
+  body{font-size:18px}
+  .prompt p{font-size:22px}
+  .choice{min-width:84px;min-height:84px;font-size:34px}
+  .choice .pic{font-size:46px}
+  .grid .cell{width:52px;height:52px;font-size:32px}
+  .grid .cell .pet{--s:48px}
+  .frame{grid-template-columns:repeat(5,38px);grid-auto-rows:38px}
+  .bigword{font-size:48px}
+  .sign{font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}
+}
+</style>
+
+<div id="app"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ================= helpers ================= */
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const sample = (a, n) => shuffle(a).slice(0, n);
+const uniq = a => [...new Set(a)];
+function el(tag, props, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (v == null || v === false) continue;
+    if (k === 'class') n.className = v;
+    else if (k === 'style') n.style.cssText = v;
+    else if (k === 'html') n.innerHTML = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat(Infinity)) { if (c == null || c === false) continue; n.append(c.nodeType ? c : document.createTextNode(c)); }
+  return n;
+}
+const btn = (props, ...kids) => el('button', Object.assign({ type: 'button' }, props), ...kids);
+
+/* ================= saved progress ================= */
+const KEY = 'ellies-vet-game-v1';
+function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const S = Object.assign({ name: 'Ellie', stars: 0, healed: {}, lvl: {}, streak: {}, stats: {}, voice: true, mix: 'both', queue: null }, load());
+
+/* ================= sound & voice ================= */
+let AC = null;
+function tone(f, at, dur, type, vol) {
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime + at;
+    o.type = type || 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.18, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(AC.destination); o.start(t); o.stop(t + dur + 0.05);
+  } catch (e) {}
+}
+const sfx = {
+  tap() { tone(620, 0, 0.08, 'sine', 0.1); },
+  good() { tone(660, 0, 0.18); tone(990, 0.12, 0.3); },
+  bad() { tone(260, 0, 0.18, 'triangle', 0.15); tone(200, 0.12, 0.25, 'triangle', 0.12); },
+  fanfare() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.13, 0.35, 'triangle', 0.16)); },
+};
+const canSpeak = 'speechSynthesis' in window;
+let voice = null;
+function chooseVoice() {
+  if (!canSpeak) return;
+  const vs = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
+  const pref = ['Samantha', 'Karen', 'Moira', 'Tessa', 'Google US English', 'Microsoft Aria', 'Microsoft Jenny'];
+  voice = vs.find(v => /en-CA/i.test(v.lang)) || pref.map(p => vs.find(v => v.name.includes(p))).find(Boolean) || vs.find(v => /en-US/i.test(v.lang)) || vs[0] || null;
+}
+if (canSpeak) { chooseVoice(); speechSynthesis.onvoiceschanged = chooseVoice; }
+function say(text) {
+  if (!S.voice || !canSpeak || !text) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if (voice) u.voice = voice;
+    u.rate = 0.88; u.pitch = 1.1;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+const hush = () => { try { canSpeak && speechSynthesis.cancel(); } catch (e) {} };
+
+/* ================= animals ================= */
+// Each animal shows a real cut-out photo from animals/<id>.png when that file exists,
+// and falls back to its emoji until it does.
+const ANIMALS = [
+  { id: 'kitten',   name: 'Kitty',   kind: 'kitten',    emoji: '🐱', food: '🐟', foods: 'fish treats' },
+  { id: 'puppy',    name: 'Biscuit', kind: 'puppy',     emoji: '🐶', food: '🦴', foods: 'dog bones' },
+  { id: 'bunny',    name: 'Clover',  kind: 'bunny',     emoji: '🐰', food: '🥕', foods: 'carrots' },
+  { id: 'hamster',  name: 'Peanut',  kind: 'hamster',   emoji: '🐹', food: '🌻', foods: 'sunflower seeds' },
+  { id: 'duckling', name: 'Waddles', kind: 'duckling',  emoji: '🦆', food: '🫐', foods: 'blueberries' },
+  { id: 'piglet',   name: 'Rosie',   kind: 'piglet',    emoji: '🐷', food: '🍎', foods: 'apples' },
+  { id: 'lamb',     name: 'Cotton',  kind: 'lamb',      emoji: '🐑', food: '🍀', foods: 'clover leaves' },
+  { id: 'pony',     name: 'Maple',   kind: 'pony',      emoji: '🐴', food: '🥕', foods: 'carrots' },
+  { id: 'calf',     name: 'Daisy',   kind: 'calf',      emoji: '🐮', food: '🍏', foods: 'green apples' },
+  { id: 'turtle',   name: 'Shelly',  kind: 'turtle',    emoji: '🐢', food: '🍓', foods: 'strawberries' },
+  { id: 'hedgehog', name: 'Spike',   kind: 'hedgehog',  emoji: '🦔', food: '🐛', foods: 'mealworms' },
+  { id: 'fox',      name: 'Rusty',   kind: 'fox kit',   emoji: '🦊', food: '🥚', foods: 'eggs' },
+  { id: 'parrot',   name: 'Kiwi',    kind: 'parrot',    emoji: '🦜', food: '🥜', foods: 'peanuts' },
+  { id: 'raccoon',  name: 'Bandit',  kind: 'raccoon',   emoji: '🦝', food: '🍒', foods: 'cherries' },
+  { id: 'beaver',   name: 'Chomper', kind: 'beaver',    emoji: '🦫', food: '🪵', foods: 'sticks' },
+  { id: 'chick',    name: 'Sunny',   kind: 'chick',     emoji: '🐤', food: '🌽', foods: 'corn treats' },
+];
+const A = id => ANIMALS.find(a => a.id === id);
+const photoOK = {};
+ANIMALS.forEach(a => {
+  const im = new Image();
+  im.onload = () => { photoOK[a.id] = true; document.querySelectorAll('.pet[data-id="' + a.id + '"]').forEach(swapPhoto); };
+  im.src = 'animals/' + a.id + '.png';
+});
+function swapPhoto(p) {
+  const a = A(p.dataset.id); const emo = p.querySelector('.emo');
+  if (!emo || !photoOK[a.id]) return;
+  emo.replaceWith(el('img', { src: 'animals/' + a.id + '.png', alt: a.name + ' the ' + a.kind, draggable: 'false' }));
+}
+function pet(a, size, opts) {
+  opts = opts || {};
+  const p = el('div', { class: 'pet' + (opts.cls ? ' ' + opts.cls : ''), 'data-id': a.id, style: '--s:' + size + 'px' },
+    photoOK[a.id] ? el('img', { src: 'animals/' + a.id + '.png', alt: a.name + ' the ' + a.kind, draggable: 'false' })
+                  : el('span', { class: 'emo', role: 'img', 'aria-label': a.name + ' the ' + a.kind }, a.emoji),
+    opts.ail ? el('span', { class: 'ail', 'aria-hidden': 'true' }, opts.ail) : null);
+  return p;
+}
+
+const AILMENTS = [
+  { id: 'foot',     says: 'has a sore foot',          badge: '🩹', steps: [['🔍', 'Look at the sore foot'], ['🧴', 'Clean it gently'], ['🩹', 'Wrap a bandage']] },
+  { id: 'fever',    says: 'feels hot and sleepy',     badge: '🌡️', steps: [['🌡️', 'Take the temperature'], ['💊', 'Mix the medicine'], ['🛏️', 'Tuck into a cozy bed']] },
+  { id: 'muddy',    says: 'rolled in the mud',        badge: '🟤', steps: [['🛁', 'Fill the bathtub'], ['🧽', 'Scrub scrub scrub'], ['🌬️', 'Blow dry']] },
+  { id: 'tummy',    says: 'has a tummy ache',         badge: '😖', steps: [['🩺', 'Listen to the tummy'], ['💊', 'Give tummy medicine'], ['🥣', 'Serve a healthy snack']] },
+  { id: 'sniffles', says: 'has the sniffles',         badge: '🤧', steps: [['🔦', 'Check the nose'], ['🍵', 'Give a warm drink'], ['🧣', 'Wrap up warm']] },
+  { id: 'checkup',  says: 'is here for a check-up',   badge: '📋', steps: [['⚖️', 'Weigh in on the scale'], ['👂', 'Check the ears'], ['🪥', 'Brush the teeth']] },
+];
+const AIL = id => AILMENTS.find(x => x.id === id);
+
+/* ================= word banks ================= */
+const CVC = [
+  ['cat','🐱'],['dog','🐶'],['pig','🐷'],['hen','🐔'],['fox','🦊'],['bug','🐛'],['rat','🐀'],['bat','🦇'],
+  ['sun','☀️'],['bed','🛏️'],['cup','☕'],['hat','👒'],['map','🗺️'],['net','🥅'],['pen','🖊️'],['bus','🚌'],
+  ['box','📦'],['web','🕸️'],['van','🚐'],['log','🪵'],['six','6️⃣'],['ten','🔟'],['bag','👜'],['pin','📌'],
+  ['nut','🥜'],['tub','🛁'],['leg','🦵'],['jet','✈️'],['cab','🚕'],['hug','🤗'],
+];
+const BLENDS = [
+  ['frog','🐸'],['crab','🦀'],['fish','🐟'],['duck','🦆'],['ship','🚢'],['shell','🐚'],['chick','🐤'],['star','⭐'],
+  ['drum','🥁'],['sled','🛷'],['skunk','🦨'],['clock','🕐'],['truck','🚚'],['tent','⛺'],['milk','🥛'],['bell','🔔'],
+  ['snail','🐌'],['snake','🐍'],['plant','🪴'],['gift','🎁'],['flag','🚩'],['hand','✋'],
+];
+const RHYMES = [
+  [['cat','🐱'],['hat','👒'],['bat','🦇'],['rat','🐀']],
+  [['dog','🐶'],['log','🪵'],['frog','🐸']],
+  [['hen','🐔'],['pen','🖊️'],['ten','🔟']],
+  [['fox','🦊'],['box','📦']],
+  [['bee','🐝'],['tree','🌳'],['three','3️⃣']],
+  [['cake','🍰'],['snake','🐍']],
+  [['moon','🌙'],['spoon','🥄']],
+  [['star','⭐'],['car','🚗']],
+  [['bear','🐻'],['pear','🍐'],['chair','🪑']],
+  [['goat','🐐'],['boat','⛵'],['coat','🧥']],
+  [['mouse','🐭'],['house','🏠']],
+  [['clock','🕐'],['sock','🧦'],['rock','🪨']],
+  [['king','🤴'],['ring','💍']],
+  [['bell','🔔'],['shell','🐚']],
+  [['fish','🐟'],['dish','🍽️']],
+  [['snail','🐌'],['mail','📬']],
+  [['bug','🐛'],['hug','🤗']],
+];
+const SIGHT = [
+  ['the','and','is','a','I','to','in','it','my','see','can','we'],
+  ['was','have','said','you','he','she','go','like','are','look','me','no'],
+  ['they','what','come','here','where','there','do','of','was','said','have','little'],
+];
+const DIGRAPH = {
+  sh: [['ship','🚢'],['sheep','🐑'],['shark','🦈'],['shell','🐚'],['shoe','👟'],['shirt','👕']],
+  ch: [['chick','🐤'],['cheese','🧀'],['cherry','🍒'],['chair','🪑'],['chocolate','🍫']],
+  th: [['thumb','👍'],['three','3️⃣'],['thread','🧵'],['thermometer','🌡️']],
+};
+const SYLL = [
+  ['dog','🐶'],['cat','🐱'],['fox','🦊'],['duck','🦆'],['frog','🐸'],['fish','🐟'],['bee','🐝'],['bear','🐻'],
+  ['pup-py','🐶'],['kit-ten','🐱'],['rab-bit','🐰'],['ham-ster','🐹'],['tur-tle','🐢'],['par-rot','🦜'],['pig-let','🐷'],
+  ['bea-ver','🦫'],['rac-coon','🦝'],['mon-key','🐒'],['ze-bra','🦓'],['pan-da','🐼'],['ti-ger','🐯'],
+  ['el-e-phant','🐘'],['but-ter-fly','🦋'],['kan-ga-roo','🦘'],['di-no-saur','🦕'],['oc-to-pus','🐙'],['go-ril-la','🦍'],['la-dy-bug','🐞'],['fla-min-go','🦩'],
+  ['cat-er-pil-lar','🐛'],['al-li-ga-tor','🐊'],
+];
+const COINS = {
+  5:   { name: 'nickel',  value: '5¢',  ic: '🦫', txt: '5' },
+  10:  { name: 'dime',    value: '10¢', ic: '⛵', txt: '10' },
+  25:  { name: 'quarter', value: '25¢', ic: '🦌', txt: '25' },
+  100: { name: 'loonie',  value: '$1',  ic: '🦆', txt: '$1' },
+  200: { name: 'toonie',  value: '$2',  ic: '🐻‍❄️', txt: '$2' },
+};
+const cents = v => v >= 100 ? (v / 100) + (v === 100 ? ' dollar' : ' dollars') : v + ' cents';
+function coinEl(v, props, tag) {
+  const c = COINS[v];
+  const face = [el('span', { class: 'ic' }, c.ic), el('span', null, c.txt)];
+  // Coins shown inside a choice button are plain spans (a button can't hold a button).
+  if (tag === 'span') return el('span', { class: 'coin c' + v }, face);
+  return btn(Object.assign({ class: 'coin c' + v, 'aria-label': c.name }, props || {}), face);
+}
+function numberChoices(ans, spread, min) {
+  min = min == null ? 0 : min;
+  const opts = new Set([ans]);
+  const cands = shuffle(spread.map(d => ans + d).filter(x => x >= min && x !== ans));
+  for (const c of cands) { if (opts.size >= 3) break; opts.add(c); }
+  for (let k = 1; opts.size < 3; k++) opts.add(ans + k);
+  return shuffle([...opts]);
+}
+function tenFrames(n, icon) {
+  const wrap = el('div', { class: 'frames' });
+  const frames = Math.max(1, Math.ceil(n / 10));
+  for (let f = 0; f < frames; f++) {
+    const fr = el('div', { class: 'frame' });
+    for (let i = 0; i < 10; i++) fr.append(el('span', null, f * 10 + i < n ? icon : ''));
+    wrap.append(fr);
+  }
+  return wrap;
+}
+function iconGroup(n, icon, goneFrom) {
+  const g = el('div', { class: 'group' });
+  for (let i = 0; i < n; i++) g.append(el('span', { class: goneFrom != null && i >= goneFrom ? 'gone' : null }, icon));
+  return g;
+}
+
+/* ================= activities =================
+   Each maker gets (level 1-3, animal) and returns
+   { prompt, speak, build(box, api) -> optional hint function } */
+const PRAISE = ['Great job!', 'You did it!', 'Super!', 'Wow, well done!', 'Yes! That is right!', 'Amazing, Doctor!'];
+const OOPS = ['Almost! Try again.', 'Good try! Have another go.', 'Oops! Try again.', 'Not quite. You can do it!'];
+
+function choiceRow(box, opts, api, cls) {
+  const row = el('div', { class: 'choices' });
+  const buttons = opts.map(o => {
+    const b = btn({ class: 'choice ' + (cls || ''), 'aria-label': o.aria || null, onclick: () => {
+      if (b.classList.contains('right')) return;
+      if (o.ok) { b.classList.add('right'); api.win(o.after); } else { b.classList.add('nope'); api.miss(b); }
+    } }, o.node || o.label);
+    return b;
+  });
+  row.append(...buttons); box.append(row);
+  return () => buttons.forEach((b, i) => opts[i].ok && b.classList.add('hint'));
+}
+
+const SKILLS = {
+  /* ---------- MATH ---------- */
+  countTap: { area: 'math', label: 'Counting', curric: 'Number – counting objects to 20', make(l, a) {
+    const n = l === 1 ? rnd(3, 10) : l === 2 ? rnd(8, 15) : rnd(12, 20);
+    const total = Math.min(24, n + rnd(3, 6));
+    return {
+      prompt: 'Give ' + a.name + ' ' + n + ' ' + a.foods + '.',
+      speak: 'Give ' + a.name + ' ' + n + ' ' + a.foods + '. Tap them into the bowl, then press done.',
+      build(box, api) {
+        const tray = el('div', { class: 'tray' }), bowl = el('div', { class: 'bowl', 'aria-label': 'food bowl' });
+        const label = el('div', { class: 'count-label' });
+        let showCount = l === 1;
+        const update = () => { const c = bowl.children.length; label.textContent = showCount ? 'In the bowl: ' + c : ''; };
+        const move = item => { sfx.tap(); (item.parentNode === tray ? bowl : tray).append(item); update(); };
+        for (let i = 0; i < total; i++) { const it = btn({ 'aria-label': 'food' }, a.food); it.onclick = () => move(it); tray.append(it); }
+        box.append(tray, label, bowl, btn({ class: 'big teal small', onclick: () => {
+          const c = bowl.children.length;
+          if (c === n) api.win(n + '! Yum yum!');
+          else { api.miss(bowl, c < n ? 'You gave ' + c + '. ' + a.name + ' needs more.' : 'You gave ' + c + '. That is too many!'); showCount = true; update(); }
+        } }, 'Done ✓'));
+        update();
+        return () => { showCount = true; update(); };
+      },
+    };
+  } },
+
+  howMany: { area: 'math', label: 'How many?', curric: 'Number – quantities to 50, ten frames', make(l, a) {
+    const n = l === 1 ? rnd(3, 10) : l === 2 ? rnd(11, 20) : rnd(21, 50);
+    const thing = pick([['🩹', 'bandages'], ['💊', 'vitamins'], ['🦴', 'chew toys'], ['🧸', 'toys']]);
+    return {
+      prompt: 'How many ' + thing[1] + ' are in the boxes?',
+      speak: 'How many ' + thing[1] + ' are in the boxes? Each full box has ten.',
+      build(box, api) {
+        box.append(tenFrames(n, thing[0]));
+        return choiceRow(box, numberChoices(n, l === 3 ? [10, -10, 1, -1] : [1, -1, 2, -2], 1).map(x => ({ label: String(x), ok: x === n, after: 'Yes, ' + n + ' ' + thing[1] + '!' })), api);
+      },
+    };
+  } },
+
+  addSub: { area: 'math', label: 'Adding & taking away', curric: 'Number – adding and subtracting within 20', make(l, a) {
+    const max = l === 1 ? 5 : l === 2 ? 10 : 20;
+    const sub = l > 1 && Math.random() < 0.5;
+    let x, y, ans;
+    if (sub) { x = rnd(3, max); y = rnd(1, x - 1); ans = x - y; }
+    else { x = rnd(1, max - 1); y = rnd(1, Math.min(max - x, l === 3 ? 9 : max)); ans = x + y; }
+    const prompt = sub ? a.name + ' has ' + x + ' ' + a.foods + '. ' + a.name + ' eats ' + y + '. How many are left?'
+                       : a.name + ' has ' + x + ' ' + a.foods + '. You give ' + y + ' more. How many now?';
+    return {
+      prompt, speak: prompt,
+      build(box, api) {
+        if (sub) box.append(iconGroup(x, a.food, x - y), el('div', { class: 'eq' }, x + ' − ' + y + ' = ?'));
+        else box.append(el('div', { class: 'row' }, iconGroup(x, a.food), el('span', { class: 'op' }, '+'), iconGroup(y, a.food)), el('div', { class: 'eq' }, x + ' + ' + y + ' = ?'));
+        return choiceRow(box, numberChoices(ans, [1, -1, 2, -2], 0).map(v => ({ label: String(v), ok: v === ans, after: (sub ? x + ' take away ' + y : x + ' plus ' + y) + ' is ' + ans + '!' })), api);
+      },
+    };
+  } },
+
+  compare: { area: 'math', label: 'More or fewer', curric: 'Number – comparing numbers to 50', make(l) {
+    const max = l === 1 ? 10 : l === 2 ? 20 : 50;
+    let p = rnd(1, max), q; do { q = rnd(1, max); } while (q === p || (l === 1 && Math.abs(p - q) < 2));
+    const more = l === 1 || Math.random() < 0.6;
+    const ans = more ? Math.max(p, q) : Math.min(p, q);
+    const pets = sample(ANIMALS, 2).map(x => x.emoji);
+    const prompt = l === 1 ? 'Which jar has MORE treats?' : more ? 'Which pet is HEAVIER on the scale?' : 'Which pet is LIGHTER on the scale?';
+    return {
+      prompt,
+      speak: l === 1 ? prompt : prompt + ' ' + p + ' kilograms, or ' + q + ' kilograms?',
+      build(box, api) {
+        const node = (v, i) => l === 1 ? el('div', { class: 'jar' }, iconGroup(v, '🍪'))
+          : el('div', { class: 'jar' }, el('span', { class: 'pic' }, pets[i]), el('span', { class: 'num' }, '⚖️ ' + v), el('span', { class: 'lbl' }, 'kilograms'));
+        return choiceRow(box, [p, q].map((v, i) => ({ node: node(v, i), ok: v === ans, aria: v + ' kilograms', after: ans + ' is ' + (more ? 'more' : 'less') + ' than ' + (ans === p ? q : p) + '!' })), api);
+      },
+    };
+  } },
+
+  skip: { area: 'math', label: 'Skip counting', curric: 'Number – counting by 2s, 5s and 10s', make(l) {
+    const step = l === 1 ? 10 : l === 2 ? 5 : 2;
+    const len = 5, maxStart = Math.floor(50 / step) - len + 1;
+    const start = rnd(step === 10 ? 0 : 1, Math.max(1, maxStart));
+    const seq = Array.from({ length: len }, (_, i) => (start + i) * step);
+    const hole = rnd(1, len - 1), ans = seq[hole];
+    return {
+      prompt: 'Count by ' + step + 's. Which number is missing?',
+      speak: 'Count by ' + step + 's. ' + seq.map((v, i) => i === hole ? 'hmm' : v).join(', ') + '. Which number is missing?',
+      build(box, api) {
+        box.append(el('div', { class: 'seq' }, seq.map((v, i) => el('span', { class: i === hole ? 'q' : null }, i === hole ? '?' : v))));
+        return choiceRow(box, numberChoices(ans, [1, -1, step, -step], 1).map(v => ({ label: String(v), ok: v === ans, after: seq.join(', ') + '!' })), api);
+      },
+    };
+  } },
+
+  tens: { area: 'math', label: 'Tens and ones', curric: 'Number – tens and ones (place value)', make(l) {
+    const t = l === 1 ? 1 : l === 2 ? rnd(2, 3) : rnd(2, 4);
+    const o = rnd(l === 1 ? 1 : 0, 9), n = t * 10 + o;
+    return {
+      prompt: 'Each stick has 10 blocks. How many blocks in all?',
+      speak: 'The vet built a block tower for the waiting room. Each stick has 10 blocks. How many blocks are there in all?',
+      build(box, api) {
+        const rods = el('div', { class: 'rods' });
+        for (let i = 0; i < t; i++) { const r = el('div', { class: 'rod', 'aria-hidden': 'true' }); for (let k = 0; k < 10; k++) r.append(el('i')); rods.append(r); }
+        const u = el('div', { class: 'units', 'aria-hidden': 'true' }); for (let i = 0; i < o; i++) u.append(el('i', { class: 'unit' }));
+        rods.append(u);
+        box.append(rods, l === 1 ? el('div', { class: 'count-label' }, t + (t === 1 ? ' ten' : ' tens') + ' and ' + o + (o === 1 ? ' one' : ' ones')) : null);
+        return choiceRow(box, numberChoices(n, [10, -10, 1, -1, 9], 1).map(v => ({ label: String(v), ok: v === n, after: t + ' tens and ' + o + ' ones make ' + n + '!' })), api);
+      },
+    };
+  } },
+
+  pattern: { area: 'math', label: 'Patterns', curric: 'Algebra – repeating patterns', make(l) {
+    const cols = shuffle(['❤️', '💙', '💛', '💚', '💜', '🧡']);
+    const cores = l === 1 ? ['AB'] : l === 2 ? ['AAB', 'ABB', 'AABB'] : ['ABC', 'ABBC', 'AABC'];
+    const core = pick(cores).split('').map(ch => cols[ch.charCodeAt(0) - 65]);
+    const shown = core.length * 2 + rnd(0, core.length - 1);
+    const seq = Array.from({ length: shown }, (_, i) => core[i % core.length]);
+    const ans = core[shown % core.length];
+    return {
+      prompt: 'Finish the bandage pattern! What comes next?',
+      speak: 'Let us decorate the bandage with a pattern. What comes next?',
+      build(box, api) {
+        box.append(el('div', { class: 'pattern' }, seq.map(c => el('span', null, c)), el('span', { class: 'q' }, '?')));
+        const opts = uniq([ans, ...shuffle(cols.slice(0, Math.max(3, uniq(core).length + 1)))]).slice(0, 3);
+        return choiceRow(box, shuffle(opts).map(c => ({ label: c, ok: c === ans })), api);
+      },
+    };
+  } },
+
+  coins: { area: 'math', label: 'Coins', curric: 'Financial literacy – Canadian coins and their values', make(l) {
+    if (l === 1) {
+      const vals = sample([5, 10, 25, 100, 200], 3), t = pick(vals), c = COINS[t];
+      const byName = Math.random() < 0.5;
+      const prompt = byName ? 'Tap the ' + c.name + '.' : 'Which coin is worth ' + c.value + '?';
+      return {
+        prompt, speak: byName ? prompt : 'Which coin is worth ' + cents(t) + '?',
+        build(box, api) {
+          box.append(el('div', { class: 'pricetag' }, '🪙 Coin check'));
+          return choiceRow(box, vals.map(v => ({ node: coinEl(v, null, 'span'), aria: COINS[v].name, ok: v === t, after: 'A ' + c.name + ' is worth ' + cents(t) + '!' })), api, 'coinchoice');
+        },
+      };
+    }
+    const bank = l === 2 ? [5, 10] : [5, 10, 25];
+    const price = l === 2 ? pick([10, 15, 20, 25, 30]) : pick([20, 30, 35, 40, 45, 50]);
+    return {
+      prompt: 'The medicine costs ' + price + '¢. Tap coins to pay.',
+      speak: 'The medicine costs ' + price + ' cents. Tap coins to pay, then press pay.',
+      build(box, api) {
+        const paid = el('div', { class: 'bowl wallet', 'aria-label': 'coins paid' });
+        const label = el('div', { class: 'count-label' });
+        let showTotal = false;
+        const sum = () => [...paid.children].reduce((s, c) => s + Number(c.dataset.v), 0);
+        const upd = () => { label.textContent = showTotal ? 'You paid ' + sum() + '¢' : ''; };
+        const wallet = el('div', { class: 'wallet' }, bank.map(v => coinEl(v, { onclick: () => {
+          sfx.tap(); say(COINS[v].name);
+          const c = coinEl(v, { 'data-v': v }); c.onclick = () => { c.remove(); upd(); }; paid.append(c); upd();
+        } })));
+        box.append(el('div', { class: 'pricetag' }, '💊 ' + price + '¢'), wallet, el('div', { class: 'count-label' }, '⬇ Your coins'), paid, label,
+          btn({ class: 'big teal small', onclick: () => {
+            const s = sum();
+            if (s === price) api.win('Exactly ' + price + ' cents. Thank you!');
+            else { showTotal = true; upd(); api.miss(paid, s < price ? 'That is ' + s + ' cents. You need more.' : 'That is ' + s + ' cents. Too much! Tap a coin to take it back.'); }
+          } }, 'Pay 💳'));
+        return () => { showTotal = true; upd(); };
+      },
+    };
+  } },
+
+  code: { area: 'math', label: 'Coding', curric: 'Algebra – coding with step-by-step instructions', make(l, a) {
+    const W = 5, H = 4;
+    let start, goal, blocks = [];
+    const key = (x, y) => x + ',' + y;
+    function path(bl) {
+      const bset = new Set(bl.map(b => key(b[0], b[1])));
+      const q = [[start, []]], seen = new Set([key(...start)]);
+      while (q.length) {
+        const [[x, y], p] = q.shift();
+        if (x === goal[0] && y === goal[1]) return p;
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nx = x + dx, ny = y + dy, k = key(nx, ny);
+          if (nx < 0 || ny < 0 || nx >= W || ny >= H || bset.has(k) || seen.has(k)) continue;
+          seen.add(k); q.push([[nx, ny], p.concat([[nx, ny]])]);
+        }
+      }
+      return null;
+    }
+    for (let tries = 0; tries < 200; tries++) {
+      start = [rnd(0, W - 1), rnd(0, H - 1)];
+      if (l === 1) { goal = Math.random() < 0.5 ? [rnd(0, W - 1), start[1]] : [start[0], rnd(0, H - 1)]; }
+      else goal = [rnd(0, W - 1), rnd(0, H - 1)];
+      const d = Math.abs(goal[0] - start[0]) + Math.abs(goal[1] - start[1]);
+      if (d < 2 || d > (l === 1 ? 4 : 6)) continue;
+      if (l === 2 && (goal[0] === start[0] || goal[1] === start[1])) continue;
+      blocks = [];
+      if (l === 3) {
+        const free = [];
+        for (let x = 0; x < W; x++) for (let y = 0; y < H; y++) if (!(x === start[0] && y === start[1]) && !(x === goal[0] && y === goal[1])) free.push([x, y]);
+        blocks = sample(free, rnd(2, 3));
+      }
+      const p = path(blocks);
+      if (p && (l < 3 || p.length > d || blocks.some(b => (b[0] === start[0] || b[1] === start[1]))) && p.length <= 7) break;
+    }
+    if (!path(blocks)) blocks = [];
+    const best = path(blocks) || [];
+    return {
+      prompt: 'Help Dr. ' + S.name + ' walk to ' + a.name + '! Make a plan with the arrows, then press Go.',
+      speak: 'Help Doctor ' + S.name + ' walk to ' + a.name + '. Tap the arrows to make a plan, then press go.',
+      build(box, api) {
+        const grid = el('div', { class: 'grid', style: 'grid-template-columns:repeat(' + W + ',auto)' });
+        const cells = {};
+        for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const c = el('div', { class: 'cell' }); cells[key(x, y)] = c; grid.append(c); }
+        blocks.forEach(b => { cells[key(...b)].textContent = pick(['🪴', '📦']); });
+        cells[key(...goal)].append(pet(a, 58));
+        const doc = el('span', { 'aria-label': 'Doctor' }, '🧑‍⚕️');
+        let pos = start.slice(), running = false;
+        const place = () => cells[key(...pos)].append(doc);
+        place();
+        const prog = [], progEl = el('div', { class: 'program', 'aria-label': 'your plan' });
+        const ARROWS = { up: ['⬆️', 0, -1], right: ['➡️', 1, 0], down: ['⬇️', 0, 1], left: ['⬅️', -1, 0] };
+        const drawProg = hi => { progEl.replaceChildren(...(prog.length ? prog.map((d, i) => el('span', { class: i === hi ? 'on' : null }, ARROWS[d][0])) : [el('span', { class: 'empty' }, 'Your plan goes here')])); };
+        drawProg();
+        const arrows = el('div', { class: 'arrows' },
+          ['left', 'up', 'down', 'right'].map(d => btn({ class: 'arrow', 'aria-label': d, onclick: () => { if (running || prog.length >= 12) return; sfx.tap(); prog.push(d); drawProg(); } }, ARROWS[d][0])),
+          btn({ class: 'arrow', 'aria-label': 'undo', onclick: () => { if (running) return; prog.pop(); drawProg(); } }, '↩️'));
+        const go = btn({ class: 'big teal small', onclick: run }, 'Go ▶');
+        function reset() { pos = start.slice(); place(); Object.values(cells).forEach(c => c.classList.remove('bump')); running = false; drawProg(); }
+        function run() {
+          if (running || !prog.length) return;
+          running = true; pos = start.slice(); place();
+          let i = 0;
+          const stepFn = () => {
+            if (i >= prog.length) {
+              if (pos[0] === goal[0] && pos[1] === goal[1]) { api.win('You made it to ' + a.name + '!'); }
+              else { api.miss(grid, 'Not there yet. Fix your plan and try again!'); setTimeout(reset, 900); }
+              return;
+            }
+            drawProg(i);
+            const [, dx, dy] = ARROWS[prog[i]];
+            const nx = pos[0] + dx, ny = pos[1] + dy;
+            const blocked = nx < 0 || ny < 0 || nx >= W || ny >= H || blocks.some(b => b[0] === nx && b[1] === ny);
+            if (blocked) {
+              const c = cells[key(nx, ny)]; if (c) c.classList.add('bump');
+              api.miss(grid, 'Bonk! Something is in the way.'); setTimeout(reset, 1100); return;
+            }
+            pos = [nx, ny]; place(); sfx.tap(); i++;
+            setTimeout(stepFn, 480);
+          };
+          setTimeout(stepFn, 250);
+        }
+        box.append(grid, progEl, arrows, go);
+        return () => best.forEach(p => cells[key(...p)].classList.add('path'));
+      },
+    };
+  } },
+
+  /* ---------- LANGUAGE ---------- */
+  firstSound: { area: 'lang', label: 'Sounds in words', curric: 'Foundations – beginning, middle and end sounds', make(l) {
+    const [w, e] = pick(CVC);
+    const pos = l === 1 ? 0 : l === 2 ? pick([0, 2]) : pick([0, 1, 2]);
+    const ans = w[pos];
+    const pool = pos === 1 ? ['a', 'e', 'i', 'o', 'u'] : 'bcdfghjlmnprstvwxz'.split('');
+    const opts = shuffle([ans, ...sample(pool.filter(x => x !== ans), 2)]);
+    const where = ['start with', 'have in the middle', 'end with'][pos];
+    return {
+      prompt: 'What sound does this word ' + where + '?',
+      speak: w + '. What sound does ' + w + ' ' + where + '?',
+      build(box, api) {
+        const word = el('div', { class: 'bigword', hidden: true });
+        box.append(btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(w) }, el('span', { class: 'bigpic' }, e)), word);
+        return choiceRow(box, opts.map(ch => ({ label: ch, ok: ch === ans, after: () => {
+          word.hidden = false; word.replaceChildren(...w.split('').map((c, i) => el('span', { class: i === pos ? 'hl' : null }, c)));
+          return [w + ' starts with ' + ch + '!', w + ' has ' + ch + ' in the middle!', w + ' ends with ' + ch + '!'][pos];
+        } })), api);
+      },
+    };
+  } },
+
+  spell: { area: 'lang', label: 'Spelling', curric: 'Foundations – spelling short-vowel words', make(l) {
+    const [w, e] = pick(l === 3 ? BLENDS.filter(b => b[0].length === 4) : CVC);
+    const given = l === 1 ? 1 : 0;
+    const extra = sample('abcdefghilmnoprstu'.split('').filter(c => !w.includes(c)), l);
+    return {
+      prompt: 'Spell the word. Tap the letters in order.',
+      speak: 'Can you spell ' + w + '? ' + w + '.',
+      build(box, api) {
+        const slots = el('div', { class: 'slots' }, w.split('').map((c, i) => el('div', { class: 'slot' + (i < given ? ' given' : '') }, i < given ? c : '')));
+        let at = given;
+        const letters = shuffle(w.slice(given).split('').concat(extra));
+        const tiles = el('div', { class: 'tiles' }, letters.map(c => {
+          const t = btn({ class: 'tile', onclick: () => {
+            if (at >= w.length) return;
+            if (c === w[at]) { sfx.tap(); slots.children[at].textContent = c; t.classList.add('used'); at++; if (at === w.length) api.win(w.split('').join(', ') + '. ' + w + '!'); }
+            else api.miss(t);
+          } }, c);
+          return t;
+        }));
+        box.append(btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(w) }, el('span', { class: 'bigpic' }, e)), slots, tiles);
+        return () => { say(w.split('').join('... ')); const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === w[at]); if (t) t.classList.add('hint'); };
+      },
+    };
+  } },
+
+  readWord: { area: 'lang', label: 'Reading words', curric: 'Foundations – decoding (sounding out) words', make(l) {
+    const bank = l === 3 ? BLENDS : CVC;
+    const [w, e] = pick(bank);
+    let others;
+    if (l === 2) {
+      const near = bank.filter(b => b[0] !== w && (b[0][0] === w[0] || b[0][1] === w[1] || b[0].slice(-1) === w.slice(-1)));
+      others = sample(near.length >= 2 ? near : bank.filter(b => b[0] !== w), 2);
+    } else others = sample(bank.filter(b => b[0] !== w && b[1] !== e), 2);
+    return {
+      prompt: 'Read the word. Tap the matching picture.',
+      speak: 'Sound out the word. Then tap the picture that matches.',
+      build(box, api) {
+        box.append(el('div', { class: 'bigword' }, w));
+        return choiceRow(box, shuffle([[w, e], ...others]).map(([ww, ee]) => ({ node: el('span', { class: 'pic' }, ee), aria: ww, ok: ww === w, after: w + '!' })), api);
+      },
+    };
+  } },
+
+  rhyme: { area: 'lang', label: 'Rhyming', curric: 'Foundations – hearing rhymes', make() {
+    const fam = pick(RHYMES);
+    const [target, match] = sample(fam, 2);
+    const others = sample(RHYMES.filter(f => f !== fam).flat(), 2);
+    const opts = shuffle([match, ...others]);
+    return {
+      prompt: 'Which word rhymes with ' + target[0] + '?',
+      speak: 'Which word rhymes with ' + target[0] + '? ' + opts.map(o => o[0]).join(', or ') + '?',
+      build(box, api) {
+        box.append(el('div', { class: 'row' }, el('span', { class: 'bigpic' }, target[1]), el('span', { class: 'bigword' }, target[0])));
+        return choiceRow(box, opts.map(o => ({ node: [el('span', { class: 'pic' }, o[1]), el('span', { class: 'lbl' }, o[0])], aria: o[0], ok: o === match, after: target[0] + ', ' + match[0] + '. They rhyme!' })), api);
+      },
+    };
+  } },
+
+  sight: { area: 'lang', label: 'Sight words', curric: 'Foundations – high-frequency words', needsVoice: true, make(l) {
+    const list = SIGHT[l - 1];
+    const words = sample(uniq(list), l === 1 ? 3 : 4), ans = pick(words);
+    return {
+      prompt: 'Listen, then find the word you hear.',
+      speak: 'Find the word: ' + ans + '. ' + ans + '.',
+      build(box, api) {
+        box.append(btn({ class: 'big sun small', onclick: () => say(ans) }, '🔊 Hear the word again'));
+        return choiceRow(box, words.map(w => ({ label: w, ok: w === ans, after: ans + '!' })), api, 'word');
+      },
+    };
+  } },
+
+  digraph: { area: 'lang', label: 'sh, ch, th', curric: 'Foundations – letter teams sh, ch and th', make(l) {
+    const keys = l === 1 ? sample(['sh', 'ch', 'th'], 2) : ['sh', 'ch', 'th'];
+    const k = pick(keys), [w, e] = pick(DIGRAPH[k]);
+    return {
+      prompt: 'Which letter team does it start with?',
+      speak: w + '. Does ' + w + ' start with ' + keys.join(', or ') + '?',
+      build(box, api) {
+        box.append(btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(w) }, el('span', { class: 'bigpic' }, e)));
+        return choiceRow(box, shuffle(keys).map(x => ({ label: x, ok: x === k, after: w + ' starts with ' + k.split('').join(' ') + '!' })), api, 'word');
+      },
+    };
+  } },
+
+  syllable: { area: 'lang', label: 'Syllables', curric: 'Foundations – clapping syllables', make(l) {
+    const pool = SYLL.filter(s => { const n = s[0].split('-').length; return l === 1 ? n <= 2 : l === 2 ? n <= 3 : n >= 2; });
+    const [split, e] = pick(pool), word = split.replace(/-/g, ''), n = split.split('-').length;
+    return {
+      prompt: 'Tap the drum once for each beat in the word.',
+      speak: word + '. Tap the drum for each beat in ' + word + ', then press done.',
+      build(box, api) {
+        let c = 0;
+        const claps = el('div', { class: 'claps' });
+        const drum = btn({ class: 'drum', onclick: () => { if (c >= 6) return; c++; tone(180, 0, .15, 'sine', .25); claps.append(el('i')); drum.classList.add('tap'); setTimeout(() => drum.classList.remove('tap'), 120); } }, 'Tap!');
+        box.append(btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(word) }, el('span', { class: 'bigpic' }, e)), drum, claps,
+          el('div', { class: 'btnrow' },
+            btn({ class: 'big sun small', onclick: () => { c = 0; claps.replaceChildren(); } }, 'Start over ↺'),
+            btn({ class: 'big teal small', onclick: () => {
+              if (c === n) api.win(split.split('-').join(', ') + '. ' + n + (n === 1 ? ' beat!' : ' beats!'));
+              else { api.miss(claps, 'You tapped ' + c + '. Listen again: ' + word + '.'); c = 0; claps.replaceChildren(); }
+            } }, 'Done ✓')));
+        return () => say(split.split('-').join('... '));
+      },
+    };
+  } },
+
+  sentence: { area: 'lang', label: 'Reading sentences', curric: 'Comprehension – reading a simple sentence', make(l) {
+    const ANI = [['cat', '🐱'], ['dog', '🐶'], ['pig', '🐷'], ['hen', '🐔'], ['fox', '🦊'], ['bug', '🐛']];
+    const PLACE = [['tub', '🛁'], ['bed', '🛏️'], ['box', '📦'], ['van', '🚐']];
+    const THING = [['hat', '👒'], ['cup', '☕'], ['map', '🗺️'], ['bag', '👜'], ['net', '🥅']];
+    const tpl = l === 1 ? 'in' : pick(['in', 'has']);
+    const an = pick(ANI), ob = pick(tpl === 'in' ? PLACE : THING);
+    const text = tpl === 'in' ? 'The ' + an[0] + ' is in the ' + ob[0] + '.' : 'The ' + an[0] + ' has a ' + ob[0] + '.';
+    const pool = tpl === 'in' ? PLACE : THING;
+    const opts = shuffle([[an, ob], [pick(ANI.filter(x => x !== an)), ob], [an, pick(pool.filter(x => x !== ob))]]);
+    return {
+      prompt: 'Read the vet note. Tap the picture that matches.',
+      speak: 'Read the vet note by yourself. Then tap the picture that matches.',
+      build(box, api) {
+        box.append(el('div', { class: 'bigword', style: 'font-size:44px' }, text));
+        return choiceRow(box, opts.map(([x, y]) => ({ node: el('span', { class: 'scene' }, x[1] + ' ' + y[1]), aria: x[0] + ' and ' + y[0], ok: x === an && y === ob, after: text })), api);
+      },
+    };
+  } },
+};
+const MATH = Object.keys(SKILLS).filter(k => SKILLS[k].area === 'math');
+const LANG = Object.keys(SKILLS).filter(k => SKILLS[k].area === 'lang' && !(SKILLS[k].needsVoice && !canSpeak));
+
+/* ================= screens ================= */
+const app = document.getElementById('app');
+let visit = null;
+
+function topBar() {
+  return el('header', { class: 'bar' },
+    el('div', { class: 'sign' }, el('span', { class: 'cross', 'aria-hidden': 'true' }, '✚'), S.name + "'s Animal Clinic"),
+    el('span', { class: 'spacer' }),
+    el('span', { class: 'pill', 'aria-label': S.stars + ' stars' }, '⭐ ', String(S.stars)),
+    btn({ class: 'iconbtn', 'aria-label': 'sticker book', onclick: () => { hush(); showStickers(); } }, '📒'),
+    btn({ class: 'iconbtn', 'aria-label': 'waiting room', onclick: () => { hush(); showRoom(); } }, '🏥'));
+}
+function screen(...kids) { app.replaceChildren(...kids); window.scrollTo(0, 0); }
+
+function showTitle() {
+  const parade = el('div', { class: 'parade' }, sample(ANIMALS, 3).map(a => pet(a, 150)));
+  screen(el('div', { class: 'title-wrap' }, el('div', { class: 'title-card' },
+    parade,
+    el('h1', null, S.name + "'s ", el('span', null, 'Animal'), ' Clinic'),
+    el('div', { class: 'badge-doc' }, '🩺 Dr. ' + S.name + ', Veterinarian'),
+    el('p', null, 'The animals need your help! Count, read and solve to make them feel better.'),
+    btn({ class: 'big', onclick: () => { sfx.good(); say('Welcome, Doctor ' + S.name + '! Your patients are waiting.'); showRoom(); } }, 'Open the clinic ▶'),
+    btn({ class: 'linkbtn', onclick: () => showParentGate() }, 'Grown-ups'))));
+}
+
+function newPatient(exclude) {
+  const healedCount = id => S.healed[id] || 0;
+  const pool = ANIMALS.filter(a => !exclude.includes(a.id));
+  const minH = Math.min(...pool.map(a => healedCount(a.id)));
+  const fresh = pool.filter(a => healedCount(a.id) === minH);
+  return { a: pick(fresh).id, ail: pick(AILMENTS).id };
+}
+function ensureQueue() {
+  if (!Array.isArray(S.queue) || S.queue.length !== 3 || S.queue.some(p => !A(p.a) || !AIL(p.ail))) {
+    S.queue = [];
+    for (let i = 0; i < 3; i++) S.queue.push(newPatient(S.queue.map(p => p.a)));
+    save();
+  }
+}
+
+function showRoom() {
+  ensureQueue();
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'room-head' }, el('h2', null, 'Waiting room'), el('p', null, 'Who will you help first? Tap a patient.')),
+    el('div', { class: 'benches' }, S.queue.map((p, i) => {
+      const a = A(p.a), ail = AIL(p.ail);
+      return el('div', { class: 'patient' },
+        pet(a, 150, { cls: 'sick', ail: ail.badge }),
+        el('h3', null, a.name),
+        el('p', { class: 'what' }, 'This ' + a.kind + ' ' + ail.says + '.'),
+        btn({ class: 'big teal small', onclick: () => { sfx.tap(); startVisit(i); } }, 'Help ' + a.name));
+    }))));
+}
+
+function planSkills() {
+  const mathOn = S.mix !== 'lang', langOn = S.mix !== 'math';
+  let order;
+  if (mathOn && langOn) order = Math.random() < 0.5 ? ['math', 'lang', 'math'] : ['lang', 'math', 'lang'];
+  else order = [mathOn ? 'math' : 'lang', mathOn ? 'math' : 'lang', mathOn ? 'math' : 'lang'];
+  const used = [];
+  return order.map(area => {
+    const pool = (area === 'math' ? MATH : LANG).filter(k => !used.includes(k));
+    // lean towards skills practiced least so everything gets a turn
+    const least = Math.min(...pool.map(k => (S.stats[k] || { done: 0 }).done));
+    const choice = pick(pool.filter(k => (S.stats[k] || { done: 0 }).done <= least + 1));
+    used.push(choice); return choice;
+  });
+}
+
+function startVisit(qi) {
+  const p = S.queue[qi];
+  visit = { qi, a: A(p.a), ail: AIL(p.ail), plan: planSkills(), step: 0 };
+  say(visit.a.name + ' ' + visit.ail.says + '. Let us help!');
+  drawExam(true);
+}
+
+function drawExam(isFirst) {
+  const { a, ail, plan, step } = visit;
+  const healthCls = step === 0 ? 'sick' : step < 3 ? 'better' : '';
+  const side = el('section', { class: 'table', 'aria-label': 'exam table' },
+    el('div', { class: 'mat' }, pet(a, 230, { cls: healthCls, ail: step < 3 ? ail.badge : null })),
+    el('div', { class: 'nametag' }, a.name),
+    el('p', { class: 'complaint' }, a.name + ' ' + ail.says + '.'),
+    el('div', { class: 'hearts', 'aria-label': step + ' of 3 hearts' }, '❤️'.repeat(step) + '🤍'.repeat(3 - step)),
+    el('ol', { class: 'steps' }, ail.steps.map(([tool, txt], i) => el('li', { class: i < step ? 'done' : i === step ? 'now' : null }, el('span', { class: 'tool' }, tool), txt))));
+  const skill = SKILLS[plan[step]], lvl = S.lvl[plan[step]] || 1;
+  const act = skill.make(lvl, a);
+  const work = el('div', { class: 'work' }), fb = el('div', { class: 'feedback', 'aria-live': 'polite' });
+  const card = el('section', { class: 'task' },
+    el('div', { class: 'task-top' }, el('span', { class: 'chip ' + skill.area }, (skill.area === 'math' ? 'Math · ' : 'Reading · ') + skill.label),
+      el('span', { class: 'stepno' }, ail.steps[step][0] + ' Step ' + (step + 1) + ' of 3')),
+    el('div', { class: 'prompt' }, btn({ class: 'speak', 'aria-label': 'read it to me', onclick: () => say(act.speak || act.prompt) }, '🔊'), el('p', null, act.prompt)),
+    work, fb);
+  let misses = 0, done = false, hint = null;
+  const api = {
+    win(after) {
+      if (done) return; done = true;
+      const msg = typeof after === 'function' ? after() : after;
+      sfx.good();
+      fb.className = 'feedback'; fb.textContent = pick(PRAISE) + ' ' + '⭐';
+      say((msg ? msg + ' ' : '') + pick(PRAISE));
+      const up = record(plan[step], misses);
+      if (up) fb.textContent += '  Level up!';
+      S.stars += 1; save();
+      setTimeout(() => { visit.step++; if (visit.step >= 3) showHealed(); else drawExam(false); }, msg && msg.length > 30 ? 2600 : 1900);
+    },
+    miss(node, msg) {
+      if (done) return;
+      misses++; sfx.bad();
+      if (node) { node.classList.remove('wobble'); void node.offsetWidth; node.classList.add('wobble'); }
+      const m = msg || pick(OOPS);
+      fb.className = 'feedback try'; fb.textContent = m; say(m);
+      if (misses >= 2 && hint) hint();
+    },
+  };
+  hint = act.build(work, api) || null;
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'exam' }, side, card),
+    el('div', null, btn({ class: 'linkbtn', onclick: () => { hush(); showRoom(); } }, '← Back to the waiting room'))));
+  if (!isFirst) say(ail.steps[step][1] + '. ' + (act.speak || act.prompt));
+  else setTimeout(() => say(ail.steps[step][1] + '. ' + (act.speak || act.prompt)), 2200);
+}
+
+function record(skill, misses) {
+  const st = S.stats[skill] || (S.stats[skill] = { done: 0, first: 0 });
+  st.done++; if (!misses) st.first++;
+  const lv = S.lvl[skill] || 1;
+  let up = false;
+  if (!misses) {
+    S.streak[skill] = (S.streak[skill] || 0) + 1;
+    if (S.streak[skill] >= 3 && lv < 3) { S.lvl[skill] = lv + 1; S.streak[skill] = 0; up = true; }
+  } else {
+    S.streak[skill] = 0;
+    if (misses >= 3 && lv > 1) S.lvl[skill] = lv - 1;
+  }
+  return up;
+}
+
+function showHealed() {
+  const { a, qi } = visit;
+  S.healed[a.id] = (S.healed[a.id] || 0) + 1;
+  S.stars += 2;
+  S.queue[qi] = newPatient(S.queue.map(p => p.a));
+  save();
+  sfx.fanfare();
+  say(a.name + ' feels all better! Thank you, Doctor ' + S.name + '! You earned a sticker.');
+  const conf = el('div', { class: 'confetti', 'aria-hidden': 'true' });
+  for (let i = 0; i < 40; i++) conf.append(el('i', { style: 'left:' + rnd(0, 100) + '%;animation-duration:' + (rnd(22, 45) / 10) + 's;animation-delay:' + (rnd(0, 12) / 10) + 's' }, pick(['⭐', '💖', '✨', '🎉', a.food])));
+  screen(topBar(), el('main', { class: 'healed' }, el('div', { class: 'healed-card' },
+    pet(a, 260, { cls: 'happy' }),
+    el('h2', null, a.name + ' feels all better!'),
+    el('p', null, 'Thank you, Dr. ' + S.name + '. ' + a.name + ' gave you a sticker for your book.'),
+    el('div', { class: 'earned' }, '⭐ +5 stars'),
+    el('div', { class: 'btnrow' },
+      btn({ class: 'big', onclick: () => { hush(); showRoom(); } }, 'Next patient ▶'),
+      btn({ class: 'big sun', onclick: () => { hush(); showStickers(); } }, 'Sticker book 📒')))), conf);
+}
+
+function showStickers() {
+  const got = ANIMALS.filter(a => S.healed[a.id]).length;
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'room-head' }, el('h2', null, 'Sticker book'), el('p', null, 'You have helped ' + got + ' of ' + ANIMALS.length + ' kinds of animals.')),
+    el('div', { class: 'book' }, ANIMALS.map(a => {
+      const n = S.healed[a.id] || 0;
+      return el('div', { class: 'sticker' + (n ? '' : ' locked') }, pet(a, 110), el('b', null, n ? a.name : '?'), el('small', null, n ? a.kind + (n > 1 ? ' · helped ' + n + ' times' : '') : 'Not yet'));
+    })),
+    el('div', null, btn({ class: 'big teal small', onclick: showRoom }, '← Back to the waiting room'))));
+}
+
+/* ---------- grown-ups ---------- */
+function showParentGate() {
+  let t = null;
+  const hold = btn({ class: 'big teal hold' }, el('span', { class: 'fill' }), 'Hold for 2 seconds');
+  const start = e => { e.preventDefault(); hold.classList.add('go'); t = setTimeout(showParent, 1700); };
+  const stop = () => { hold.classList.remove('go'); clearTimeout(t); };
+  hold.addEventListener('pointerdown', start); ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => hold.addEventListener(ev, stop));
+  screen(el('main', { class: 'title-wrap' }, el('div', { class: 'title-card' },
+    el('h2', { style: 'font-size:36px' }, 'Grown-ups only'), el('p', null, 'Press and hold the button to open the settings.'), hold,
+    btn({ class: 'linkbtn', onclick: showTitle }, '← Back'))));
+}
+function showParent() {
+  const seg = (opts, cur, onPick) => el('div', { class: 'seg', role: 'group' }, opts.map(([v, lab]) => btn({ class: v === cur ? 'on' : null, onclick: () => { onPick(v); save(); showParent(); } }, lab)));
+  let armed = false;
+  const reset = btn({ class: 'big small', onclick: () => {
+    if (!armed) { armed = true; reset.textContent = 'Tap again to erase all progress'; return; }
+    const keep = { name: S.name, voice: S.voice, mix: S.mix };
+    Object.keys(S).forEach(k => delete S[k]);
+    Object.assign(S, { stars: 0, healed: {}, lvl: {}, streak: {}, stats: {}, queue: null }, keep); save(); showParent();
+  } }, 'Reset progress');
+  const nameIn = el('input', { type: 'text', id: 'kid-name', value: S.name, maxlength: '16', 'aria-label': "Child's name" });
+  nameIn.addEventListener('change', () => { S.name = nameIn.value.trim() || 'Ellie'; save(); });
+  const rows = Object.entries(SKILLS).map(([k, sk]) => {
+    const st = S.stats[k] || { done: 0, first: 0 }, lv = S.lvl[k] || 1;
+    const setLv = d => { S.lvl[k] = Math.min(3, Math.max(1, lv + d)); S.streak[k] = 0; save(); showParent(); };
+    return el('tr', null,
+      el('td', null, el('span', { class: 'chip ' + sk.area }, sk.area === 'math' ? 'Math' : 'Language')),
+      el('td', null, el('b', null, sk.label), el('br'), el('span', { style: 'color:var(--ink-soft)' }, sk.curric)),
+      el('td', null, el('div', { class: 'lv' }, btn({ 'aria-label': 'easier', onclick: () => setLv(-1) }, '−'), el('span', null, 'Level ' + lv), btn({ 'aria-label': 'harder', onclick: () => setLv(1) }, '+'))),
+      el('td', { class: 'n' }, String(st.done)),
+      el('td', { class: 'n' }, st.done ? Math.round(100 * st.first / st.done) + '%' : '–'));
+  });
+  screen(el('main', { class: 'screen' }, el('section', { class: 'parent' },
+    el('h2', null, 'Grown-ups corner'),
+    el('p', null, 'Every patient needs three treatment steps. Each step is a short activity from the Ontario Grade 1 Mathematics (2020) and Language (2023) curriculum. Levels go up by themselves after three first-try answers in a row, and go down after a struggle. You can also set them by hand below.'),
+    el('div', { class: 'settings' },
+      el('label', { for: 'kid-name' }, 'Name', nameIn),
+      el('span', null, 'Voice'), seg([[true, 'On'], [false, 'Off']], S.voice, v => { S.voice = v; }),
+      el('span', null, 'Subjects'), seg([['both', 'Math + Reading'], ['math', 'Math only'], ['lang', 'Reading only']], S.mix, v => { S.mix = v; })),
+    !canSpeak ? el('p', null, 'This browser cannot read aloud, so the "find the word you hear" activity is turned off.') : null,
+    el('div', { class: 'tablewrap' }, el('table', null,
+      el('thead', null, el('tr', null, ['Subject', 'Skill', 'Level', 'Done', 'First try'].map(h => el('th', null, h)))),
+      el('tbody', null, rows))),
+    el('p', null, 'Level guide for number work: level 1 uses numbers to 10, level 2 to 20, level 3 to 50. Skip counting goes 10s → 5s → 2s. Coins go from naming coins to paying with nickels and dimes, then quarters.'),
+    el('div', { class: 'btnrow', style: 'justify-content:flex-start' }, btn({ class: 'big teal small', onclick: showTitle }, 'Done'), reset))));
+}
+
+showTitle();
+})();
+</script>
