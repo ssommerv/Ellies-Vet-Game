@@ -243,6 +243,8 @@ th{font:600 14px var(--display);letter-spacing:.04em;text-transform:uppercase;co
 td.n{font-variant-numeric:tabular-nums}
 .lv{display:flex;align-items:center;gap:6px}
 .lv button{width:34px;height:34px;border-radius:8px;border:2px solid var(--line);background:var(--card);font-weight:700}
+.credits{margin:0;padding-left:1.2em;font:15px/1.5 system-ui,sans-serif;color:var(--ink-soft);columns:2 320px}
+.credits a{color:var(--teal-deep)}
 .hold{position:relative;overflow:hidden}
 .hold .fill{position:absolute;inset:0;background:rgba(255,255,255,.35);transform-origin:left;transform:scaleX(0)}
 .hold.go .fill{transition:transform 1.6s linear;transform:scaleX(1)}
@@ -363,6 +365,8 @@ const ANIMALS = [
   { id: 'beaver',   name: 'Chomper', kind: 'beaver',    emoji: '🦫', food: '🪵', foods: 'sticks' },
   { id: 'chick',    name: 'Sunny',   kind: 'chick',     emoji: '🐤', food: '🌽', foods: 'corn treats' },
 ];
+// Photographer and licence for each photo in animals/ (full details in animals/CREDITS.md).
+const PHOTO_CREDITS = [["kitten", "Kun-cats", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%BE%D1%82%D1%8F%D1%82%D0%B0_%D0%BF%D0%B8%D1%82%D0%BE%D0%BC%D0%BD%D0%B8%D0%BA%D0%B0_%D0%BC%D0%B5%D0%B9%D0%BD_%D0%BA%D1%83%D0%BD%D0%BE%D0%B2_Khrustal_Orchid.JPG"], ["puppy", "Szczenie Jack Russell Terrier.jpg: Siristru derivative work: Wuhazet", "Public domain", "https://commons.wikimedia.org/wiki/File:Szczenie_Jack_Russell_Terrier3.jpg"], ["bunny", "ClearGraphics", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Netherland_Dwarf_-_Sable_Point.jpg"], ["hamster", "Wschlitz", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Juvenile_Female_Mesocricetus_auratus_in_Pet_Store_enclosure,_Illinois,_USA.jpg"], ["duckling", "Luis Miguel Bugallo Sánchez (Lmbuga Commons)(Lmbuga Galipedia) Publicada por/Publish by: Luis Miguel Bugallo Sánchez", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Parrulo_-Muscovy_duckling.jpg"], ["piglet", "Amanda Slater from Coventry, England", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Gloucester_Old_Spot.jpg"], ["lamb", "Peter Shanks from Lithgow, Australia", "CC BY 3.0", "https://commons.wikimedia.org/wiki/File:Lamb_first_steps_(edited).jpg"], ["pony", "Ealdgyth", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Standingarabianfoalone.jpg"], ["calf", "Hayden Soloviev", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Hereford_cow,_Souris,_Prince_Edward_Island.jpg"], ["turtle", "Kobie Mercury-Clarke", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Chrysemys_picta_marginata_(27730831161)_(mirrored).jpg"], ["hedgehog", "Pueri Michał Klimont", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Atelerix_albiventris_young.jpg"], ["fox", "ClaudiaTen", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Portrait_of_a_red_fox_in_Rautas_fj%C3%A4llurskog_(cropped).jpg"], ["parrot", "Corinne Waheed", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Sunny_D_Pheonix,_hand_fed_Sun_Conure_in_captivity._Photo_by_Cory_Waheed.jpg"], ["raccoon", "Paxson Woelber", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Curious_Raccoon.jpg"], ["beaver", "Steve from Washington, DC, USA", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:American_Beaver.jpg"], ["chick", "GrinningIodize", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:A_young_chicken_standing,_April_2022.jpg"]];
 const A = id => ANIMALS.find(a => a.id === id);
 const photoOK = {};
 ANIMALS.forEach(a => {
@@ -1115,6 +1119,10 @@ function showParent() {
       el('thead', null, el('tr', null, ['Subject', 'Skill', 'Level', 'Done', 'First try'].map(h => el('th', null, h)))),
       el('tbody', null, rows))),
     el('p', null, 'Level guide for number work: level 1 uses numbers to 10, level 2 to 20, level 3 to 50. Skip counting goes 10s → 5s → 2s. Coins go from naming coins to paying with nickels and dimes, then quarters.'),
+    el('h3', { style: 'font-size:22px' }, 'Photo credits'),
+    el('p', null, 'Animal photos are from Wikimedia Commons, with backgrounds removed. Tap a name to see the original photo.'),
+    el('ul', { class: 'credits' }, PHOTO_CREDITS.filter(c => photoOK[c[0]]).map(([id, who, lic, url]) =>
+      el('li', null, el('a', { href: url, target: '_blank', rel: 'noopener' }, A(id).name + ' the ' + A(id).kind), ' · ' + who + ' · ' + lic))),
     el('div', { class: 'btnrow', style: 'justify-content:flex-start' }, btn({ class: 'big teal small', onclick: showTitle }, 'Done'), reset))));
 }
 

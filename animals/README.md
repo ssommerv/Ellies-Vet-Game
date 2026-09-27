@@ -1,8 +1,8 @@
 # Animal photos
 
-Drop a real photo with a transparent background here for any animal, named
-exactly as below (PNG, about 600×600 px or larger, square-ish). The game
-uses the photo automatically; until a photo exists it shows the emoji.
+Each animal has a real photo with a transparent background, from Wikimedia
+Commons (see CREDITS.md). To swap one, replace the file, keeping the name (PNG, about 600×600 px or larger, square-ish). If a
+photo is missing, the game shows the animal's emoji instead.
 
 | File | Animal (name in game) |
 |---|---|
