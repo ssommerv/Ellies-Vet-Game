@@ -550,7 +550,7 @@ const SYLL = [
 ];
 const COINS = {
   5:   { name: 'nickel',  value: '5¢',  ic: '🦫', txt: '5', photo: true },
-  10:  { name: 'dime',    value: '10¢', ic: '⛵', txt: '10' },
+  10:  { name: 'dime',    value: '10¢', ic: '⛵', txt: '10', photo: true },
   25:  { name: 'quarter', value: '25¢', ic: '🦌', txt: '25', photo: true },
   100: { name: 'loonie',  value: '$1',  ic: '🦆', txt: '$1', photo: true },
   200: { name: 'toonie',  value: '$2',  ic: '🐻‍❄️', txt: '$2', photo: true },
@@ -558,7 +558,7 @@ const COINS = {
 const cents = v => v >= 100 ? (v / 100) + (v === 100 ? ' dollar' : ' dollars') : v + ' cents';
 function coinEl(v, props, tag) {
   const c = COINS[v];
-  // Real coin photos live in art/coins/<name>.png; coins without one (the dime, for now) are drawn.
+  // Real coin photos live in art/coins/<name>.png; a coin whose photo fails to load is drawn instead.
   const drawn = () => [el('span', { class: 'ic' }, c.ic), el('span', null, c.txt)];
   const face = c.photo ? [el('img', { src: 'art/coins/' + c.name + '.png', alt: '', draggable: 'false', onerror: e => {
     const coin = e.target.parentNode; coin.classList.remove('photo'); e.target.replaceWith(...drawn()); } })] : drawn();
