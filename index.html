@@ -47,7 +47,17 @@ button:focus-visible{outline:4px solid var(--lilac);outline-offset:3px}
 /* ---------- top bar ---------- */
 .bar{display:flex;align-items:center;gap:12px;padding-block:12px;flex-wrap:wrap}
 .sign{display:flex;align-items:center;gap:10px;background:var(--card);border:3px solid var(--teal);border-radius:18px;padding:6px 16px 6px 8px;font:700 24px/1 var(--display);color:var(--teal-deep);box-shadow:0 5px 0 var(--teal)}
-.sign .cross{width:34px;height:34px;border-radius:10px;background:var(--coral);display:grid;place-items:center;color:#fff;font-size:26px;line-height:1}
+.sign .ellie{margin-block:-4px}
+/* Dr. Ellie's headshot */
+.ellie{flex:none;border-radius:50%;background:var(--wall);border:3px solid #fff;box-shadow:0 0 0 3px var(--teal);object-fit:cover;display:block}
+.ellie.hop{animation:hop .3s ease-in-out 4 alternate}
+.ellie.tilt{animation:tilt .5s ease-in-out}
+@keyframes tilt{30%{transform:rotate(-10deg)}70%{transform:rotate(8deg)}}
+button.ellie-btn{border:none;background:none;padding:0;border-radius:50%}
+.says{display:flex;align-items:center;gap:14px}
+.bubble{position:relative;background:#EEF8F6;border:3px solid var(--line);border-radius:22px;padding:10px 18px;flex:1;min-width:0}
+.bubble::before{content:'';position:absolute;left:-13px;top:50%;margin-top:-10px;border:10px solid transparent;border-right:12px solid var(--line);border-left:0}
+.bubble::after{content:'';position:absolute;left:-8px;top:50%;margin-top:-8px;border:8px solid transparent;border-right:9px solid #EEF8F6;border-left:0}
 .bar .spacer{flex:1}
 .pill{display:flex;align-items:center;gap:6px;background:var(--card);border:3px solid var(--sun-deep);border-radius:999px;padding:6px 14px;font:700 22px/1 var(--display);box-shadow:0 4px 0 var(--sun-deep);font-variant-numeric:tabular-nums}
 .iconbtn{min-width:56px;height:56px;border-radius:16px;border:3px solid var(--line);background:var(--card);font-size:28px;box-shadow:0 4px 0 var(--line);display:grid;place-items:center;padding:0 10px}
@@ -77,13 +87,22 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .title-card h1{font-size:clamp(44px,8vw,84px);line-height:.95;color:var(--teal-deep)}
 .title-card h1 span{color:var(--coral)}
 .title-card p{font-size:24px;margin:0;color:var(--ink-soft)}
-.parade{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
-.parade .pet:nth-child(2){margin-top:-24px}
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:40px;align-items:center;max-width:1020px;padding-block:12px}
+.hero .title-card{align-items:flex-start;text-align:left}
+.poster{margin:0;transform:rotate(-2.5deg)}
+.poster img{display:block;width:100%;height:auto;border-radius:26px;border:8px solid #fff;box-shadow:0 10px 0 var(--teal),0 18px 40px rgba(17,80,80,.18)}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;gap:26px;justify-items:center}
+  .hero .title-card{align-items:center;text-align:center}
+  .poster{max-width:min(330px,80vw)}
+}
 .badge-doc{display:inline-flex;align-items:center;gap:10px;background:var(--card);border:3px dashed var(--teal);border-radius:16px;padding:8px 18px;font:600 24px var(--display);color:var(--teal-deep)}
 .linkbtn{background:none;border:none;color:var(--ink-soft);font:600 18px var(--display);text-decoration:underline;padding:12px}
 
 /* ---------- waiting room ---------- */
 .room-head{display:flex;flex-direction:column;gap:4px}
+.room-head .says{margin-top:6px;max-width:640px}
+.room-head .bubble p{margin:0;font-size:22px;color:var(--ink)}
 .room-head h2{font-size:34px}
 .room-head p{margin:0;color:var(--ink-soft)}
 .benches{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
@@ -113,7 +132,7 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .chip.lang{background:var(--lilac)}
 .stepno{margin-left:auto;font:600 17px var(--display);color:var(--ink-soft)}
 .prompt{display:flex;align-items:center;gap:12px}
-.prompt p{margin:0;font-size:28px;font-weight:700;line-height:1.25}
+.prompt .bubble p{margin:0;font-size:28px;font-weight:700;line-height:1.25}
 .speak{flex:none;width:60px;height:60px;border-radius:50%;border:3px solid var(--lilac);background:#F1EEFF;font-size:28px;box-shadow:0 4px 0 var(--lilac)}
 .work{display:flex;flex-direction:column;align-items:center;gap:16px;flex:1}
 .feedback{min-height:44px;text-align:center;font:700 28px var(--display);color:var(--good)}
@@ -192,6 +211,7 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .grid .cell{width:62px;height:62px;background:#F2FBF8;border-radius:10px;display:grid;place-items:center;font-size:40px;line-height:1;overflow:hidden}
 .grid .cell .pet{--s:58px}
 .grid .cell .pet .ail{display:none}
+.grid .cell .ellie{border-width:2px;box-shadow:0 0 0 2px var(--teal)}
 .grid .cell.path{background:#FFF0BF}
 .grid .cell.bump{background:#FFD7D0}
 .program{display:flex;flex-wrap:wrap;gap:6px;min-height:58px;align-items:center;justify-content:center;background:#F4F0FF;border:3px dashed var(--lilac);border-radius:16px;padding:6px 10px;width:100%;box-sizing:border-box}
@@ -221,6 +241,8 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 /* ---------- healed ---------- */
 .healed{flex:1;display:grid;place-items:center;text-align:center;position:relative}
 .healed-card{display:flex;flex-direction:column;align-items:center;gap:14px}
+.duo{display:flex;align-items:flex-end;gap:10px}
+.duo .ellie{margin-bottom:24px}
 .healed h2{font-size:clamp(34px,6vw,56px);color:var(--teal-deep)}
 .healed p{margin:0;font-size:24px}
 .earned{font:700 28px var(--display);color:var(--sun-deep)}
@@ -270,7 +292,9 @@ td.n{font-variant-numeric:tabular-nums}
 }
 @media (max-width:520px){
   body{font-size:18px}
-  .prompt p{font-size:22px}
+  .prompt .bubble p{font-size:22px}
+  .prompt .ellie{width:54px!important;height:54px!important}
+  .prompt .speak{display:none}
   .choice{min-width:84px;min-height:84px;font-size:34px}
   .choice .pic{font-size:46px}
   .grid .cell{width:52px;height:52px;font-size:32px}
@@ -460,6 +484,11 @@ function swapPhoto(p) {
   const a = A(p.dataset.id); const emo = p.querySelector('.emo');
   if (!emo || !photoOK[a.id]) return;
   emo.replaceWith(el('img', { src: 'animals/' + a.id + '.png', alt: a.name + ' the ' + a.kind, draggable: 'false' }));
+}
+// Dr. Ellie's headshot (cropped from art/ellie-clinic.jpg); it quietly disappears if the file is missing.
+function ellie(size, cls) {
+  return el('img', { class: 'ellie' + (cls ? ' ' + cls : ''), src: 'art/ellie-head.png', alt: 'Dr. ' + S.name, width: size, height: size,
+    draggable: 'false', style: 'width:' + size + 'px;height:' + size + 'px', onerror: e => { e.target.hidden = true; } });
 }
 function pet(a, size, opts) {
   opts = opts || {};
@@ -797,7 +826,7 @@ const SKILLS = {
         for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const c = el('div', { class: 'cell' }); cells[key(x, y)] = c; grid.append(c); }
         blocks.forEach(b => { cells[key(...b)].textContent = pick(['🪴', '📦']); });
         cells[key(...goal)].append(pet(a, 58));
-        const doc = el('span', { 'aria-label': 'Doctor' }, '🧑‍⚕️');
+        const doc = ellie(50);
         let pos = start.slice(), running = false;
         const place = () => cells[key(...pos)].append(doc);
         place();
@@ -995,7 +1024,7 @@ let visit = null;
 
 function topBar() {
   return el('header', { class: 'bar' },
-    el('div', { class: 'sign' }, el('span', { class: 'cross', 'aria-hidden': 'true' }, '✚'), S.name + "'s Animal Clinic"),
+    el('div', { class: 'sign' }, ellie(40), S.name + "'s Animal Clinic"),
     el('span', { class: 'spacer' }),
     el('span', { class: 'pill', 'aria-label': S.stars + ' stars' }, '⭐ ', String(S.stars)),
     btn({ class: 'iconbtn', 'aria-label': 'sticker book', onclick: () => { hush(); showStickers(); } }, '📒'),
@@ -1005,14 +1034,14 @@ function screen(...kids) { app.replaceChildren(...kids); window.scrollTo(0, 0); 
 
 function showTitle() {
   visit = null;
-  const parade = el('div', { class: 'parade' }, sample(ANIMALS, 3).map(a => pet(a, 150)));
-  screen(el('div', { class: 'title-wrap' }, el('div', { class: 'title-card' },
-    parade,
+  const poster = el('figure', { class: 'poster' }, el('img', { src: 'art/ellie-clinic.jpg', alt: 'Dr. ' + S.name + ' at her clinic with a puppy', width: '900', height: '1200',
+    onerror: e => { e.target.closest('figure').hidden = true; } }));
+  screen(el('div', { class: 'title-wrap' }, el('div', { class: 'hero' }, poster, el('div', { class: 'title-card' },
     el('h1', null, S.name + "'s ", el('span', null, 'Animal'), ' Clinic'),
     el('div', { class: 'badge-doc' }, '🩺 Dr. ' + S.name + ', Veterinarian'),
     el('p', null, 'The animals need your help! Count, read and solve to make them feel better.'),
     btn({ class: 'big', onclick: () => { sfx.good(); say('Welcome, Doctor ' + S.name + '! Your patients are waiting.'); showRoom(); } }, 'Open the clinic ▶'),
-    btn({ class: 'linkbtn', onclick: () => showParentGate() }, 'Grown-ups'))));
+    btn({ class: 'linkbtn', onclick: () => showParentGate() }, 'Grown-ups')))));
 }
 
 function newPatient(exclude) {
@@ -1034,7 +1063,8 @@ function showRoom() {
   visit = null;
   ensureQueue();
   screen(topBar(), el('main', { class: 'screen' },
-    el('div', { class: 'room-head' }, el('h2', null, 'Waiting room'), el('p', null, 'Who will you help first? Tap a patient.')),
+    el('div', { class: 'room-head' }, el('h2', null, 'Waiting room'),
+      el('div', { class: 'says' }, ellie(72), el('div', { class: 'bubble' }, el('p', null, 'Who will you help first? Tap a patient.')))),
     el('div', { class: 'benches' }, S.queue.map((p, i) => {
       const a = A(p.a), ail = AIL(p.ail);
       return el('div', { class: 'patient' },
@@ -1079,17 +1109,21 @@ function drawExam(isFirst) {
   const skill = SKILLS[plan[step]], lvl = S.lvl[plan[step]] || 1;
   const act = skill.make(lvl, a);
   const work = el('div', { class: 'work' }), fb = el('div', { class: 'feedback', 'aria-live': 'polite' });
+  const doc = ellie(76);
+  const react = cls => { doc.classList.remove('hop', 'tilt'); void doc.offsetWidth; doc.classList.add(cls); };
   const card = el('section', { class: 'task' },
     el('div', { class: 'task-top' }, el('span', { class: 'chip ' + skill.area }, (skill.area === 'math' ? 'Math · ' : 'Reading · ') + skill.label),
       el('span', { class: 'stepno' }, ail.steps[step][0] + ' Step ' + (step + 1) + ' of 3')),
-    el('div', { class: 'prompt' }, btn({ class: 'speak', 'aria-label': 'read it to me', onclick: () => say(act.speak || act.prompt) }, '🔊'), el('p', null, act.prompt)),
+    el('div', { class: 'prompt says' }, btn({ class: 'ellie-btn', 'aria-label': 'read it to me', onclick: () => say(act.speak || act.prompt) }, doc),
+      el('div', { class: 'bubble' }, el('p', null, act.prompt)),
+      btn({ class: 'speak', 'aria-label': 'read it to me', onclick: () => say(act.speak || act.prompt) }, '🔊')),
     work, fb);
   let misses = 0, done = false, hint = null;
   const api = {
     win(after) {
       if (done) return; done = true;
       const msg = typeof after === 'function' ? after() : after;
-      sfx.good();
+      sfx.good(); react('hop');
       fb.className = 'feedback'; fb.textContent = pick(PRAISE) + ' ' + '⭐';
       const talk = say((msg ? msg + ' ' : '') + pick(PRAISE));
       const up = record(plan[step], misses);
@@ -1104,7 +1138,7 @@ function drawExam(isFirst) {
     },
     miss(node, msg) {
       if (done) return;
-      misses++; sfx.bad();
+      misses++; sfx.bad(); react('tilt');
       if (node) { node.classList.remove('wobble'); void node.offsetWidth; node.classList.add('wobble'); }
       const m = msg || pick(OOPS);
       fb.className = 'feedback try'; fb.textContent = m; say(m);
@@ -1145,7 +1179,7 @@ function showHealed() {
   const conf = el('div', { class: 'confetti', 'aria-hidden': 'true' });
   for (let i = 0; i < 40; i++) conf.append(el('i', { style: 'left:' + rnd(0, 100) + '%;animation-duration:' + (rnd(22, 45) / 10) + 's;animation-delay:' + (rnd(0, 12) / 10) + 's' }, pick(['⭐', '💖', '✨', '🎉', a.food])));
   screen(topBar(), el('main', { class: 'healed' }, el('div', { class: 'healed-card' },
-    pet(a, 260, { cls: 'happy' }),
+    el('div', { class: 'duo' }, ellie(120, 'hop'), pet(a, 260, { cls: 'happy' })),
     el('h2', null, a.name + ' feels all better!'),
     el('p', null, 'Thank you, Dr. ' + S.name + '. ' + a.name + ' gave you a sticker for your book.'),
     el('div', { class: 'earned' }, '⭐ +5 stars'),
@@ -1158,7 +1192,8 @@ function showStickers() {
   visit = null;
   const got = ANIMALS.filter(a => S.healed[a.id]).length;
   screen(topBar(), el('main', { class: 'screen' },
-    el('div', { class: 'room-head' }, el('h2', null, 'Sticker book'), el('p', null, 'You have helped ' + got + ' of ' + ANIMALS.length + ' kinds of animals.')),
+    el('div', { class: 'room-head' }, el('h2', null, 'Sticker book'),
+      el('div', { class: 'says' }, ellie(72), el('div', { class: 'bubble' }, el('p', null, 'You have helped ' + got + ' of ' + ANIMALS.length + ' kinds of animals!')))),
     el('div', { class: 'book' }, ANIMALS.map(a => {
       const n = S.healed[a.id] || 0;
       return el('div', { class: 'sticker' + (n ? '' : ' locked') }, pet(a, 110), el('b', null, n ? a.name : '?'), el('small', null, n ? a.kind + (n > 1 ? ' · helped ' + n + ' times' : '') : 'Not yet'));
