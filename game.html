@@ -308,9 +308,12 @@ const S = Object.assign({ name: 'Ellie', stars: 0, healed: {}, lvl: {}, streak: 
 
 /* ================= sound & voice ================= */
 let AC = null;
+const audio = () => (AC = AC || new (window.AudioContext || window.webkitAudioContext)());
+// iPad Safari only lets sound start from a tap, so wake the audio on the first one.
+document.addEventListener('pointerdown', () => { try { audio().resume(); } catch (e) {} }, { once: true });
 function tone(f, at, dur, type, vol) {
   try {
-    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    audio();
     const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime + at;
     o.type = type || 'sine'; o.frequency.value = f;
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.18, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
@@ -323,26 +326,82 @@ const sfx = {
   bad() { tone(260, 0, 0.18, 'triangle', 0.15); tone(200, 0.12, 0.25, 'triangle', 0.12); },
   fanfare() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.13, 0.35, 'triangle', 0.16)); },
 };
+
+// The narrator: recorded clips from voice/ (made by tools/voice), one per sentence.
+// Any sentence without a clip is read by the device's own voice instead.
 const canSpeak = 'speechSynthesis' in window;
 let voice = null;
 function chooseVoice() {
   if (!canSpeak) return;
   const vs = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
-  const pref = ['Samantha', 'Karen', 'Moira', 'Tessa', 'Google US English', 'Microsoft Aria', 'Microsoft Jenny'];
-  voice = vs.find(v => /en-CA/i.test(v.lang)) || pref.map(p => vs.find(v => v.name.includes(p))).find(Boolean) || vs.find(v => /en-US/i.test(v.lang)) || vs[0] || null;
+  const pref = ['Ava', 'Samantha', 'Karen', 'Moira', 'Tessa', 'Google US English', 'Microsoft Aria', 'Microsoft Jenny'];
+  const better = vs.filter(v => /enhanced|premium/i.test(v.name));
+  voice = pref.map(p => better.find(v => v.name.includes(p))).find(Boolean) || better[0]
+    || pref.map(p => vs.find(v => v.name.includes(p))).find(Boolean) || vs.find(v => /en-(CA|US)/i.test(v.lang)) || vs[0] || null;
 }
 if (canSpeak) { chooseVoice(); speechSynthesis.onvoiceschanged = chooseVoice; }
-function say(text) {
-  if (!S.voice || !canSpeak || !text) return;
-  try {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    if (voice) u.voice = voice;
-    u.rate = 0.88; u.pitch = 1.1;
-    speechSynthesis.speak(u);
-  } catch (e) {}
+
+const clipKey = t => t.toLowerCase().replace(/’/g, "'").replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
+const sentences = t => (String(t).match(/[^.!?]+[.!?]*/g) || []).map(x => x.trim()).filter(x => clipKey(x));
+const VOICE = { index: null, packs: [], clips: new Map() };
+VOICE.ready = fetch('voice/index.json').then(r => r.ok ? r.json() : null).then(j => {
+  if (!j) return;
+  VOICE.index = j;
+  VOICE.packs = j.packs.map(p => fetch('voice/' + p).then(r => r.arrayBuffer()));
+}).catch(() => {});
+function clip(k) {
+  const hit = VOICE.index && VOICE.index.clips[k];
+  if (!hit) return Promise.resolve(null);
+  if (!VOICE.clips.has(k)) {
+    VOICE.clips.set(k, VOICE.packs[hit[0]].then(buf => new Promise((ok, bad) =>
+      audio().decodeAudioData(buf.slice(hit[1], hit[1] + hit[2]), ok, bad))).catch(() => null));
+  }
+  return VOICE.clips.get(k);
 }
-const hush = () => { try { canSpeak && speechSynthesis.cancel(); } catch (e) {} };
+let sayId = 0, playing = null;
+function playClip(buf, id) {
+  return new Promise(done => {
+    if (id !== sayId) return done();
+    const src = audio().createBufferSource(); src.buffer = buf; src.connect(AC.destination);
+    src.onended = () => { if (playing === src) playing = null; done(); };
+    playing = src; src.start();
+  });
+}
+function speakDevice(text, id) {
+  return new Promise(done => {
+    if (!canSpeak || id !== sayId) return done();
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      if (voice) u.voice = voice;
+      u.rate = 0.88; u.pitch = 1.1; u.onend = u.onerror = () => done();
+      speechSynthesis.speak(u);
+      setTimeout(done, 1500 + text.length * 120);
+    } catch (e) { done(); }
+  });
+}
+function hush() {
+  sayId++;
+  try { if (playing) playing.stop(); } catch (e) {}
+  playing = null;
+  try { canSpeak && speechSynthesis.cancel(); } catch (e) {}
+}
+function say(text) {
+  if (!S.voice || !text) return;
+  hush();
+  const id = sayId, parts = sentences(text);
+  const wait = Promise.race([VOICE.ready, new Promise(r => setTimeout(r, 1500))]);
+  (async () => {
+    await wait;
+    const bufs = parts.map(p => clip(clipKey(p)));   // start decoding everything at once
+    for (let i = 0; i < parts.length; i++) {
+      const buf = await bufs[i];
+      if (id !== sayId) return;
+      if (buf) await playClip(buf, id); else await speakDevice(parts[i], id);
+      if (id !== sayId) return;
+      await new Promise(r => setTimeout(r, 90));
+    }
+  })();
+}
 
 /* ================= animals ================= */
 // Each animal shows a real cut-out photo from animals/<id>.png when that file exists,
@@ -570,11 +629,12 @@ const SKILLS = {
     const prompt = l === 1 ? 'Which jar has MORE treats?' : more ? 'Which pet is HEAVIER on the scale?' : 'Which pet is LIGHTER on the scale?';
     return {
       prompt,
-      speak: l === 1 ? prompt : prompt + ' ' + p + ' kilograms, or ' + q + ' kilograms?',
+      speak: l === 1 ? prompt : prompt + ' ' + p + ' kilograms. Or ' + q + ' kilograms?',
       build(box, api) {
         const node = (v, i) => l === 1 ? el('div', { class: 'jar' }, iconGroup(v, '🍪'))
           : el('div', { class: 'jar' }, el('span', { class: 'pic' }, pets[i]), el('span', { class: 'num' }, '⚖️ ' + v), el('span', { class: 'lbl' }, 'kilograms'));
-        return choiceRow(box, [p, q].map((v, i) => ({ node: node(v, i), ok: v === ans, aria: v + ' kilograms', after: ans + ' is ' + (more ? 'more' : 'less') + ' than ' + (ans === p ? q : p) + '!' })), api);
+        return choiceRow(box, [p, q].map((v, i) => ({ node: node(v, i), ok: v === ans, aria: v + ' kilograms',
+          after: l === 1 ? ans + ' is more than ' + (ans === p ? q : p) + '!' : ans + ' kilograms is ' + (more ? 'heavier' : 'lighter') + '!' })), api);
       },
     };
   } },
@@ -587,7 +647,7 @@ const SKILLS = {
     const hole = rnd(1, len - 1), ans = seq[hole];
     return {
       prompt: 'Count by ' + step + 's. Which number is missing?',
-      speak: 'Count by ' + step + 's. ' + seq.map((v, i) => i === hole ? 'hmm' : v).join(', ') + '. Which number is missing?',
+      speak: 'Count by ' + { 10: 'tens', 5: 'fives', 2: 'twos' }[step] + '. ' + seq.map((v, i) => i === hole ? 'hmm' : v).join(', ') + '. Which number is missing?',
       build(box, api) {
         box.append(el('div', { class: 'seq' }, seq.map((v, i) => el('span', { class: i === hole ? 'q' : null }, i === hole ? '?' : v))));
         return choiceRow(box, numberChoices(ans, [1, -1, step, -step], 1).map(v => ({ label: String(v), ok: v === ans, after: seq.join(', ') + '!' })), api);
@@ -607,7 +667,7 @@ const SKILLS = {
         const u = el('div', { class: 'units', 'aria-hidden': 'true' }); for (let i = 0; i < o; i++) u.append(el('i', { class: 'unit' }));
         rods.append(u);
         box.append(rods, l === 1 ? el('div', { class: 'count-label' }, t + (t === 1 ? ' ten' : ' tens') + ' and ' + o + (o === 1 ? ' one' : ' ones')) : null);
-        return choiceRow(box, numberChoices(n, [10, -10, 1, -1, 9], 1).map(v => ({ label: String(v), ok: v === n, after: t + ' tens and ' + o + ' ones make ' + n + '!' })), api);
+        return choiceRow(box, numberChoices(n, [10, -10, 1, -1, 9], 1).map(v => ({ label: String(v), ok: v === n, after: t + (t === 1 ? ' ten and ' : ' tens and ') + o + (o === 1 ? ' one make ' : ' ones make ') + n + '!' })), api);
       },
     };
   } },
@@ -828,7 +888,7 @@ const SKILLS = {
     const opts = shuffle([match, ...others]);
     return {
       prompt: 'Which word rhymes with ' + target[0] + '?',
-      speak: 'Which word rhymes with ' + target[0] + '? ' + opts.map(o => o[0]).join(', or ') + '?',
+      speak: 'Which word rhymes with ' + target[0] + '? ' + opts[0][0] + '? ' + opts[1][0] + '? Or ' + opts[2][0] + '?',
       build(box, api) {
         box.append(el('div', { class: 'row' }, el('span', { class: 'bigpic' }, target[1]), el('span', { class: 'bigword' }, target[0])));
         return choiceRow(box, opts.map(o => ({ node: [el('span', { class: 'pic' }, o[1]), el('span', { class: 'lbl' }, o[0])], aria: o[0], ok: o === match, after: target[0] + ', ' + match[0] + '. They rhyme!' })), api);
@@ -978,7 +1038,7 @@ function planSkills() {
 function startVisit(qi) {
   const p = S.queue[qi];
   visit = { qi, a: A(p.a), ail: AIL(p.ail), plan: planSkills(), step: 0 };
-  say(visit.a.name + ' ' + visit.ail.says + '. Let us help!');
+  say(visit.a.name + ' ' + visit.ail.says + ". Let's help!");
   drawExam(true);
 }
 

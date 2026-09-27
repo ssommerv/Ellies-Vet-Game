@@ -21,10 +21,32 @@ Open `index.html` in Safari. To put it on the iPad home screen, host the repo
 (for example with GitHub Pages: Settings → Pages → Deploy from branch), open
 the page in Safari and choose Share → Add to Home Screen.
 
+## Narrator voice
+
+Every line the game speaks is pre-recorded with [Kokoro](https://huggingface.co/hexgrad/Kokoro-82M),
+a free, open-source voice model, and stored in `voice/`. Any line without a
+recording (for example after changing the child's name) is read by the
+device's own voice. On an iPad, downloading an Enhanced voice (Settings →
+Accessibility → Spoken Content → Voices) makes that fallback sound better.
+
+To re-record, for example with a different voice:
+
+```sh
+pip install kokoro-onnx soundfile lameenc
+# download kokoro-v1.0.onnx and voices-v1.0.bin from
+# https://github.com/thewh1teagle/kokoro-onnx/releases (model-files-v1.0)
+node tools/build.mjs && node tools/voice/run.cjs   # list every line and check coverage
+python3 tools/voice/build_voice.py --voice af_heart --model <folder with the model files>
+```
+
+If you change what the game says, update `tools/voice/lines.js` too;
+`run.cjs` reports any spoken sentence that has no recording.
+
 ## Files
 
 - `game.html`: the whole game (styles, markup, script).
 - `index.html`: generated from `game.html` by `node tools/build.mjs`. Edit
   `game.html`, then rebuild.
-- `animals/`: optional real animal photos with transparent backgrounds. See
-  `animals/README.md` for file names.
+- `animals/`: real animal photos with transparent backgrounds. See
+  `animals/README.md` for file names and `animals/CREDITS.md` for credits.
+- `voice/`: the recorded narrator lines (made by `tools/voice/`).
