@@ -203,6 +203,10 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .coin.c25{width:88px;height:88px;background:radial-gradient(circle at 35% 30%,#F7F8FA,#A9B2BA)}
 .coin.c100{width:92px;height:92px;border-radius:0;background:radial-gradient(circle at 35% 30%,#FFE9A3,#C99A28);clip-path:polygon(50% 0%,77% 8%,95% 29%,100% 56%,89% 80%,65% 97%,35% 97%,11% 80%,0% 56%,5% 29%,23% 8%);box-shadow:none}
 .coin.c200{width:98px;height:98px;background:radial-gradient(circle,#E8B84A 0 52%,#C9CFD5 53%);}
+.coin.photo{background:none;box-shadow:none;border-radius:50%;clip-path:none}
+.coin.photo img{width:100%;height:100%;display:block;filter:drop-shadow(0 4px 0 rgba(0,0,0,.18))}
+.coinwrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.coinval{font:600 16px var(--display);color:var(--ink-soft)}
 .wallet{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center}
 .pricetag{font:700 40px var(--read);background:var(--card);border:3px solid var(--coral);border-radius:12px 40px 40px 12px;padding:8px 26px 8px 18px;color:var(--coral-deep)}
 
@@ -558,19 +562,23 @@ const SYLL = [
   ['cat-er-pil-lar','🐛'],['al-li-ga-tor','🐊'],
 ];
 const COINS = {
-  5:   { name: 'nickel',  value: '5¢',  ic: '🦫', txt: '5' },
+  5:   { name: 'nickel',  value: '5¢',  ic: '🦫', txt: '5', photo: true },
   10:  { name: 'dime',    value: '10¢', ic: '⛵', txt: '10' },
-  25:  { name: 'quarter', value: '25¢', ic: '🦌', txt: '25' },
-  100: { name: 'loonie',  value: '$1',  ic: '🦆', txt: '$1' },
-  200: { name: 'toonie',  value: '$2',  ic: '🐻‍❄️', txt: '$2' },
+  25:  { name: 'quarter', value: '25¢', ic: '🦌', txt: '25', photo: true },
+  100: { name: 'loonie',  value: '$1',  ic: '🦆', txt: '$1', photo: true },
+  200: { name: 'toonie',  value: '$2',  ic: '🐻‍❄️', txt: '$2', photo: true },
 };
 const cents = v => v >= 100 ? (v / 100) + (v === 100 ? ' dollar' : ' dollars') : v + ' cents';
 function coinEl(v, props, tag) {
   const c = COINS[v];
-  const face = [el('span', { class: 'ic' }, c.ic), el('span', null, c.txt)];
+  // Real coin photos live in art/coins/<name>.png; coins without one (the dime, for now) are drawn.
+  const drawn = () => [el('span', { class: 'ic' }, c.ic), el('span', null, c.txt)];
+  const face = c.photo ? [el('img', { src: 'art/coins/' + c.name + '.png', alt: '', draggable: 'false', onerror: e => {
+    const coin = e.target.parentNode; coin.classList.remove('photo'); e.target.replaceWith(...drawn()); } })] : drawn();
+  const cls = 'coin c' + v + (c.photo ? ' photo' : '');
   // Coins shown inside a choice button are plain spans (a button can't hold a button).
-  if (tag === 'span') return el('span', { class: 'coin c' + v }, face);
-  return btn(Object.assign({ class: 'coin c' + v, 'aria-label': c.name }, props || {}), face);
+  if (tag === 'span') return el('span', { class: cls }, face);
+  return btn(Object.assign({ class: cls, 'aria-label': c.name }, props || {}), face);
 }
 function numberChoices(ans, spread, min) {
   min = min == null ? 0 : min;
@@ -766,10 +774,10 @@ const SKILLS = {
         let showTotal = false;
         const sum = () => [...paid.children].reduce((s, c) => s + Number(c.dataset.v), 0);
         const upd = () => { label.textContent = showTotal ? 'You paid ' + sum() + '¢' : ''; };
-        const wallet = el('div', { class: 'wallet' }, bank.map(v => coinEl(v, { onclick: () => {
+        const wallet = el('div', { class: 'wallet' }, bank.map(v => el('div', { class: 'coinwrap' }, coinEl(v, { onclick: () => {
           sfx.tap(); say(COINS[v].name);
           const c = coinEl(v, { 'data-v': v }); c.onclick = () => { c.remove(); upd(); }; paid.append(c); upd();
-        } })));
+        } }), el('span', { class: 'coinval' }, COINS[v].name + ' · ' + COINS[v].value))));
         box.append(el('div', { class: 'pricetag' }, '💊 ' + price + '¢'), wallet, el('div', { class: 'count-label' }, '⬇ Your coins'), paid, label,
           btn({ class: 'big teal small', onclick: () => {
             const s = sum();
