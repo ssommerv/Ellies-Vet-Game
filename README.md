@@ -17,9 +17,15 @@ skill and lets you change levels, the name, voice and subjects.
 
 ## Play
 
-Open `index.html` in Safari. To put it on the iPad home screen, host the repo
-(for example with GitHub Pages: Settings → Pages → Deploy from branch), open
-the page in Safari and choose Share → Add to Home Screen.
+Open `index.html` in Safari, or host the repo with GitHub Pages:
+
+1. On GitHub: Settings → Pages → Build and deployment → Source: **Deploy from
+   a branch**, pick the branch that has the game and the `/ (root)` folder,
+   then Save. Pages needs a public repo on a free GitHub plan.
+2. After a minute or two the game is at
+   `https://<your-username>.github.io/Ellies-Vet-Game/`.
+3. On the iPad, open that address in Safari, tap Share → **Add to Home
+   Screen**. It opens full-screen with Dr. Ellie as the app icon.
 
 ## Narrator voice
 

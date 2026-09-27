@@ -12,6 +12,8 @@ const head = `<!doctype html>
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Vet Clinic">
 <meta name="theme-color" content="#DDF3EE">
+<link rel="apple-touch-icon" href="art/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
 <style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
 `;
 const [first, ...rest] = body.split('<div id="app"></div>');
