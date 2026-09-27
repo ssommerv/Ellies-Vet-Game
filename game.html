@@ -229,7 +229,7 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .claps i{width:34px;height:34px;border-radius:50%;background:var(--coral);display:block}
 
 /* sentence scenes */
-.scene{font-size:54px;line-height:1;min-width:170px;min-height:110px}
+.scene{font-size:54px;line-height:1;min-width:170px;min-height:110px;display:flex;align-items:center;justify-content:center;gap:.25em}
 
 /* ---------- healed ---------- */
 .healed{flex:1;display:grid;place-items:center;text-align:center;position:relative}
@@ -1005,7 +1005,7 @@ const SKILLS = {
       speak: 'Read the vet note by yourself. Then tap the picture that matches.',
       build(box, api) {
         box.append(el('div', { class: 'bigword', style: 'font-size:44px' }, text));
-        return choiceRow(box, opts.map(([x, y]) => ({ node: el('span', { class: 'scene' }, x[1] + ' ' + y[1]), aria: x[0] + ' and ' + y[0], ok: x === an && y === ob, after: text })), api);
+        return choiceRow(box, opts.map(([x, y]) => ({ node: el('span', { class: 'scene' }, el('span', null, x[1]), el('span', null, y[1])), aria: x[0] + ' and ' + y[0], ok: x === an && y === ob, after: text })), api);
       },
     };
   } },
