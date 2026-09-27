@@ -385,22 +385,32 @@ function hush() {
   playing = null;
   try { canSpeak && speechSynthesis.cancel(); } catch (e) {}
 }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let speaking = Promise.resolve();
+async function speak(text, id) {
+  const parts = sentences(text);
+  await Promise.race([VOICE.ready, sleep(1500)]);
+  const bufs = parts.map(p => clip(clipKey(p)));   // start decoding everything at once
+  for (let i = 0; i < parts.length; i++) {
+    const buf = await bufs[i];
+    if (id !== sayId) return;
+    if (buf) await playClip(buf, id); else await speakDevice(parts[i], id);
+    if (id !== sayId) return;
+    // a breath between sentences; a shorter one between sounded-out letters ("c... a... t")
+    if (i < parts.length - 1) await sleep(/\.\.\.$/.test(parts[i]) ? 350 : 550);
+  }
+}
+// Say something now, cutting off whatever is being said. Resolves when finished.
 function say(text) {
-  if (!S.voice || !text) return;
   hush();
-  const id = sayId, parts = sentences(text);
-  const wait = Promise.race([VOICE.ready, new Promise(r => setTimeout(r, 1500))]);
-  (async () => {
-    await wait;
-    const bufs = parts.map(p => clip(clipKey(p)));   // start decoding everything at once
-    for (let i = 0; i < parts.length; i++) {
-      const buf = await bufs[i];
-      if (id !== sayId) return;
-      if (buf) await playClip(buf, id); else await speakDevice(parts[i], id);
-      if (id !== sayId) return;
-      await new Promise(r => setTimeout(r, 90));
-    }
-  })();
+  if (!S.voice || !text) return (speaking = Promise.resolve());
+  return (speaking = speak(text, sayId));
+}
+// Say something after the current line has finished (dropped if something cuts in first).
+function sayNext(text) {
+  const id = sayId;
+  if (!S.voice || !text) return speaking;
+  return (speaking = speaking.then(() => sleep(450)).then(() => id === sayId ? speak(text, id) : null));
 }
 
 /* ================= animals ================= */
@@ -981,6 +991,7 @@ function topBar() {
 function screen(...kids) { app.replaceChildren(...kids); window.scrollTo(0, 0); }
 
 function showTitle() {
+  visit = null;
   const parade = el('div', { class: 'parade' }, sample(ANIMALS, 3).map(a => pet(a, 150)));
   screen(el('div', { class: 'title-wrap' }, el('div', { class: 'title-card' },
     parade,
@@ -1007,6 +1018,7 @@ function ensureQueue() {
 }
 
 function showRoom() {
+  visit = null;
   ensureQueue();
   screen(topBar(), el('main', { class: 'screen' },
     el('div', { class: 'room-head' }, el('h2', null, 'Waiting room'), el('p', null, 'Who will you help first? Tap a patient.')),
@@ -1066,11 +1078,16 @@ function drawExam(isFirst) {
       const msg = typeof after === 'function' ? after() : after;
       sfx.good();
       fb.className = 'feedback'; fb.textContent = pick(PRAISE) + ' ' + '⭐';
-      say((msg ? msg + ' ' : '') + pick(PRAISE));
+      const talk = say((msg ? msg + ' ' : '') + pick(PRAISE));
       const up = record(plan[step], misses);
       if (up) fb.textContent += '  Level up!';
       S.stars += 1; save();
-      setTimeout(() => { visit.step++; if (visit.step >= 3) showHealed(); else drawExam(false); }, msg && msg.length > 30 ? 2600 : 1900);
+      // Move on once the praise has been said in full (and never sooner than 1.6 s).
+      const v = visit;
+      Promise.all([talk, sleep(1600)]).then(() => sleep(500)).then(() => {
+        if (visit !== v || v.step !== step) return;   // the player has left this exam
+        v.step++; if (v.step >= 3) showHealed(); else drawExam(false);
+      });
     },
     miss(node, msg) {
       if (done) return;
@@ -1085,8 +1102,8 @@ function drawExam(isFirst) {
   screen(topBar(), el('main', { class: 'screen' },
     el('div', { class: 'exam' }, side, card),
     el('div', null, btn({ class: 'linkbtn', onclick: () => { hush(); showRoom(); } }, '← Back to the waiting room'))));
-  if (!isFirst) say(ail.steps[step][1] + '. ' + (act.speak || act.prompt));
-  else setTimeout(() => say(ail.steps[step][1] + '. ' + (act.speak || act.prompt)), 2200);
+  // On a new patient, the first instruction waits for the "Let's help!" introduction to finish.
+  (isFirst ? sayNext : say)(ail.steps[step][1] + '. ' + (act.speak || act.prompt));
 }
 
 function record(skill, misses) {
@@ -1125,6 +1142,7 @@ function showHealed() {
 }
 
 function showStickers() {
+  visit = null;
   const got = ANIMALS.filter(a => S.healed[a.id]).length;
   screen(topBar(), el('main', { class: 'screen' },
     el('div', { class: 'room-head' }, el('h2', null, 'Sticker book'), el('p', null, 'You have helped ' + got + ' of ' + ANIMALS.length + ' kinds of animals.')),
@@ -1137,6 +1155,7 @@ function showStickers() {
 
 /* ---------- grown-ups ---------- */
 function showParentGate() {
+  visit = null;
   let t = null;
   const hold = btn({ class: 'big teal hold' }, el('span', { class: 'fill' }), 'Hold for 2 seconds');
   const start = e => { e.preventDefault(); hold.classList.add('go'); t = setTimeout(showParent, 1700); };

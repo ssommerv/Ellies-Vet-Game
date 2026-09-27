@@ -10,7 +10,7 @@ const root = path.join(__dirname, '..', '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8')
   // expose the game's data and record everything passed to say()
   .replace(/^showTitle\(\);$/m, 'window.__T={SKILLS,ANIMALS,AILMENTS,CVC,BLENDS,RHYMES,SIGHT,DIGRAPH,SYLL,COINS,PRAISE,OOPS,cents,clipKey,sentences};showTitle();')
-  .replace('function say(text) {', 'function say(text) {\n  (window.__said = window.__said || []).push(String(text));');
+  .replace('async function speak(text, id) {', 'async function speak(text, id) {\n  (window.__said = window.__said || []).push(String(text));');
 const tmp = path.join(os.tmpdir(), 'vet-voice-check.html');
 fs.writeFileSync(tmp, html);
 

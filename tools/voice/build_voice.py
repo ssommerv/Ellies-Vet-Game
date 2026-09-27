@@ -28,10 +28,17 @@ def phonemes(k, text, lang):
     return ' '.join(out)
 
 def trim(s, sr):
-    loud = np.where(np.abs(s) > 0.01)[0]
+    # Find where speech really starts and ends using a smoothed loudness curve, so
+    # quiet endings like the "s" in "treats" are kept, then leave a little air
+    # either side and fade out to avoid a click.
+    env = np.convolve(np.abs(s), np.ones(240) / 240, 'same')
+    loud = np.where(env > 0.002)[0]
     if not len(loud): return s
-    pad = int(sr * 0.04)
-    return s[max(0, loud[0] - pad): loud[-1] + pad]
+    start = max(0, loud[0] - int(sr * 0.05)); end = min(len(s), loud[-1] + int(sr * 0.15))
+    out = s[start:end].copy()
+    fade = min(len(out), int(sr * 0.03))
+    out[-fade:] *= np.linspace(1, 0, fade)
+    return out
 
 def mp3(s, sr):
     enc = lameenc.Encoder(); enc.set_bit_rate(32); enc.set_in_sample_rate(sr); enc.set_channels(1); enc.set_quality(2)
@@ -56,7 +63,7 @@ def main():
         open(os.path.join(a.out, name), 'wb').write(cur); packs.append(name)
     for i, (key, text) in enumerate(lines.items()):
         ph = phonemes(k, text, lang)
-        s, sr = k.create(ph, voice=a.voice, speed=a.speed, is_phonemes=True) if ph else k.create(text, voice=a.voice, speed=a.speed, lang=lang)
+        s, sr = k.create(ph, voice=a.voice, speed=a.speed, is_phonemes=True, trim=False) if ph else k.create(text, voice=a.voice, speed=a.speed, lang=lang, trim=False)
         data = mp3(trim(s, sr), sr)
         if len(cur) + len(data) > PACK_BYTES:
             flush(); cur = bytearray()
