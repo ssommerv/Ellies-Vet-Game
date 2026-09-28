@@ -11,6 +11,13 @@ activity from the Ontario Grade 1 curriculum:
   short-vowel words, decoding words, rhyming, sight words, sh/ch/th, clapping
   syllables, and reading a simple sentence.
 
+Each healed patient earns 5 stars. In the **clinic shop** stars buy decorations
+that appear in the waiting-room picture and the exam room, or adopt an animal
+she has already helped. Adopted pets live in the clinic, and she can visit to
+feed, pat and play with them. At checkout she pays by tapping 10-star and
+5-star bags while the narrator counts along (a Grown-ups setting switches this
+to one-tap buying).
+
 Instructions are read aloud (tap 🔊 to hear them again). Levels adjust
 automatically, and the **Grown-ups** corner (press and hold) shows progress per
 skill and lets you change levels, the name, voice and subjects.
@@ -46,7 +53,9 @@ python3 tools/voice/build_voice.py --voice af_heart --model <folder with the mod
 ```
 
 If you change what the game says, update `tools/voice/lines.js` too;
-`run.cjs` reports any spoken sentence that has no recording.
+`run.cjs` reports any spoken sentence that has no recording. Re-running
+`build_voice.py` only records lines that are new; add `--fresh` to re-record
+everything (for example after switching voice).
 
 ## Files
 

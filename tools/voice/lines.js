@@ -121,5 +121,19 @@ window.voiceLines = function (T) {
   });
   range(0, 6).forEach(c => add('You tapped ' + c + '.'));
 
+  // clinic shop and decorations
+  const stars = n => n + (n === 1 ? ' star' : ' stars');
+  add('Welcome to the clinic shop!', 'What would you like?', 'Tap the star bags to pay.', 'Too many stars!', 'Tap a bag to take it back.',
+    'Help more animals to earn stars!', 'Adopting a pet costs ' + T.PET_PRICE + ' stars.', 'Help this animal at the clinic first.',
+    'Congratulations!', 'Come back tomorrow.');
+  range(0, 500).forEach(n => add('You have ' + stars(n) + '.'));
+  range(1, 60).forEach(n => add('You need ' + n + ' more ' + (n === 1 ? 'star' : 'stars') + '.'));
+  range(51, 60).forEach(n => add(n + '!'));   // running total while paying (0-50 are recorded above)
+  T.DECOR.forEach(d => add('The ' + d.name + ' costs ' + d.price + ' stars.', 'The ' + d.name + ' is in your clinic now!'));
+
+  // adopted pets
+  A.forEach(a => add('You adopted ' + a.name + '!', 'Welcome to the family, ' + a.name + '!', 'Say hi to ' + a.name + '!',
+    a.name + ' missed you!', a.name + ' loves the food!', a.name + ' loves pats!', a.name + ' loves to play!', a.name + ' is so happy!'));
+
   return out;
 };

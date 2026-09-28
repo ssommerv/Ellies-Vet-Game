@@ -50,21 +50,34 @@ def main():
     ap.add_argument('--speed', type=float, default=0.95)
     ap.add_argument('--model', default='.', help='folder holding kokoro-v1.0.onnx and voices-v1.0.bin')
     ap.add_argument('--out', default=os.path.join(ROOT, 'voice'))
+    ap.add_argument('--fresh', action='store_true', help='re-record every line instead of reusing clips already in --out')
     a = ap.parse_args()
     lang = 'en-gb' if a.voice.startswith('b') else 'en-us'
     k = Kokoro(os.path.join(a.model, 'kokoro-v1.0.onnx'), os.path.join(a.model, 'voices-v1.0.bin'))
     lines = json.load(open(os.path.join(HERE, 'lines.json')))
     os.makedirs(a.out, exist_ok=True)
+    # Keep clips already recorded in the same voice, so adding lines only records the new ones.
+    old, old_packs = {}, []
+    index_path = os.path.join(a.out, 'index.json')
+    if not a.fresh and os.path.exists(index_path):
+        prev = json.load(open(index_path))
+        if prev.get('voice') == a.voice:
+            old = prev['clips']
+            old_packs = [open(os.path.join(a.out, p), 'rb').read() for p in prev['packs']]
     for f in os.listdir(a.out):
         if f.startswith('pack-'): os.remove(os.path.join(a.out, f))
-    packs, clips, cur, t0 = [], {}, bytearray(), time.time()
+    packs, clips, cur, t0, made = [], {}, bytearray(), time.time(), 0
     def flush():
         name = f'pack-{len(packs)}.mp3'
         open(os.path.join(a.out, name), 'wb').write(cur); packs.append(name)
     for i, (key, text) in enumerate(lines.items()):
-        ph = phonemes(k, text, lang)
-        s, sr = k.create(ph, voice=a.voice, speed=a.speed, is_phonemes=True, trim=False) if ph else k.create(text, voice=a.voice, speed=a.speed, lang=lang, trim=False)
-        data = mp3(trim(s, sr), sr)
+        if key in old:
+            p, off, ln = old[key]
+            data = old_packs[p][off:off + ln]
+        else:
+            ph = phonemes(k, text, lang)
+            s, sr = k.create(ph, voice=a.voice, speed=a.speed, is_phonemes=True, trim=False) if ph else k.create(text, voice=a.voice, speed=a.speed, lang=lang, trim=False)
+            data = mp3(trim(s, sr), sr); made += 1
         if len(cur) + len(data) > PACK_BYTES:
             flush(); cur = bytearray()
         clips[key] = [len(packs), len(cur), len(data)]
@@ -72,7 +85,7 @@ def main():
         if i % 200 == 0: print(f'{i}/{len(lines)} {time.time() - t0:.0f}s', flush=True)
     flush()
     json.dump({'voice': a.voice, 'packs': packs, 'clips': clips}, open(os.path.join(a.out, 'index.json'), 'w'), separators=(',', ':'))
-    print('done', len(clips), 'clips in', len(packs), 'packs', f'{time.time() - t0:.0f}s')
+    print('done', len(clips), 'clips in', len(packs), 'packs,', made, 'newly recorded', f'{time.time() - t0:.0f}s')
 
 if __name__ == '__main__':
     main()

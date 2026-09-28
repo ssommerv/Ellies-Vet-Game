@@ -265,6 +265,74 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .sticker b{font-family:var(--display);font-size:20px}
 .sticker small{color:var(--ink-soft);font-size:15px}
 
+/* ---------- clinic picture (waiting room) ---------- */
+.clinic-room{position:relative;height:190px;border-radius:26px;overflow:hidden;border:4px solid var(--line);box-shadow:0 8px 0 var(--line);
+  background:linear-gradient(#FBF6EE 0 56%,#CDEBE5 56% 64%,#A9DBCF 64%)}
+.deco{position:absolute;line-height:1;transform:translateX(-50%);filter:drop-shadow(0 3px 2px rgba(0,0,0,.15))}
+.deco.fly{animation:flutter 3.2s ease-in-out infinite}
+@keyframes flutter{50%{transform:translate(-50%,-7px) rotate(10deg)}}
+.rug{position:absolute;left:50%;bottom:5%;width:48%;height:24%;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(ellipse at center,#FFF 0 18%,#FFD6E0 19% 34%,#FFE9A8 35% 50%,#CFEFC4 51% 66%,#C9E3FF 67% 82%,#E3D4FF 83%)}
+.tank{position:absolute;left:78%;top:14%;width:98px;height:62px;transform:translateX(-50%);border:4px solid #7FB4E0;border-radius:10px;
+  background:linear-gradient(#DDF4FF,#7CC6EC);overflow:hidden;box-shadow:0 4px 0 #5E93BF}
+.tank .fish{position:absolute;top:10px;font-size:24px;line-height:1;animation:swim 7s linear infinite}
+.tank .f2{top:30px;font-size:20px;animation-duration:9s;animation-delay:-4s}
+@keyframes swim{from{left:-34px}to{left:104px}}
+.room-pet{position:absolute;bottom:3%;transform:translateX(-50%);border:none;background:none;padding:0;z-index:2}
+.room-pet .pet .ail{display:none}
+.room-empty{position:absolute;left:0;right:0;top:34%;margin:0;padding-inline:16px;text-align:center;font:600 20px var(--display);color:var(--ink-soft)}
+.fresh{animation:popin .9s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes popin{0%{opacity:0;scale:.2}100%{opacity:1;scale:1}}
+.shelf{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;width:100%;padding:6px 10px 4px;border-bottom:8px solid #D9B58A;border-radius:0 0 6px 6px;font-size:34px;line-height:1.1;box-sizing:border-box}
+
+/* ---------- shop ---------- */
+.shop-tabs{align-self:flex-start}
+.shop-tabs button{font-size:20px;padding:12px 18px}
+.shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.item{background:var(--card);border:4px solid var(--line);border-radius:24px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;box-shadow:0 6px 0 var(--line)}
+.item-pic{height:100px;display:grid;place-items:center}
+.item-emoji{font-size:64px;line-height:1}
+.item b{font-family:var(--display);font-size:20px}
+.item small{color:var(--ink-soft);font-size:15px;min-height:1.2em}
+.item .big{width:100%}
+.item .big.dim{background:#C9D6D3;box-shadow:0 7px 0 #A9BAB6;color:#fff}
+.item.locked .pet{filter:grayscale(1) brightness(1.6) opacity(.35)}
+.got{font:700 17px var(--display);color:var(--good);padding-block:14px}
+.big-emoji{font-size:120px}
+.fresh-pop{animation:popin .9s cubic-bezier(.3,1.6,.5,1) both}
+
+/* checkout */
+.modal{position:fixed;inset:0;z-index:20;background:rgba(31,58,72,.45);display:grid;place-items:center;padding:16px;overflow:auto}
+.modal-card{background:var(--card);border-radius:30px;border:4px solid var(--teal);box-shadow:0 10px 0 var(--teal);padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:560px;width:100%;box-sizing:border-box;text-align:center}
+.modal-card h3{font-size:30px}
+.modal-card p{margin:0;color:var(--ink-soft)}
+.bag{width:84px;height:92px;border:none;padding:0;border-radius:42% 42% 48% 48%/34% 34% 62% 62%;background:radial-gradient(circle at 40% 35%,#FFE08A,#E3A413);
+  box-shadow:0 5px 0 #B98208;display:grid;place-items:center;align-content:center;font:700 26px/1 var(--display);color:#6B4A00;position:relative}
+.bag::before{content:'';position:absolute;top:-8px;left:50%;width:34px;height:14px;margin-left:-17px;background:#C98E0C;border-radius:8px 8px 3px 3px}
+.bag span{font-size:22px}
+.bags-paid{min-height:110px;justify-content:center;align-items:center}
+.bags-paid .bag{width:66px;height:72px;font-size:20px}
+.paid{font:700 26px var(--display);color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* adoption certificate */
+.cert{background:#FFFBEA;border:6px double var(--sun-deep);border-radius:22px;padding:18px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;max-width:520px}
+.cert-top{font:700 26px var(--display);color:var(--sun-deep);letter-spacing:.02em}
+.cert p{margin:0;font-size:22px}
+.cert small{color:var(--ink-soft)}
+
+/* pet visits */
+.pet-home{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.pet-home .table{flex:1 1 320px;max-width:560px}
+.pet-stage{position:relative;display:grid;place-items:center}
+.pet-list{display:flex;flex-wrap:wrap;gap:10px;flex:1 1 200px;align-content:flex-start}
+.pet-pick{border:4px solid var(--line);background:var(--card);border-radius:20px;padding:6px;box-shadow:0 4px 0 var(--line)}
+.pet-pick.on{border-color:var(--teal);box-shadow:0 4px 0 var(--teal)}
+.pet-pick .ail{display:none}
+.care{background:var(--sun);color:var(--ink);box-shadow:0 7px 0 var(--sun-deep)}
+.care.did{background:var(--good-soft);box-shadow:0 7px 0 var(--good);color:#1B6B42}
+.floaty{position:absolute;left:50%;top:40%;font-size:54px;pointer-events:none;animation:floatup 1.4s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,40px) scale(.6);opacity:0}25%{opacity:1}100%{transform:translate(-50%,-90px) scale(1.2);opacity:0}}
+
 /* ---------- grown-ups ---------- */
 .parent{background:var(--card);border-radius:24px;border:3px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:16px;-webkit-user-select:text;user-select:text}
 .parent h2{font-size:30px}
@@ -347,7 +415,8 @@ const btn = (props, ...kids) => el('button', Object.assign({ type: 'button' }, p
 const KEY = 'ellies-vet-game-v1';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
-const S = Object.assign({ name: 'Ellie', stars: 0, healed: {}, lvl: {}, streak: {}, stats: {}, voice: true, mix: 'both', queue: null }, load());
+const S = Object.assign({ name: 'Ellie', stars: 0, healed: {}, lvl: {}, streak: {}, stats: {}, voice: true, mix: 'both', queue: null,
+  owned: [], pets: {}, checkoutMath: true }, load());
 
 /* ================= sound & voice ================= */
 let AC = null;
@@ -1036,7 +1105,9 @@ function topBar() {
   return el('header', { class: 'bar' },
     el('div', { class: 'sign' }, ellie(40), S.name + "'s Animal Clinic"),
     el('span', { class: 'spacer' }),
-    el('span', { class: 'pill', 'aria-label': S.stars + ' stars' }, '⭐ ', String(S.stars)),
+    btn({ class: 'pill', 'aria-label': S.stars + ' stars, open the shop', onclick: () => showShop() }, '⭐ ', String(S.stars)),
+    btn({ class: 'iconbtn', 'aria-label': 'clinic shop', onclick: () => showShop() }, '🛍️'),
+    Object.keys(S.pets).length ? btn({ class: 'iconbtn', 'aria-label': 'my pets', onclick: () => showPets() }, '🐾') : null,
     btn({ class: 'iconbtn', 'aria-label': 'sticker book', onclick: () => { hush(); showStickers(); } }, '📒'),
     btn({ class: 'iconbtn', 'aria-label': 'waiting room', onclick: () => { hush(); showRoom(); } }, '🏥'));
 }
@@ -1069,12 +1140,15 @@ function ensureQueue() {
   }
 }
 
-function showRoom() {
+function showRoom(fresh) {
   visit = null;
   ensureQueue();
+  fresh = typeof fresh === 'string' ? fresh : null;   // id of a just-bought decoration, to pop it in
+  if (fresh) say('The ' + DECOR.find(d => d.id === fresh).name + ' is in your clinic now!');
   screen(topBar(), el('main', { class: 'screen' },
     el('div', { class: 'room-head' }, el('h2', null, 'Waiting room'),
       el('div', { class: 'says' }, ellie(72), el('div', { class: 'bubble' }, el('p', null, 'Who will you help first? Tap a patient.')))),
+    clinicScene(fresh),
     el('div', { class: 'benches' }, S.queue.map((p, i) => {
       const a = A(p.a), ail = AIL(p.ail);
       return el('div', { class: 'patient' },
@@ -1115,7 +1189,9 @@ function drawExam(isFirst) {
     el('div', { class: 'nametag' }, a.name),
     el('p', { class: 'complaint' }, a.name + ' ' + ail.says + '.'),
     el('div', { class: 'hearts', 'aria-label': step + ' of 3 hearts' }, '❤️'.repeat(step) + '🤍'.repeat(3 - step)),
-    el('ol', { class: 'steps' }, ail.steps.map(([tool, txt], i) => el('li', { class: i < step ? 'done' : i === step ? 'now' : null }, el('span', { class: 'tool' }, tool), txt))));
+    el('ol', { class: 'steps' }, ail.steps.map(([tool, txt], i) => el('li', { class: i < step ? 'done' : i === step ? 'now' : null }, el('span', { class: 'tool' }, tool), txt))),
+    DECOR.some(d => d.room === 'exam' && owns(d.id)) ? el('div', { class: 'shelf', 'aria-label': 'Exam room equipment' },
+      DECOR.filter(d => d.room === 'exam' && owns(d.id)).map(d => el('span', { title: cap(d.name) }, d.emoji))) : null);
   const skill = SKILLS[plan[step]], lvl = S.lvl[plan[step]] || 1;
   const act = skill.make(lvl, a);
   const work = el('div', { class: 'work' }), fb = el('div', { class: 'feedback', 'aria-live': 'polite' });
@@ -1211,6 +1287,196 @@ function showStickers() {
     el('div', null, btn({ class: 'big teal small', onclick: showRoom }, '← Back to the waiting room'))));
 }
 
+/* ---------- clinic shop, decorations and adopted pets ---------- */
+// Stars are spent here; stickers stay in the sticker book. Waiting-room items with `at` sit at
+// [centre x %, top %, size px] in the clinic picture; the rug, fish tank and butterflies are drawn specially.
+const DECOR = [
+  { id: 'plant',       name: 'potted plant',     emoji: '🪴', price: 10, room: 'wait', at: [6, 50, 60] },
+  { id: 'balloons',    name: 'balloons',         emoji: '🎈', price: 10, room: 'wait', at: [63, 6, 46] },
+  { id: 'butterflies', name: 'butterfly wall',   emoji: '🦋', price: 15, room: 'wait' },
+  { id: 'poster',      name: 'animal poster',    emoji: '🖼️', price: 15, room: 'wait', at: [30, 10, 48] },
+  { id: 'lamp',        name: 'exam lamp',        emoji: '💡', price: 15, room: 'exam' },
+  { id: 'toys',        name: 'toy basket',       emoji: '🧸', price: 20, room: 'wait', at: [40, 58, 44] },
+  { id: 'rug',         name: 'rainbow rug',      emoji: '🌈', price: 20, room: 'wait' },
+  { id: 'petbed',      name: 'cozy pet basket',  emoji: '🧺', price: 20, room: 'exam' },
+  { id: 'scale',       name: 'pet scale',        emoji: '⚖️', price: 20, room: 'exam' },
+  { id: 'fishtank',    name: 'fish tank',        emoji: '🐠', price: 25, room: 'wait' },
+  { id: 'couch',       name: 'comfy couch',      emoji: '🛋️', price: 30, room: 'wait', at: [18, 48, 72] },
+  { id: 'microscope',  name: 'microscope',       emoji: '🔬', price: 30, room: 'exam' },
+  { id: 'xray',        name: 'x-ray machine',    emoji: '🩻', price: 40, room: 'exam' },
+  { id: 'trophy',      name: 'best vet trophy',  emoji: '🏆', price: 45, room: 'wait', at: [48, 12, 42] },
+  { id: 'ambulance',   name: 'animal ambulance', emoji: '🚑', price: 50, room: 'wait', at: [89, 50, 66] },
+];
+const PET_PRICE = 50;
+const owns = id => S.owned.includes(id);
+const cap = t => t[0].toUpperCase() + t.slice(1);
+const starsWord = n => n + (n === 1 ? ' star' : ' stars');
+const today = () => new Date().toLocaleDateString('en-CA');   // YYYY-MM-DD in local time
+
+function clinicScene(fresh) {
+  const room = el('div', { class: 'clinic-room', role: 'img', 'aria-label': 'Your clinic' });
+  const put = (node, id) => { if (id === fresh) node.classList.add('fresh'); room.append(node); };
+  if (owns('rug')) put(el('div', { class: 'rug' }), 'rug');
+  if (owns('butterflies')) [[8, 12, 30], [24, 30, 22], [40, 6, 26], [74, 12, 28], [95, 30, 22]].forEach(([x, y, s], i) =>
+    put(el('span', { class: 'deco fly', style: `left:${x}%;top:${y}%;font-size:${s}px;animation-delay:${i * 0.5}s` }, '🦋'), 'butterflies'));
+  if (owns('fishtank')) put(el('div', { class: 'tank' }, el('span', { class: 'fish' }, '🐠'), el('span', { class: 'fish f2' }, '🐟')), 'fishtank');
+  DECOR.filter(d => d.at && owns(d.id)).forEach(d =>
+    put(el('span', { class: 'deco', style: `left:${d.at[0]}%;top:${d.at[1]}%;font-size:${d.at[2]}px` }, d.emoji), d.id));
+  const pets = Object.keys(S.pets), size = pets.length > 6 ? 52 : pets.length > 3 ? 70 : 88;
+  pets.forEach((id, i) => {
+    const x = pets.length === 1 ? 50 : 12 + i * (76 / (pets.length - 1));
+    put(btn({ class: 'room-pet', style: `left:${x}%`, 'aria-label': 'Visit ' + A(id).name, onclick: () => showPets(id) }, pet(A(id), size)), 'pet-' + id);
+  });
+  if (!S.owned.some(id => DECOR.find(d => d.id === id).room === 'wait') && !pets.length)
+    room.append(el('p', { class: 'room-empty' }, 'Your clinic is a bit bare. Visit the shop 🛍️ to decorate it!'));
+  return room;
+}
+
+function checkout(item, onBought) {
+  // item: { title, price, pic (node), intro (spoken) }
+  const layer = el('div', { class: 'modal' });
+  const close = () => { hush(); layer.remove(); };
+  let total = 0;
+  const label = el('div', { class: 'paid' });
+  const tray = el('div', { class: 'bowl bags-paid', 'aria-label': 'stars paid' });
+  const upd = () => { label.textContent = 'Paid ' + total + ' of ' + item.price + ' ⭐'; };
+  let bought = false;
+  const finish = () => {
+    if (bought || total !== item.price && S.checkoutMath) return;   // a bag was taken back during the pause
+    bought = true;
+    S.stars -= item.price; save(); sfx.fanfare();
+    layer.remove(); onBought();
+  };
+  const bag = (v, props) => btn(Object.assign({ class: 'bag', 'aria-label': v + ' star bag' }, props), el('span', null, '⭐'), el('b', null, String(v)));
+  const card = el('div', { class: 'modal-card' },
+    item.pic, el('h3', null, item.title), el('div', { class: 'pricetag' }, '⭐ ' + item.price));
+  if (S.checkoutMath) {
+    const bags = el('div', { class: 'wallet' }, [10, 5].map(v => bag(v, { onclick: () => {
+      if (total >= item.price) return;
+      total += v; sfx.tap();
+      const t = bag(v, { onclick: () => {
+        t.remove(); total -= v; upd(); say(String(total));
+        if (total === item.price) setTimeout(finish, 900);   // paid too much, then took some back
+      } });
+      tray.append(t); upd();
+      if (total === item.price) { say(String(total)); setTimeout(finish, 900); }
+      else if (total > item.price) { sfx.bad(); tray.classList.remove('wobble'); void tray.offsetWidth; tray.classList.add('wobble'); say('Too many stars! Tap a bag to take it back.'); }
+      else say(String(total));
+    } })));
+    card.append(el('p', null, 'Tap the star bags to pay. Count by tens and fives!'), bags, tray, label);
+    upd();
+    say(item.intro + ' Tap the star bags to pay.');
+  } else {
+    card.append(btn({ class: 'big teal', onclick: finish }, 'Buy for ⭐ ' + item.price));
+    say(item.intro);
+  }
+  card.append(btn({ class: 'linkbtn', onclick: close }, 'Not now'));
+  layer.append(card);
+  app.append(layer);
+}
+
+function celebrate(title, pic, spoken, buttons) {
+  const conf = el('div', { class: 'confetti', 'aria-hidden': 'true' });
+  for (let i = 0; i < 36; i++) conf.append(el('i', { style: 'left:' + rnd(0, 100) + '%;animation-duration:' + (rnd(22, 45) / 10) + 's;animation-delay:' + (rnd(0, 12) / 10) + 's' }, pick(['⭐', '💖', '✨', '🎉'])));
+  say(spoken);
+  screen(topBar(), el('main', { class: 'healed' }, el('div', { class: 'healed-card' }, pic, el('h2', null, title), el('div', { class: 'btnrow' }, buttons))), conf);
+}
+
+function needMore(price, node) {
+  const n = price - S.stars;
+  sfx.bad(); node.classList.remove('wobble'); void node.offsetWidth; node.classList.add('wobble');
+  say('You need ' + n + ' more ' + (n === 1 ? 'star' : 'stars') + '. Help more animals to earn stars!');
+}
+
+function showShop(tab, quiet) {
+  visit = null; hush();
+  tab = tab === 'pets' ? 'pets' : 'decor';
+  const card = (pic, title, sub, action) => el('div', { class: 'item' }, el('div', { class: 'item-pic' }, pic), el('b', null, title), sub ? el('small', null, sub) : null, action);
+  const priceBtn = (price, onBuy) => {
+    const b = btn({ class: 'big small' + (S.stars >= price ? ' teal' : ' dim'), onclick: () => S.stars >= price ? onBuy() : needMore(price, b) }, '⭐ ' + price);
+    return b;
+  };
+  let items;
+  if (tab === 'decor') {
+    items = DECOR.map(d => card(el('span', { class: 'item-emoji' }, d.emoji), cap(d.name), d.room === 'wait' ? 'Waiting room' : 'Exam room',
+      owns(d.id) ? el('span', { class: 'got' }, '✓ In your clinic')
+        : priceBtn(d.price, () => checkout({ title: cap(d.name), price: d.price, pic: el('span', { class: 'item-emoji big-emoji' }, d.emoji), intro: 'The ' + d.name + ' costs ' + d.price + ' stars.' }, () => {
+            S.owned.push(d.id); save();
+            celebrate('The ' + d.name + ' is in your clinic!', el('span', { class: 'item-emoji big-emoji fresh-pop' }, d.emoji), 'Thank you! The ' + d.name + ' is in your clinic now!', [
+              btn({ class: 'big', onclick: () => d.room === 'wait' ? showRoom(d.id) : showShop('decor', true) }, d.room === 'wait' ? 'See my clinic ▶' : 'Back to the shop'),
+              btn({ class: 'big sun', onclick: () => showShop('decor', true) }, 'Keep shopping 🛍️')]);
+          }))));
+  } else {
+    items = ANIMALS.map(a => {
+      if (S.pets[a.id]) return card(pet(a, 96), a.name, 'Part of the family ❤️', btn({ class: 'big sun small', onclick: () => showPets(a.id) }, 'Visit'));
+      if (!S.healed[a.id]) return el('div', { class: 'item locked', onclick: () => say('Help this animal at the clinic first.') }, el('div', { class: 'item-pic' }, pet(a, 96)), el('b', null, '?'), el('small', null, 'Help me first'));
+      return card(pet(a, 96), a.name, 'the ' + a.kind, priceBtn(PET_PRICE, () => checkout({ title: 'Adopt ' + a.name, price: PET_PRICE, pic: pet(a, 150, { cls: 'happy' }), intro: 'Adopting a pet costs 50 stars.' }, () => {
+        S.pets[a.id] = { adopted: today(), day: today(), done: [] }; save();
+        const cert = el('div', { class: 'cert' },
+          el('div', { class: 'cert-top' }, '📜 Adoption certificate'),
+          el('div', { class: 'duo' }, ellie(96, 'hop'), pet(a, 200, { cls: 'happy' })),
+          el('p', null, a.name + ' the ' + a.kind + ' is now part of Dr. ' + S.name + "'s clinic family."),
+          el('small', null, 'Adopted ' + new Date().toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' })));
+        celebrate('You adopted ' + a.name + '!', cert, 'Congratulations! You adopted ' + a.name + '! Welcome to the family, ' + a.name + '!', [
+          btn({ class: 'big', onclick: () => showPets(a.id) }, 'Say hi to ' + a.name + ' ▶')]);
+      })));
+    });
+  }
+  const tabs = el('div', { class: 'seg shop-tabs', role: 'tablist' },
+    btn({ class: tab === 'decor' ? 'on' : null, role: 'tab', onclick: () => showShop('decor', true) }, '🖼️ Decorate'),
+    btn({ class: tab === 'pets' ? 'on' : null, role: 'tab', onclick: () => showShop('pets', true) }, '🐾 Adopt a pet'));
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'room-head' }, el('h2', null, 'Clinic shop'),
+      el('div', { class: 'says' }, ellie(72), el('div', { class: 'bubble' }, el('p', null,
+        'You have ' + starsWord(S.stars) + '. ' + (tab === 'decor' ? 'What would you like?' : 'Adopting a pet costs ' + PET_PRICE + ' stars.'))))),
+    tabs, el('div', { class: 'shop' }, items),
+    el('div', null, btn({ class: 'big teal small', onclick: () => showRoom() }, '← Back to the waiting room'))));
+  if (!quiet) say('Welcome to the clinic shop! You have ' + starsWord(S.stars) + '. What would you like?');
+}
+
+function showPets(id) {
+  visit = null; hush();
+  const ids = Object.keys(S.pets);
+  if (!ids.length) return showShop('pets');
+  id = S.pets[id] ? id : ids[0];
+  const a = A(id), p = S.pets[id];
+  let greet = 'Say hi to ' + a.name + '!';
+  if (p.day !== today()) {
+    if (p.day && (new Date(today()) - new Date(p.day)) / 864e5 >= 2) greet = a.name + ' missed you!';
+    p.day = today(); p.done = []; save();
+  }
+  const hearts = el('div', { class: 'hearts' });
+  const drawHearts = () => { hearts.textContent = '❤️'.repeat(p.done.length) + '🤍'.repeat(3 - p.done.length); };
+  const stage = el('div', { class: 'pet-stage' }, pet(a, 240, { cls: p.done.length === 3 ? 'happy' : '' }));
+  const float = (emoji, cls) => { const f = el('span', { class: 'floaty ' + cls }, emoji); stage.append(f); setTimeout(() => f.remove(), 1500); };
+  const ACTIONS = [
+    ['feed', a.food, 'Feed', a.name + ' loves the food!'],
+    ['pat', '✋', 'Pat', a.name + ' loves pats!'],
+    ['play', '🎾', 'Play', a.name + ' loves to play!'],
+  ];
+  const acts = el('div', { class: 'btnrow' }, ACTIONS.map(([key, emoji, label, line]) => {
+    const b = btn({ class: 'big small care' + (p.done.includes(key) ? ' did' : ''), onclick: () => {
+      float(key === 'pat' ? '💕' : emoji, key);
+      if (p.done.includes(key)) return say(p.done.length === 3 ? a.name + ' is so happy! Come back tomorrow.' : line);
+      p.done.push(key); save(); b.classList.add('did'); drawHearts(); sfx.good();
+      if (p.done.length === 3) { stage.firstChild.classList.add('happy'); say(line + ' ' + a.name + ' is so happy! Come back tomorrow.'); }
+      else say(line);
+    } }, emoji + ' ' + label);
+    return b;
+  }));
+  drawHearts();
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'room-head' }, el('h2', null, 'My pets'),
+      el('div', { class: 'says' }, ellie(72), el('div', { class: 'bubble' }, el('p', null, 'Feed, pat and play to fill ' + a.name + "'s hearts.")))),
+    el('div', { class: 'pet-home' },
+      el('section', { class: 'table' }, el('div', { class: 'mat' }, stage), el('div', { class: 'nametag' }, a.name), hearts, acts),
+      ids.length > 1 ? el('div', { class: 'pet-list' }, ids.map(k => btn({ class: 'pet-pick' + (k === id ? ' on' : ''), 'aria-label': A(k).name, onclick: () => showPets(k) }, pet(A(k), 64)))) : null),
+    el('div', { class: 'btnrow', style: 'justify-content:flex-start' },
+      btn({ class: 'big teal small', onclick: () => showRoom() }, '← Back to the waiting room'),
+      btn({ class: 'big sun small', onclick: () => showShop('pets') }, '🛍️ Adopt another'))));
+  say(greet);
+}
+
 /* ---------- grown-ups ---------- */
 function showParentGate() {
   visit = null;
@@ -1228,9 +1494,9 @@ function showParent() {
   let armed = false;
   const reset = btn({ class: 'big small', onclick: () => {
     if (!armed) { armed = true; reset.textContent = 'Tap again to erase all progress'; return; }
-    const keep = { name: S.name, voice: S.voice, mix: S.mix };
+    const keep = { name: S.name, voice: S.voice, mix: S.mix, checkoutMath: S.checkoutMath };
     Object.keys(S).forEach(k => delete S[k]);
-    Object.assign(S, { stars: 0, healed: {}, lvl: {}, streak: {}, stats: {}, queue: null }, keep); save(); showParent();
+    Object.assign(S, { stars: 0, healed: {}, lvl: {}, streak: {}, stats: {}, queue: null, owned: [], pets: {} }, keep); save(); showParent();
   } }, 'Reset progress');
   const nameIn = el('input', { type: 'text', id: 'kid-name', value: S.name, maxlength: '16', 'aria-label': "Child's name" });
   nameIn.addEventListener('change', () => { S.name = nameIn.value.trim() || 'Ellie'; save(); });
@@ -1250,7 +1516,10 @@ function showParent() {
     el('div', { class: 'settings' },
       el('label', { for: 'kid-name' }, 'Name', nameIn),
       el('span', null, 'Voice'), seg([[true, 'On'], [false, 'Off']], S.voice, v => { S.voice = v; }),
-      el('span', null, 'Subjects'), seg([['both', 'Math + Reading'], ['math', 'Math only'], ['lang', 'Reading only']], S.mix, v => { S.mix = v; })),
+      el('span', null, 'Subjects'), seg([['both', 'Math + Reading'], ['math', 'Math only'], ['lang', 'Reading only']], S.mix, v => { S.mix = v; }),
+      el('span', null, 'Shop checkout'), seg([[true, 'Count star bags'], [false, 'One-tap buy']], S.checkoutMath, v => { S.checkoutMath = v; })),
+    el('p', null, 'Stars (5 per patient) are spent in the clinic shop, on decorations and on adopting animals ' + S.name + ' has already helped. With "Count star bags", she pays by tapping 10-star and 5-star bags while the narrator counts along. Adopted pets never get sick or sad; after a couple of days away they just say they missed her.'),
+    el('p', null, 'Stars now: ' + S.stars + ' · Decorations: ' + S.owned.length + ' of ' + DECOR.length + ' · Pets adopted: ' + Object.keys(S.pets).length),
     !canSpeak ? el('p', null, 'This browser cannot read aloud, so the "find the word you hear" activity is turned off.') : null,
     el('div', { class: 'tablewrap' }, el('table', null,
       el('thead', null, el('tr', null, ['Subject', 'Skill', 'Level', 'Done', 'First try'].map(h => el('th', null, h)))),
