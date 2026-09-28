@@ -289,6 +289,8 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .tower .tag{font:700 24px var(--display);min-height:28px;color:var(--good)}
 .mini .frame{grid-template-columns:repeat(5,34px);grid-auto-rows:34px}
 .mini .frame span{font-size:24px}
+.frame .paw{width:100%;height:100%}
+.frame .paw svg{width:78%;height:78%;fill:#7A5230;display:block}
 @media (max-width:520px){
   .track{grid-template-columns:repeat(10,minmax(0,1fr))}
   .dot{width:20px;height:20px}
@@ -689,12 +691,18 @@ function numberChoices(ans, spread, min) {
   for (let k = 1; opts.size < 3; k++) opts.add(ans + k);
   return shuffle([...opts]);
 }
+// A single paw print (the 🐾 emoji shows two, which is easy to count twice).
+const PAW_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="16.2" rx="5.2" ry="4.4"/>' +
+  '<circle cx="5.6" cy="10" r="2.3"/><circle cx="9.6" cy="6.4" r="2.4"/><circle cx="14.4" cy="6.4" r="2.4"/><circle cx="18.4" cy="10" r="2.3"/></svg>';
 function tenFrames(n, icon) {
   const wrap = el('div', { class: 'frames' });
   const frames = Math.max(1, Math.ceil(n / 10));
   for (let f = 0; f < frames; f++) {
     const fr = el('div', { class: 'frame' });
-    for (let i = 0; i < 10; i++) fr.append(el('span', null, f * 10 + i < n ? icon : ''));
+    for (let i = 0; i < 10; i++) {
+      const full = f * 10 + i < n;
+      fr.append(icon === 'paw' ? el('span', { class: 'paw', html: full ? PAW_SVG : '' }) : el('span', null, full ? icon : ''));
+    }
     wrap.append(fr);
   }
   return wrap;
@@ -1295,7 +1303,7 @@ const N10 = {
       prompt: 'Read the number word. Tap the box that matches.', speak: 'Read the number word by yourself. Then tap the box that matches.',
       build(box, api) {
         box.append(el('div', { class: 'bigword' }, NUM_WORDS[n]));
-        return choiceRow(box, shuffle([n, ...others]).map(v => ({ node: el('span', { class: 'mini' }, tenFrames(v, '🐾')), aria: String(v), ok: v === n, after: NUM_WORDS[n] + '!' })), api);
+        return choiceRow(box, shuffle([n, ...others]).map(v => ({ node: el('span', { class: 'mini' }, tenFrames(v, 'paw')), aria: String(v), ok: v === n, after: NUM_WORDS[n] + '!' })), api);
       },
     };
   } },
@@ -1329,7 +1337,7 @@ const N10 = {
           } }, c);
           return t;
         }));
-        box.append(el('span', { class: 'mini' }, tenFrames(n, '🐾')), slots, tiles);
+        box.append(el('span', { class: 'mini' }, tenFrames(n, 'paw')), slots, tiles);
         return () => { say(w.split('').join('... ')); const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === w[at]); if (t) t.classList.add('hint'); };
       },
     };
