@@ -131,6 +131,32 @@ window.voiceLines = function (T) {
   range(51, 60).forEach(n => add(n + '!'));   // running total while paying (0-50 are recorded above)
   T.DECOR.forEach(d => add('The ' + d.name + ' costs ' + d.price + ' stars.', 'The ' + d.name + ' is in your clinic now!'));
 
+  // week edition: Numbers to 10
+  T.N10_THINGS.forEach(([, t]) => { add('How many ' + t + ' are in the box?', 'Yes, 0 ' + t + '!', 'Count the ' + t + '.'); range(1, 10).forEach(n => add('Yes, ' + n + ' ' + t + '!')); });
+  add('Tap the correct word.', 'Yes!', 'No!', 'Count back.', 'Count on.', 'What comes next?', 'Fill in the missing numbers.',
+    'Put the towers in order.', 'Tap the shortest tower first.', 'Tap the tallest tower first.', 'They are in order!',
+    'Read the number word by yourself.', 'Then tap the box that matches.');
+  range(0, 10).forEach(k => {
+    add('Which number is greater than ' + k + '?', 'Which number is less than ' + k + '?');
+    range(0, 10).forEach(x => { if (x > k) add(x + ' is greater than ' + k + '!'); if (x < k) add(x + ' is less than ' + k + '!'); });
+  });
+  range(1, 10).forEach(a => add(a + ' and ' + a + ' are the same!'));
+  T.N10_PAIRS.forEach(([[, na], [, nb]]) => add('Are there more ' + na + ' than ' + nb + '?', 'Are there fewer ' + na + ' than ' + nb + '?', 'Is the number of ' + na + ' and ' + nb + ' the same?'));
+  range(0, 6).forEach(start => [false, true].forEach(down => {
+    const seq = range(start, start + 4); if (down) seq.reverse();
+    add(seq.join(', ') + '!');
+    range(0, 4).forEach(h => add(seq.map((v, i) => i === h ? 'hmm' : v).join(', ') + '.'));
+  }));
+  range(0, 9).forEach(x => range(x + 1, Math.min(10, x + 5)).forEach(y => {
+    const d = y - x;
+    add(y + ' is how many more than ' + x + '?', x + ' is how many less than ' + y + '?', y + ' is ' + d + ' more than ' + x + '!', x + ' is ' + d + ' less than ' + y + '!');
+  }));
+  range(1, 4).forEach(k => range(0, 10).forEach(n => {
+    if (n + k <= 10) add('What is ' + k + ' more than ' + n + '?', k + ' more than ' + n + ' is ' + (n + k) + '!');
+    if (n - k >= 0) add('What is ' + k + ' less than ' + n + '?', k + ' less than ' + n + ' is ' + (n - k) + '!');
+  }));
+  T.NUM_WORDS.forEach(w => add(w + '.', w + '!', 'Can you spell ' + w + '?', w.split('').join(', ') + '.'));
+
   // adopted pets
   A.forEach(a => add('You adopted ' + a.name + '!', 'Welcome to the family, ' + a.name + '!', 'Say hi to ' + a.name + '!',
     a.name + ' missed you!', a.name + ' loves the food!', a.name + ' loves pats!', a.name + ' loves to play!', a.name + ' is so happy!'));

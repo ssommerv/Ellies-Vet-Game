@@ -22,6 +22,22 @@ Instructions are read aloud (tap 🔊 to hear them again). Levels adjust
 automatically, and the **Grown-ups** corner (press and hold) shows progress per
 skill and lets you change levels, the name, voice and subjects.
 
+## Editions
+
+The Grown-ups corner has an **Edition** picker:
+
+- **Base edition**: every Grade 1 math and reading activity above.
+- **Numbers to 10** (week of 28 September): built from the Chapter 1 worksheets
+  (Online Workbook 1A / Revisit 1A). Nine activities, all within 0–10: counting
+  to 10, more/fewer/same and greater/less than, what comes next, 1–4 more or
+  less and "how many more", counting on and back with ten frames, ordering cube
+  towers, and three number-word reading activities (read, match and spell zero
+  to ten).
+
+Stars, stickers, decorations and pets are shared by all editions; each activity
+keeps its own level. A new week is a new entry in `EDITIONS` in `game.html`
+plus its lines in `tools/voice/lines.js`.
+
 ## Play
 
 Open `index.html` in Safari, or host the repo with GitHub Pages:

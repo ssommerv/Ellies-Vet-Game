@@ -265,6 +265,36 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .sticker b{font-family:var(--display);font-size:20px}
 .sticker small{color:var(--ink-soft);font-size:15px}
 
+/* ---------- week edition ---------- */
+.week-badge{font:700 20px var(--display);background:var(--sun);color:var(--ink);border-radius:999px;padding:6px 16px;box-shadow:0 4px 0 var(--sun-deep)}
+.editions h3{font-size:22px;margin:0 0 8px}
+.edition-pick{display:flex;flex-wrap:wrap;gap:12px}
+.edition{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:3px solid var(--line);background:var(--card);border-radius:16px;padding:10px 16px;max-width:360px}
+.edition b{font:700 19px var(--display)}
+.edition small{color:var(--ink-soft);font-size:15px}
+.edition.on{border-color:var(--teal);background:#E6F6F3}
+.match{display:flex;flex-direction:column;gap:10px;background:#F4FAF8;border-radius:18px;padding:12px 16px}
+.matchrow{display:grid;grid-auto-flow:column;grid-auto-columns:46px;gap:4px;font-size:38px;line-height:1;justify-content:start}
+.track{display:grid;grid-template-columns:repeat(10,minmax(0,52px));border:3px solid var(--teal);border-radius:10px;overflow:hidden;background:var(--teal);gap:3px;max-width:100%}
+.tcell{background:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0 8px}
+.tcell small{font:700 16px var(--read);color:var(--ink-soft)}
+.dot{width:30px;height:30px;border-radius:50%;background:#4F5D66;display:block}
+.dot.hot{background:var(--coral)}
+.dot.empty{background:none;border:2px dashed var(--line)}
+.towers{display:flex;align-items:flex-end;justify-content:center;gap:14px;flex-wrap:wrap;min-height:250px}
+.tower{border:none;background:none;padding:6px;display:flex;flex-direction:column;align-items:center;gap:6px;border-radius:14px}
+.tower .cubes{display:flex;flex-direction:column;gap:2px}
+.tower .cubes i{display:block;width:34px;height:20px;background:var(--sun);border-radius:3px;box-shadow:inset 0 0 0 2px var(--sun-deep)}
+.tower.placed .cubes i{background:var(--good-soft);box-shadow:inset 0 0 0 2px var(--good)}
+.tower .tag{font:700 24px var(--display);min-height:28px;color:var(--good)}
+.mini .frame{grid-template-columns:repeat(5,34px);grid-auto-rows:34px}
+.mini .frame span{font-size:24px}
+@media (max-width:520px){
+  .track{grid-template-columns:repeat(10,minmax(0,1fr))}
+  .dot{width:20px;height:20px}
+  .matchrow{grid-auto-columns:32px;font-size:28px}
+}
+
 /* ---------- clinic picture (waiting room) ---------- */
 .clinic-room{position:relative;height:190px;border-radius:26px;overflow:hidden;border:4px solid var(--line);box-shadow:0 8px 0 var(--line);
   background:linear-gradient(#FBF6EE 0 56%,#CDEBE5 56% 64%,#A9DBCF 64%)}
@@ -416,7 +446,7 @@ const KEY = 'ellies-vet-game-v1';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 const S = Object.assign({ name: 'Ellie', stars: 0, healed: {}, lvl: {}, streak: {}, stats: {}, voice: true, mix: 'both', queue: null,
-  owned: [], pets: {}, checkoutMath: true }, load());
+  owned: [], pets: {}, checkoutMath: true, edition: 'n10' }, load());
 
 /* ================= sound & voice ================= */
 let AC = null;
@@ -1094,8 +1124,227 @@ const SKILLS = {
     };
   } },
 };
-const MATH = Object.keys(SKILLS).filter(k => SKILLS[k].area === 'math');
-const LANG = Object.keys(SKILLS).filter(k => SKILLS[k].area === 'lang' && !(SKILLS[k].needsVoice && !canSpeak));
+/* ================= week edition: Numbers to 10 =================
+   Made from Ellie's Chapter 1 worksheets (Online Workbook 1A / Revisit 1A):
+   counting to 10 in numbers and words, comparing (more / fewer / same, greater / less than),
+   counting on and back, 1-4 more or less, "how many more", ten frames and ordering towers.
+   Every number stays within 0-10. */
+const NUM_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const N10_THINGS = [['🩹', 'bandages'], ['💊', 'vitamins'], ['🦴', 'chew toys'], ['🧸', 'toys']];
+const N10_PAIRS = [[['🦴', 'bones'], ['🐶', 'puppies']], [['🥕', 'carrots'], ['🐰', 'bunnies']], [['🐟', 'fish'], ['🐱', 'kittens']],
+  [['🪱', 'worms'], ['🐦', 'birds']], [['🥣', 'bowls'], ['🐹', 'hamsters']]];
+const upto = (a, b) => { const r = []; for (let i = a; i <= b; i++) r.push(i); return r; };
+// three answer choices near the answer, all within lo..hi
+function near(ans, lo, hi) {
+  lo = lo == null ? 0 : lo; hi = hi == null ? 10 : hi;
+  const c = shuffle([1, -1, 2, -2, 3, -3].map(d => ans + d).filter(x => x >= lo && x <= hi));
+  return shuffle([ans, c[0], c[1]]);
+}
+// the worksheet's number track: cells 1-10, counters up to n, the ones above `from` highlighted
+function track(n, from) {
+  return el('div', { class: 'track', 'aria-hidden': 'true' }, upto(1, 10).map(i =>
+    el('div', { class: 'tcell' }, el('small', null, String(i)), el('span', { class: 'dot' + (i > n ? ' empty' : from != null && i > from ? ' hot' : '') }))));
+}
+const N10 = {
+  n10count: { area: 'math', label: 'Counting to 10', curric: 'Numbers to 10 – counting objects 0 to 10', make(l) {
+    const n = l === 1 ? rnd(1, 5) : l === 2 ? rnd(1, 10) : rnd(0, 10);
+    const [ic, thing] = pick(N10_THINGS);
+    return {
+      prompt: 'How many ' + thing + ' are in the box?', speak: 'How many ' + thing + ' are in the box?',
+      build(box, api) {
+        box.append(tenFrames(n, ic));
+        return choiceRow(box, near(n).map(x => ({ label: String(x), ok: x === n, after: 'Yes, ' + n + ' ' + thing + '!' })), api);
+      },
+    };
+  } },
+
+  n10compare: { area: 'math', label: 'More, fewer, same', curric: 'Numbers to 10 – comparing: more, fewer, same, greater than, less than', make(l) {
+    if (l >= 2 && Math.random() < 0.4) {
+      const greater = Math.random() < 0.5, k = greater ? rnd(0, 8) : rnd(2, 10);
+      const ok = greater ? rnd(k + 1, 10) : rnd(0, k - 1);
+      const wrong = sample(upto(0, 10).filter(x => greater ? x <= k : x >= k), 2);
+      const rel = greater ? ' is greater than ' : ' is less than ';
+      return {
+        prompt: '__' + rel + k + '.', speak: 'Which number is ' + (greater ? 'greater' : 'less') + ' than ' + k + '?',
+        build(box, api) {
+          box.append(el('div', { class: 'bigword' }, el('span', { class: 'hl' }, '?'), rel + k));
+          return choiceRow(box, shuffle([ok, ...wrong]).map(x => ({ label: String(x), ok: x === ok, after: ok + rel + k + '!' })), api);
+        },
+      };
+    }
+    const [[ia, na], [ib, nb]] = pick(N10_PAIRS), max = l === 1 ? 5 : 10;
+    const a = rnd(1, max);
+    let b = a;
+    if (Math.random() >= (l === 3 ? 0.35 : 0.2)) { do { b = rnd(1, max); } while (b === a || (l === 1 && Math.abs(a - b) < 2)); }
+    const q = pick(['more', 'fewer', 'same']);
+    const truth = q === 'more' ? a > b : q === 'fewer' ? a < b : a === b;
+    const prompt = q === 'same' ? 'Is the number of ' + na + ' and ' + nb + ' the same?' : 'Are there ' + q + ' ' + na + ' than ' + nb + '?';
+    const why = a === b ? a + ' and ' + b + ' are the same!' : a > b ? a + ' is more than ' + b + '!' : a + ' is less than ' + b + '!';
+    return {
+      prompt, speak: prompt,
+      build(box, api) {
+        const row = (n, ic) => el('div', { class: 'matchrow' }, upto(1, n).map(() => el('span', null, ic)));
+        box.append(el('div', { class: 'match' }, row(a, ia), row(b, ib)));
+        return choiceRow(box, ['Yes', 'No'].map(w => ({ label: w, ok: (w === 'Yes') === truth, after: (truth ? 'Yes! ' : 'No! ') + why })), api, 'word');
+      },
+    };
+  } },
+
+  n10next: { area: 'math', label: 'What comes next?', curric: 'Numbers to 10 – counting on and back, missing numbers', make(l) {
+    const down = l > 1 && Math.random() < 0.5, start = rnd(0, 6);
+    const seq = upto(start, start + 4); if (down) seq.reverse();
+    const hole = l === 3 ? rnd(0, 4) : 4, ans = seq[hole];
+    const ask = hole === 4 ? 'What comes next?' : 'Which number is missing?';
+    return {
+      prompt: ask, speak: (down ? 'Count back. ' : 'Count on. ') + seq.map((v, i) => i === hole ? 'hmm' : v).join(', ') + '. ' + ask,
+      build(box, api) {
+        box.append(el('div', { class: 'seq' }, seq.map((v, i) => el('span', { class: i === hole ? 'q' : null }, i === hole ? '?' : v))));
+        return choiceRow(box, near(ans).map(x => ({ label: String(x), ok: x === ans, after: seq.join(', ') + '!' })), api);
+      },
+    };
+  } },
+
+  n10moreless: { area: 'math', label: 'More and less', curric: 'Numbers to 10 – 1, 2, 3 or 4 more or less; how many more', make(l) {
+    if (l === 3 && Math.random() < 0.4) {
+      const x = rnd(0, 8), y = rnd(x + 1, Math.min(10, x + 5)), d = y - x, more = Math.random() < 0.5;
+      return {
+        prompt: more ? y + ' is __ more than ' + x + '.' : x + ' is __ less than ' + y + '.',
+        speak: more ? y + ' is how many more than ' + x + '?' : x + ' is how many less than ' + y + '?',
+        build(box, api) {
+          box.append(track(y, x));
+          return choiceRow(box, near(d, 1, 10).map(v => ({ label: String(v), ok: v === d, after: more ? y + ' is ' + d + ' more than ' + x + '!' : x + ' is ' + d + ' less than ' + y + '!' })), api);
+        },
+      };
+    }
+    const k = l === 1 ? 1 : l === 2 ? rnd(1, 2) : rnd(1, 4), more = Math.random() < 0.5;
+    const n = more ? rnd(0, 10 - k) : rnd(k, 10), ans = more ? n + k : n - k;
+    const rel = k + (more ? ' more than ' : ' less than ') + n;
+    return {
+      prompt: rel + ' is __.', speak: 'What is ' + rel + '?',
+      build(box, api) {
+        box.append(track(n));
+        return choiceRow(box, near(ans).map(v => ({ label: String(v), ok: v === ans, after: rel + ' is ' + ans + '!' })), api);
+      },
+    };
+  } },
+
+  n10back: { area: 'math', label: 'Count on and back', curric: 'Numbers to 10 – counting back with ten frames', make(l) {
+    const down = l < 3 || Math.random() < 0.5, start = down ? rnd(4, 10) : rnd(0, 6);
+    const seq = upto(0, 4).map(i => down ? start - i : start + i);
+    const blanks = l === 1 ? [2] : l === 2 ? [2, 3] : sample(upto(0, 4), 2).sort((p, q) => p - q);
+    const line = (down ? 'Count back.' : 'Count on.') + ' Fill in the missing numbers.';
+    return {
+      prompt: line, speak: line,
+      build(box, api) {
+        let at = 0;
+        const frameBox = el('div');
+        const showFrame = () => {   // the ten frame shows the number just before the next blank
+          const i = at < blanks.length ? blanks[at] : 4;
+          frameBox.replaceChildren(tenFrames(i === 0 ? seq[0] : seq[i - 1], '🟣'));
+        };
+        const slots = seq.map((v, i) => el('span', { class: blanks.includes(i) ? 'q' : null }, blanks.includes(i) ? '?' : v));
+        const pool = shuffle([...blanks.map(i => seq[i]), ...sample(upto(0, 10).filter(x => !seq.includes(x)), 2)]);
+        const tiles = el('div', { class: 'tiles' }, pool.map(v => {
+          const t = btn({ class: 'tile', onclick: () => {
+            if (at >= blanks.length) return;
+            if (v === seq[blanks[at]]) {
+              sfx.tap(); say(String(v)); slots[blanks[at]].textContent = v; slots[blanks[at]].classList.remove('q'); t.classList.add('used'); at++; showFrame();
+              if (at === blanks.length) api.win(seq.join(', ') + '!');
+            } else api.miss(t);
+          } }, String(v));
+          return t;
+        }));
+        showFrame();
+        box.append(frameBox, el('div', { class: 'seq' }, slots), tiles);
+        return () => { const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === String(seq[blanks[at]])); if (t) t.classList.add('hint'); };
+      },
+    };
+  } },
+
+  n10order: { area: 'math', label: 'Tower order', curric: 'Numbers to 10 – putting numbers in order', make(l) {
+    const count = l === 1 ? 3 : l === 2 ? 4 : 5, hs = sample(upto(1, 10), count);
+    const tallFirst = l === 3 && Math.random() < 0.4;
+    const order = hs.slice().sort((p, q) => tallFirst ? q - p : p - q);
+    const line = 'Put the towers in order. Tap the ' + (tallFirst ? 'tallest' : 'shortest') + ' tower first.';
+    return {
+      prompt: line, speak: line,
+      build(box, api) {
+        let at = 0;
+        const towers = el('div', { class: 'towers' }, hs.map(h => {
+          const tag = el('b', { class: 'tag' }, '');
+          const t = btn({ class: 'tower', 'aria-label': 'tower', onclick: () => {
+            if (t.classList.contains('placed') || at >= count) return;
+            if (h === order[at]) {
+              sfx.tap(); say(String(h)); t.classList.add('placed'); tag.textContent = h; at++;
+              if (at === count) api.win('They are in order!');
+            } else api.miss(t);
+          } }, tag, el('div', { class: 'cubes' }, upto(1, h).map(() => el('i'))));
+          t.dataset.h = h;
+          return t;
+        }));
+        box.append(towers);
+        return () => { const t = [...towers.children].find(x => +x.dataset.h === order[at]); if (t) t.classList.add('hint'); };
+      },
+    };
+  } },
+
+  n10readword: { area: 'lang', label: 'Reading number words', curric: 'Numbers to 10 – reading number words zero to ten', make(l) {
+    const n = l === 1 ? rnd(1, 5) : rnd(0, 10);
+    const others = l === 3 ? near(n).filter(x => x !== n) : sample(upto(0, l === 1 ? 6 : 10).filter(x => x !== n), 2);
+    return {
+      prompt: 'Read the number word. Tap the box that matches.', speak: 'Read the number word by yourself. Then tap the box that matches.',
+      build(box, api) {
+        box.append(el('div', { class: 'bigword' }, NUM_WORDS[n]));
+        return choiceRow(box, shuffle([n, ...others]).map(v => ({ node: el('span', { class: 'mini' }, tenFrames(v, '🐾')), aria: String(v), ok: v === n, after: NUM_WORDS[n] + '!' })), api);
+      },
+    };
+  } },
+
+  n10wordpick: { area: 'lang', label: 'Tap the number word', curric: 'Numbers to 10 – matching amounts to number words', make(l) {
+    const n = l === 1 ? rnd(1, 5) : rnd(1, 10), [ic, thing] = pick(N10_THINGS);
+    const words = l === 3 ? near(n, 0, 10).concat(sample(upto(0, 10).filter(x => Math.abs(x - n) > 3), 1)) : shuffle([n, ...sample(upto(0, 10).filter(x => x !== n), 2)]);
+    const line = 'Count the ' + thing + '. Tap the correct word.';
+    return {
+      prompt: line, speak: line,
+      build(box, api) {
+        box.append(iconGroup(n, ic));
+        return choiceRow(box, shuffle([...new Set(words)]).map(v => ({ label: NUM_WORDS[v], ok: v === n, after: 'Yes, ' + n + ' ' + thing + '!' })), api, 'word');
+      },
+    };
+  } },
+
+  n10spell: { area: 'lang', label: 'Spelling number words', curric: 'Numbers to 10 – spelling number words', make(l) {
+    const n = l === 1 ? pick([1, 2, 6, 10]) : rnd(0, 10), w = NUM_WORDS[n], given = l === 1 ? 1 : 0;
+    const extra = sample('abcdfghilmnoprstuvwxz'.split('').filter(c => !w.includes(c)), l);
+    return {
+      prompt: 'Spell the number word. Tap the letters in order.', speak: 'Can you spell ' + w + '? ' + w + '.',
+      build(box, api) {
+        const slots = el('div', { class: 'slots' }, w.split('').map((c, i) => el('div', { class: 'slot' + (i < given ? ' given' : '') }, i < given ? c : '')));
+        let at = given;
+        const tiles = el('div', { class: 'tiles' }, shuffle(w.slice(given).split('').concat(extra)).map(c => {
+          const t = btn({ class: 'tile', onclick: () => {
+            if (at >= w.length) return;
+            if (c === w[at]) { sfx.tap(); slots.children[at].textContent = c; t.classList.add('used'); at++; if (at === w.length) api.win(w.split('').join(', ') + '. ' + w + '!'); }
+            else api.miss(t);
+          } }, c);
+          return t;
+        }));
+        box.append(el('span', { class: 'mini' }, tenFrames(n, '🐾')), slots, tiles);
+        return () => { say(w.split('').join('... ')); const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === w[at]); if (t) t.classList.add('hint'); };
+      },
+    };
+  } },
+};
+
+// Editions: the base game, or a week built from Ellie's school pages. Stars, stickers,
+// decorations and pets are shared; each activity keeps its own level.
+const EDITIONS = {
+  base: { name: 'Base edition', note: 'All Grade 1 math and reading activities', skills: SKILLS },
+  n10:  { name: 'Numbers to 10', note: 'This week · Chapter 1: counting, comparing, counting on and back', skills: N10 },
+};
+const ALL_SKILLS = Object.assign({}, SKILLS, N10);
+const edition = () => EDITIONS[S.edition] || EDITIONS.base;
+const areaSkills = area => Object.keys(edition().skills).filter(k => ALL_SKILLS[k].area === area && !(ALL_SKILLS[k].needsVoice && !canSpeak));
 
 /* ================= screens ================= */
 const app = document.getElementById('app');
@@ -1120,6 +1369,7 @@ function showTitle() {
   screen(el('div', { class: 'title-wrap' }, el('div', { class: 'hero' }, poster, el('div', { class: 'title-card' },
     el('h1', null, S.name + "'s ", el('span', null, 'Animal'), ' Clinic'),
     el('div', { class: 'badge-doc' }, '🩺 Dr. ' + S.name + ', Veterinarian'),
+    S.edition !== 'base' && EDITIONS[S.edition] ? el('div', { class: 'week-badge' }, '📚 This week: ' + edition().name) : null,
     el('p', null, 'The animals need your help! Count, read and solve to make them feel better.'),
     btn({ class: 'big', onclick: () => { sfx.good(); say('Welcome, Doctor ' + S.name + '! Your patients are waiting.'); showRoom(); } }, 'Open the clinic ▶'),
     btn({ class: 'linkbtn', onclick: () => showParentGate() }, 'Grown-ups')))));
@@ -1166,7 +1416,7 @@ function planSkills() {
   else order = [mathOn ? 'math' : 'lang', mathOn ? 'math' : 'lang', mathOn ? 'math' : 'lang'];
   const used = [];
   return order.map(area => {
-    const pool = (area === 'math' ? MATH : LANG).filter(k => !used.includes(k));
+    const pool = areaSkills(area).filter(k => !used.includes(k));
     // lean towards skills practiced least so everything gets a turn
     const least = Math.min(...pool.map(k => (S.stats[k] || { done: 0 }).done));
     const choice = pick(pool.filter(k => (S.stats[k] || { done: 0 }).done <= least + 1));
@@ -1192,7 +1442,7 @@ function drawExam(isFirst) {
     el('ol', { class: 'steps' }, ail.steps.map(([tool, txt], i) => el('li', { class: i < step ? 'done' : i === step ? 'now' : null }, el('span', { class: 'tool' }, tool), txt))),
     DECOR.some(d => d.room === 'exam' && owns(d.id)) ? el('div', { class: 'shelf', 'aria-label': 'Exam room equipment' },
       DECOR.filter(d => d.room === 'exam' && owns(d.id)).map(d => el('span', { title: cap(d.name) }, d.emoji))) : null);
-  const skill = SKILLS[plan[step]], lvl = S.lvl[plan[step]] || 1;
+  const skill = ALL_SKILLS[plan[step]], lvl = S.lvl[plan[step]] || 1;
   const act = skill.make(lvl, a);
   const work = el('div', { class: 'work' }), fb = el('div', { class: 'feedback', 'aria-live': 'polite' });
   const doc = ellie(76);
@@ -1494,13 +1744,13 @@ function showParent() {
   let armed = false;
   const reset = btn({ class: 'big small', onclick: () => {
     if (!armed) { armed = true; reset.textContent = 'Tap again to erase all progress'; return; }
-    const keep = { name: S.name, voice: S.voice, mix: S.mix, checkoutMath: S.checkoutMath };
+    const keep = { name: S.name, voice: S.voice, mix: S.mix, checkoutMath: S.checkoutMath, edition: S.edition };
     Object.keys(S).forEach(k => delete S[k]);
     Object.assign(S, { stars: 0, healed: {}, lvl: {}, streak: {}, stats: {}, queue: null, owned: [], pets: {} }, keep); save(); showParent();
   } }, 'Reset progress');
   const nameIn = el('input', { type: 'text', id: 'kid-name', value: S.name, maxlength: '16', 'aria-label': "Child's name" });
   nameIn.addEventListener('change', () => { S.name = nameIn.value.trim() || 'Ellie'; save(); });
-  const rows = Object.entries(SKILLS).map(([k, sk]) => {
+  const rows = Object.entries(edition().skills).map(([k, sk]) => {
     const st = S.stats[k] || { done: 0, first: 0 }, lv = S.lvl[k] || 1;
     const setLv = d => { S.lvl[k] = Math.min(3, Math.max(1, lv + d)); S.streak[k] = 0; save(); showParent(); };
     return el('tr', null,
@@ -1512,6 +1762,11 @@ function showParent() {
   });
   screen(el('main', { class: 'screen' }, el('section', { class: 'parent' },
     el('h2', null, 'Grown-ups corner'),
+    el('div', { class: 'editions' }, el('h3', null, 'Edition'),
+      el('div', { class: 'edition-pick' }, Object.entries(EDITIONS).map(([id, ed]) =>
+        btn({ class: 'edition' + (edition() === ed ? ' on' : ''), onclick: () => { S.edition = id; save(); showParent(); } },
+          el('b', null, (edition() === ed ? '✓ ' : '') + ed.name), el('small', null, ed.note))))),
+    el('p', null, 'The skill table below shows the activities in the edition you picked. Stars, stickers, decorations and pets are shared by all editions.'),
     el('p', null, 'Every patient needs three treatment steps. Each step is a short activity from the Ontario Grade 1 Mathematics (2020) and Language (2023) curriculum. Levels go up by themselves after three first-try answers in a row, and go down after a struggle. You can also set them by hand below.'),
     el('div', { class: 'settings' },
       el('label', { for: 'kid-name' }, 'Name', nameIn),
