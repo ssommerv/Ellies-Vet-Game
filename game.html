@@ -1327,13 +1327,109 @@ const N10 = {
       },
     };
   } },
+
+  /* ---------- reading from UFLI Home Practice, Lessons 37a and 37b (short o) ---------- */
+  oChain: { area: 'lang', label: 'Word chains', curric: 'UFLI 37 – short o word chains (change one letter)', make(l) {
+    const chain = pick(l === 1 ? O_CHAINS.slice(0, 2) : l === 2 ? O_CHAINS.slice(0, 3) : O_CHAINS);
+    const i = rnd(0, chain.length - 2), from = chain[i], to = chain[i + 1], line = chainStep(from, to);
+    const others = sample([...new Set(O_CHAINS.flat())].filter(w => w !== to && w !== from), 1);
+    return {
+      prompt: line + ' What word is this?', speak: 'This word is ' + from + '. ' + line + ' What word is this?',
+      build(box, api) {
+        box.append(el('div', { class: 'row' }, el('div', { class: 'bigword' }, from), el('span', { class: 'op' }, '→'), el('div', { class: 'bigword' }, el('span', { class: 'hl' }, '?'))));
+        return choiceRow(box, shuffle([to, from, ...others]).map(w => ({ label: w, ok: w === to, after: from + ', ' + to + '!' })), api, 'word');
+      },
+    };
+  } },
+
+  oSpell: { area: 'lang', label: 'Spelling short o words', curric: 'UFLI 37 – spelling short o words', make(l) {
+    const w = pick(l === 3 ? O_WORDS_B : O_WORDS_A), given = l === 1 ? 1 : 0;
+    const extra = sample('abcdefghiklmnprstuz'.split('').filter(c => !w.includes(c)), l);
+    return {
+      prompt: 'Listen, then spell the word.', speak: 'Can you spell ' + w + '? ' + w + '.',
+      build(box, api) {
+        const slots = el('div', { class: 'slots' }, w.split('').map((c, i) => el('div', { class: 'slot' + (i < given ? ' given' : '') }, i < given ? c : '')));
+        let at = given;
+        const tiles = el('div', { class: 'tiles' }, shuffle(w.slice(given).split('').concat(extra)).map(c => {
+          const t = btn({ class: 'tile', onclick: () => {
+            if (at >= w.length) return;
+            if (c === w[at]) { sfx.tap(); slots.children[at].textContent = c; t.classList.add('used'); at++; if (at === w.length) api.win(w.split('').join(', ') + '. ' + w + '!'); }
+            else api.miss(t);
+          } }, c);
+          return t;
+        }));
+        box.append(O_PICS[w] ? btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(w) }, el('span', { class: 'bigpic' }, O_PICS[w]))
+          : btn({ class: 'big sun small', onclick: () => say(w) }, '🔊 Hear the word'), slots, tiles);
+        return () => { say(w.split('').join('... ')); const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === w[at]); if (t) t.classList.add('hint'); };
+      },
+    };
+  } },
+
+  oHeart: { area: 'lang', label: 'Heart words', curric: 'UFLI 37 – heart words he, be, me, from', needsVoice: true, make(l) {
+    const ans = pick(HEART_WORDS);
+    const words = l === 1 ? shuffle([ans, ...sample(HEART_WORDS.filter(w => w !== ans), 2)])
+      : l === 2 ? shuffle(HEART_WORDS.slice())
+      : shuffle([ans, ...sample(HEART_WORDS.filter(w => w !== ans), 1), ...sample(['we', 'she', 'for', 'the', 'my'], 2)]);
+    return {
+      prompt: 'Listen, then find the heart word you hear.', speak: 'Find the word: ' + ans + '. ' + ans + '.',
+      build(box, api) {
+        box.append(btn({ class: 'big sun small', onclick: () => say(ans) }, '🔊 Hear the word again'));
+        return choiceRow(box, words.map(w => ({ label: w, ok: w === ans, after: ans + '!' })), api, 'word');
+      },
+    };
+  } },
+
+  oRead: { area: 'lang', label: 'Read and answer', curric: 'UFLI 37 – reading short o sentences', make(l) {
+    if (l > 1 && Math.random() < 0.5) {
+      const [q, yes] = pick(O_QUESTIONS);
+      return {
+        prompt: 'Read the question. Tap Yes or No.', speak: 'Read the question by yourself. Then tap yes or no.',
+        build(box, api) {
+          box.append(el('div', { class: 'bigword', style: 'font-size:44px' }, q));
+          return choiceRow(box, ['Yes', 'No'].map(w => ({ label: w, ok: (w === 'Yes') === yes, after: q + ' ' + (yes ? 'Yes!' : 'No!') })), api, 'word');
+        },
+      };
+    }
+    const an = pick(O_SCENE_ANIMALS), pl = pick(O_SCENE_PLACES);
+    const text = 'The ' + an[0] + ' is on the ' + pl[0] + '.';
+    const opts = shuffle([[an, pl], [O_SCENE_ANIMALS.find(x => x !== an), pl], [an, O_SCENE_PLACES.find(x => x !== pl)]]);
+    return {
+      prompt: 'Read the vet note. Tap the picture that matches.', speak: 'Read the vet note by yourself. Then tap the picture that matches.',
+      build(box, api) {
+        box.append(el('div', { class: 'bigword', style: 'font-size:44px' }, text));
+        return choiceRow(box, opts.map(([x, y]) => ({ node: el('span', { class: 'scene' }, el('span', null, x[1]), el('span', null, y[1])), aria: x[0] + ' and ' + y[0], ok: x === an && y === pl, after: text })), api);
+      },
+    };
+  } },
 };
+// UFLI 37a (short o review) and 37b (short o advanced review) word lists, heart words and chains.
+const O_WORDS_A = ['not', 'sob', 'dog', 'hop', 'box', 'jog'];
+const O_WORDS_B = ['frog', 'spot', 'drop', 'plot', 'cost', 'soft'];
+const HEART_WORDS = ['he', 'be', 'me', 'from'];
+const O_PICS = { dog: '🐶', box: '📦', frog: '🐸', drop: '💧', jog: '🏃' };
+const O_CHAINS = [['lot', 'log', 'dog', 'dot', 'not'], ['top', 'hop', 'hot', 'pot', 'pop'], ['cost', 'lost', 'lot', 'slot'], ['plot', 'slot', 'slop', 'stop']];
+const O_QUESTIONS = [['Can a frog hop?', true], ['Can a box hop?', false], ['Can a dog jog?', true], ['Can a log jog?', false],
+  ['Is a frog a dog?', false], ['Can he jog?', true], ['Can a frog sit on a log?', true], ['Can a dog sit in a box?', true],
+  ['Can a pot hop?', false], ['Can a mop jog?', false], ['Is a log soft?', false], ['Is a dog a frog?', false]];
+const O_SCENE_ANIMALS = [['dog', '🐶'], ['frog', '🐸']];
+const O_SCENE_PLACES = [['box', '📦'], ['log', '🪵']];
+// The UFLI word-work instruction for one step of a chain ("Change the t to g.")
+function chainStep(a, b) {
+  if (a.length === b.length) { const i = [...a].findIndex((c, k) => c !== b[k]); return 'Change the ' + a[i] + ' to ' + b[i] + '.'; }
+  if (b.length === a.length + 1) {
+    const i = [...b].findIndex((c, k) => b.slice(0, k) + b.slice(k + 1) === a);
+    return i === 0 ? 'Add ' + b[0] + ' to the start.' : i === b.length - 1 ? 'Add ' + b[i] + ' to the end.' : 'Add ' + b[i] + ' after the ' + b[i - 1] + '.';
+  }
+  const i = [...a].findIndex((c, k) => a.slice(0, k) + a.slice(k + 1) === b);
+  return 'Take away the ' + a[i] + '.';
+}
 
 // Editions: the base game, or a week built from Ellie's school pages. Stars, stickers,
 // decorations and pets are shared; each activity keeps its own level.
 const EDITIONS = {
   base: { name: 'Base edition', note: 'All Grade 1 math and reading activities', skills: SKILLS },
-  n10:  { name: 'Numbers to 10', note: 'This week · Chapter 1: counting, comparing, counting on and back', skills: N10 },
+  n10:  { name: 'Week of Sept 28', badge: 'Numbers to 10 · short o words', skills: N10,
+          note: 'Math: Numbers to 10 (counting, comparing, counting on and back) · Reading: number words, short o words and heart words (UFLI 37a/b)' },
 };
 const ALL_SKILLS = Object.assign({}, SKILLS, N10);
 const edition = () => EDITIONS[S.edition] || EDITIONS.base;
@@ -1362,7 +1458,7 @@ function showTitle() {
   screen(el('div', { class: 'title-wrap' }, el('div', { class: 'hero' }, poster, el('div', { class: 'title-card' },
     el('h1', null, S.name + "'s ", el('span', null, 'Animal'), ' Clinic'),
     el('div', { class: 'badge-doc' }, '🩺 Dr. ' + S.name + ', Veterinarian'),
-    S.edition !== 'base' && EDITIONS[S.edition] ? el('div', { class: 'week-badge' }, '📚 This week: ' + edition().name) : null,
+    S.edition !== 'base' && EDITIONS[S.edition] ? el('div', { class: 'week-badge' }, '📚 This week: ' + (edition().badge || edition().name)) : null,
     el('p', null, 'The animals need your help! Count, read and solve to make them feel better.'),
     btn({ class: 'big', onclick: () => { sfx.good(); say('Welcome, Doctor ' + S.name + '! Your patients are waiting.'); showRoom(); } }, 'Open the clinic ▶'),
     btn({ class: 'linkbtn', onclick: () => showParentGate() }, 'Grown-ups')))));

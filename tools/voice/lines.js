@@ -157,6 +157,15 @@ window.voiceLines = function (T) {
   }));
   T.NUM_WORDS.forEach(w => add(w + '.', w + '!', 'Can you spell ' + w + '?', w.split('').join(', ') + '.'));
 
+  // week reading: UFLI 37a/b short o words, heart words and word chains
+  const oWords = [...new Set([...T.O_WORDS_A, ...T.O_WORDS_B, ...T.O_CHAINS.flat(), ...T.HEART_WORDS])];
+  oWords.forEach(w => add(w + '.', w + '!', 'Can you spell ' + w + '?', w.split('').join(', ') + '.', 'This word is ' + w + '.', 'Find the word: ' + w + '.'));
+  T.O_CHAINS.forEach(c => c.slice(1).forEach((to, i) => add(T.chainStep(c[i], to), c[i] + ', ' + to + '!')));
+  add('What word is this?', 'Listen, then spell the word.', 'Read the question by yourself.', 'Then tap yes or no.', 'Read the vet note by yourself.', 'Then tap the picture that matches.');
+  T.O_QUESTIONS.forEach(([q]) => add(q));
+  T.O_SCENE_ANIMALS.forEach(([a]) => T.O_SCENE_PLACES.forEach(([p]) => add('The ' + a + ' is on the ' + p + '.')));
+  ['we', 'she', 'for', 'the', 'my'].forEach(w => add(w + '!'));
+
   // adopted pets
   A.forEach(a => add('You adopted ' + a.name + '!', 'Welcome to the family, ' + a.name + '!', 'Say hi to ' + a.name + '!',
     a.name + ' missed you!', a.name + ' loves the food!', a.name + ' loves pats!', a.name + ' loves to play!', a.name + ' is so happy!'));

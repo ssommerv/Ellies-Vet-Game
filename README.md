@@ -32,7 +32,10 @@ The Grown-ups corner has an **Edition** picker:
   to 10, more/fewer/same and greater/less than, what comes next, 1–4 more or
   less and "how many more", counting on and back with ten frames, ordering cube
   towers, and three number-word reading activities (read, match and spell zero
-  to ten).
+  to ten). Its reading also covers UFLI Home Practice Lessons 37a/37b: short o
+  word chains ("Change the t to g"), spelling the short o words (not, sob, dog,
+  hop, box, jog, frog, spot, drop, plot, cost, soft), the heart words he, be,
+  me and from, and reading short o sentences and yes/no questions.
 
 Stars, stickers, decorations and pets are shared by all editions; each activity
 keeps its own level. A new week is a new entry in `EDITIONS` in `game.html`
