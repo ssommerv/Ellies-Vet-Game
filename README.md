@@ -71,6 +71,13 @@ node tools/build.mjs && node tools/voice/run.cjs   # list every line and check c
 python3 tools/voice/build_voice.py --voice af_heart --model <folder with the model files>
 ```
 
+To use an ElevenLabs voice instead (for example a saved voice called "Jessa"),
+set `ELEVENLABS_API_KEY` in the environment (never in the repo), then run
+`python3 tools/voice/build_voice_elevenlabs.py --voice-name Jessa --estimate`
+to count characters, `--sample 8` to hear a few lines, and no flag to record
+everything. Recorded lines are cached in `.voice-cache/` (not committed), so
+re-runs only pay for new lines.
+
 If you change what the game says, update `tools/voice/lines.js` too;
 `run.cjs` reports any spoken sentence that has no recording. Re-running
 `build_voice.py` only records lines that are new; add `--fresh` to re-record
