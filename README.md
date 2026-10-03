@@ -55,8 +55,10 @@ Open `index.html` in Safari, or host the repo with GitHub Pages:
 
 ## Narrator voice
 
-Every line the game speaks is pre-recorded with [Kokoro](https://huggingface.co/hexgrad/Kokoro-82M),
-a free, open-source voice model, and stored in `voice/`. Any line without a
+Every line the game speaks is pre-recorded and stored in `voice/`. The narrator
+is the ElevenLabs voice "Jessa" (Multilingual v2, made with
+`tools/voice/build_voice_elevenlabs.py`); the free [Kokoro](https://huggingface.co/hexgrad/Kokoro-82M)
+model (`build_voice.py`) is the no-cost alternative. Any line without a
 recording (for example after changing the child's name) is read by the
 device's own voice. On an iPad, downloading an Enhanced voice (Settings →
 Accessibility → Spoken Content → Voices) makes that fallback sound better.
@@ -76,7 +78,9 @@ set `ELEVENLABS_API_KEY` in the environment (never in the repo), then run
 `python3 tools/voice/build_voice_elevenlabs.py --voice-name Jessa --estimate`
 to count characters, `--sample 8` to hear a few lines, and no flag to record
 everything. Recorded lines are cached in `.voice-cache/` (not committed), so
-re-runs only pay for new lines.
+re-runs only pay for new lines. It also reuses the clips already in `voice/`
+when they were made with the same voice, so adding a week only records its new
+lines.
 
 If you change what the game says, update `tools/voice/lines.js` too;
 `run.cjs` reports any spoken sentence that has no recording. Re-running

@@ -88,8 +88,18 @@ def main():
 
     t0, done = time.time(), 0
     datas = {}
+    # Reuse clips already in --out when they were made with this voice, so a new week only pays for new lines.
+    index_path = os.path.join(a.out, 'index.json')
+    if os.path.exists(index_path):
+        prev = json.load(open(index_path))
+        if prev.get('voice') == 'elevenlabs:' + vname:
+            packs_old = [open(os.path.join(a.out, p), 'rb').read() for p in prev['packs']]
+            for key_, (p, off, n) in prev['clips'].items():
+                if key_ in lines: datas[key_] = packs_old[p][off:off + n]
+    todo = {k: t for k, t in lines.items() if k not in datas}
+    print(f'{len(datas)} lines reused, {len(todo)} to record ({sum(len(t) for t in todo.values())} characters)', flush=True)
     with cf.ThreadPoolExecutor(a.workers) as pool:
-        futs = {pool.submit(record, text): key_ for key_, text in lines.items()}
+        futs = {pool.submit(record, text): key_ for key_, text in todo.items()}
         for f in cf.as_completed(futs):
             datas[futs[f]] = f.result(); done += 1
             if done % 200 == 0: print(f'{done}/{len(lines)} {time.time() - t0:.0f}s', flush=True)
