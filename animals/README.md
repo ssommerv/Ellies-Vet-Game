@@ -22,6 +22,16 @@ photo is missing, the game shows the animal's emoji instead.
 | raccoon.png | Bandit the raccoon |
 | beaver.png | Chomper the beaver |
 | chick.png | Sunny the chick |
+| panda.png | Bao the panda cub |
+| koala.png | Kip the koala |
+| penguin.png | Pip the penguin |
+| guineapig.png | Nibbles the guinea pig |
+| squirrel.png | Hazel the squirrel |
+| fawn.png | Fern the fawn |
+| seal.png | Splash the seal pup |
+| otter.png | Ollie the otter |
+| mouse.png | Squeak the mouse |
+| sloth.png | Mo the sloth |
 
 Good free sources: Wikimedia Commons, Pixabay, Unsplash, Pexels. To cut out
 the background, use the "Remove background" option (long-press a photo in the

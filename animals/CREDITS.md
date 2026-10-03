@@ -23,3 +23,13 @@ licence.
 | raccoon.png | [Curious Raccoon.jpg](https://commons.wikimedia.org/wiki/File:Curious_Raccoon.jpg) | Paxson Woelber | CC BY-SA 3.0 |
 | beaver.png | [American Beaver.jpg](https://commons.wikimedia.org/wiki/File:American_Beaver.jpg) | Steve from Washington, DC, USA | CC BY-SA 2.0 |
 | chick.png | [A young chicken standing, April 2022.jpg](https://commons.wikimedia.org/wiki/File:A_young_chicken_standing,_April_2022.jpg) | GrinningIodize | CC BY-SA 4.0 |
+| panda.png | [Giant panda on a white background.png](https://commons.wikimedia.org/wiki/File:Giant_panda_on_a_white_background.png) | Harald | CC BY 2.0 |
+| koala.png | [Koala climbing tree.jpg](https://commons.wikimedia.org/wiki/File:Koala_climbing_tree.jpg) | Diliff | CC BY-SA 3.0 |
+| penguin.png | [Falkland Islands Penguins 05.jpg](https://commons.wikimedia.org/wiki/File:Falkland_Islands_Penguins_05.jpg) | Ben Tubby | CC BY 2.0 |
+| guineapig.png | [George the amazing guinea pig.jpg](https://commons.wikimedia.org/wiki/File:George_the_amazing_guinea_pig.jpg) | Unknown | CC BY-SA 3.0 |
+| squirrel.png | [EasternGraySquirrel GAm.jpg](https://commons.wikimedia.org/wiki/File:EasternGraySquirrel_GAm.jpg) | JeffreyGammon | CC BY-SA 4.0 |
+| fawn.png | [Kid-jbk.jpg](https://commons.wikimedia.org/wiki/File:Kid-jbk.jpg) | Jan Bo Kristensen | CC BY-SA 3.0 |
+| seal.png | [Harbor seal mammal phoca vitulina.jpg](https://commons.wikimedia.org/wiki/File:Harbor_seal_mammal_phoca_vitulina.jpg) | Boyd Amanda, U.S. Fish and Wildlife Service | Public domain |
+| otter.png | [Northern River Otter on Seedskadee NWR (22802102984).jpg](https://commons.wikimedia.org/wiki/File:Northern_River_Otter_on_Seedskadee_NWR_(22802102984).jpg) | USFWS Mountain-Prairie | Public domain |
+| mouse.png | [ApodemusSylvaticus.jpg](https://commons.wikimedia.org/wiki/File:ApodemusSylvaticus.jpg) | Christian Fischer | CC BY-SA 4.0 |
+| sloth.png | [Bicho-preguiça 3.jpg](https://commons.wikimedia.org/wiki/File:Bicho-pregui%C3%A7a_3.jpg) | Daniella Maraschiello | CC BY-SA 4.0 |
