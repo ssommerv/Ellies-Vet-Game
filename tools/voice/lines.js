@@ -166,6 +166,14 @@ window.voiceLines = function (T) {
   T.O_SCENE_ANIMALS.forEach(([a]) => T.O_SCENE_PLACES.forEach(([p]) => add('The ' + a + ' is on the ' + p + '.')));
   ['we', 'she', 'for', 'the', 'my'].forEach(w => add(w + '!'));
 
+  // Chapter 1 test practice
+  range(6, 10).forEach(y => add(y + ' is how many more than 5?', y + ' is ' + (y - 5) + ' more than 5!'));
+  range(4, 9).forEach(x => add(x + ' is how many less than 10?', x + ' is ' + (10 - x) + ' less than 10!'));
+  range(1, 4).forEach(k => add('What is ' + k + ' more than 5?', k + ' more than 5 is ' + (5 + k) + '!', 'What is ' + k + ' less than 10?', k + ' less than 10 is ' + (10 - k) + '!'));
+  add('Count.', 'Tap the 2 groups that show the same number.', 'Those two are not the same.', 'Count again!',
+    'Tap the group that has more.', 'Tap the group that has fewer.', 'Now fill in the blanks.', 'Tap the number, then the word.', 'Now tap the word.');
+  T.T1_GROUPS.forEach(([, t]) => { add('Count the ' + t + '.'); range(1, 10).forEach(n => add('Yes, ' + n + ' ' + t + '!')); });
+
   // adopted pets
   A.forEach(a => add('You adopted ' + a.name + '!', 'Welcome to the family, ' + a.name + '!', 'Say hi to ' + a.name + '!',
     a.name + ' missed you!', a.name + ' loves the food!', a.name + ' loves pats!', a.name + ' loves to play!', a.name + ' is so happy!'));

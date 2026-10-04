@@ -268,6 +268,19 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .dot{width:30px;height:30px;border-radius:50%;background:#4F5D66;display:block}
 .dot.hot{background:var(--coral)}
 .dot.empty{background:none;border:2px dashed var(--line)}
+.dot.empty.gap{border:3px solid var(--coral);background:#FFE3DE}
+.track .tcell:nth-child(5){margin-right:5px}   /* a thicker line after 5 makes "more than 5" easy to see */
+/* test practice */
+.week-badge.test{background:var(--coral);color:#fff;box-shadow:0 4px 0 var(--coral-deep)}
+.sets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;max-width:640px}
+.sets .choice.set{min-height:130px;padding:10px}
+.sets .group{font-size:30px;max-width:230px;background:none;padding:0}
+.choice.set.picked{border-color:var(--sun-deep);background:#FFF3CF;box-shadow:0 6px 0 var(--sun-deep)}
+.blank{display:inline-block;min-width:1.2em;padding:0 .2em;border-bottom:5px solid var(--teal);color:var(--coral);text-align:center}
+.blank.filled{color:var(--ink)}
+.blank.wide{min-width:3em}
+.labelbox{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;justify-content:center;font:700 44px var(--read);background:#FFFBEA;border:3px dashed var(--sun-deep);border-radius:18px;padding:8px 22px}
+.labelbox small{font-size:22px;color:var(--ink-soft)}
 .towers{display:flex;align-items:flex-end;justify-content:center;gap:14px;flex-wrap:wrap;min-height:250px}
 .tower{border:none;background:none;padding:6px;display:flex;flex-direction:column;align-items:center;gap:6px;border-radius:14px}
 .tower .cubes{display:flex;flex-direction:column;gap:2px}
@@ -1434,15 +1447,156 @@ function chainStep(a, b) {
   return 'Take away the ' + a[i] + '.';
 }
 
+/* ================= Chapter 1 unit test practice (test on Monday, October 5, 2026) =================
+   From the teacher's review note and the review package: counting to 10 in numbers and words,
+   comparing sets (more / fewer / same, greater than / less than), counting on and back, and
+   relating numbers to 5 and 10. "8 is __ more than 5" was the one that tripped Ellie up, so
+   those questions come up in nearly every patient. */
+const T1_GROUPS = [['🐦', 'birds'], ['🐿️', 'squirrels'], ['🐻', 'bear cubs'], ['🦎', 'lizards'], ['🐯', 'tiger cubs'], ['🐺', 'wolf cubs'], ['🍃', 'leaves']];
+const T1_SETS = [['🌼', 'flowers'], ['🌹', 'roses'], ['🐰', 'bunnies'], ['🦆', 'ducks'], ['🧁', 'cupcakes'], ['🥪', 'sandwiches'], ['🥧', 'pies'], ['🍓', 'strawberries']];
+const T1 = {
+  t1five: { area: 'math', label: 'More than 5, less than 10', curric: 'Chapter 1 test – relate numbers to 5 and 10', make(l) {
+    const kind = pick(l === 1 ? ['more5', 'less10'] : ['more5', 'less10', 'more5', 'less10', 'from5', 'from10']);
+    let prompt, speak, ans, after, plain, helped, lo = 1;
+    if (kind === 'more5') {
+      const y = l === 1 ? rnd(6, 8) : rnd(6, 10); ans = y - 5;
+      prompt = y + ' is __ more than 5.'; speak = y + ' is how many more than 5?'; after = y + ' is ' + ans + ' more than 5!';
+      plain = () => track(y); helped = () => track(y, 5);
+    } else if (kind === 'less10') {
+      const x = l === 1 ? rnd(7, 9) : rnd(l === 3 ? 4 : 5, 9); ans = 10 - x;
+      prompt = x + ' is __ less than 10.'; speak = x + ' is how many less than 10?'; after = x + ' is ' + ans + ' less than 10!';
+      plain = () => track(x); helped = () => { const t = track(x); t.querySelectorAll('.dot.empty').forEach(d => d.classList.add('gap')); return t; };
+    } else if (kind === 'from5') {
+      const k = rnd(1, 4); ans = 5 + k; lo = 5;
+      prompt = k + ' more than 5 is __.'; speak = 'What is ' + k + ' more than 5?'; after = k + ' more than 5 is ' + ans + '!';
+      plain = () => track(5); helped = () => track(ans, 5);
+    } else {
+      const k = rnd(1, 4); ans = 10 - k; lo = 4;
+      prompt = k + ' less than 10 is __.'; speak = 'What is ' + k + ' less than 10?'; after = k + ' less than 10 is ' + ans + '!';
+      plain = () => track(10); helped = () => track(10, ans);
+    }
+    return {
+      prompt, speak,
+      build(box, api) {
+        // Level 1 shows the counters to count (past 5, or the gaps up to 10); later levels show them as a hint.
+        let t = l === 1 ? helped() : plain();
+        box.append(t);
+        const hint = choiceRow(box, near(ans, lo, 10).map(v => ({ label: String(v), ok: v === ans, after })), api);
+        return () => { const h = helped(); t.replaceWith(h); t = h; hint(); };
+      },
+    };
+  } },
+
+  t1same: { area: 'math', label: 'Same number', curric: 'Chapter 1 test – find 2 sets that show the same number', start: 2, make(l) {
+    const n = l === 1 ? rnd(2, 5) : rnd(2, 8), kinds = sample(T1_SETS, 4);
+    const others = sample(upto(1, l === 1 ? 6 : 9).filter(x => x !== n && (l === 1 || Math.abs(x - n) <= 3)), 2);
+    const counts = shuffle([n, n, ...others]);
+    return {
+      prompt: 'Count. Tap the 2 groups that show the same number.', speak: 'Count. Tap the 2 groups that show the same number.',
+      build(box, api) {
+        let picked = [];
+        const grid = el('div', { class: 'sets' }, counts.map((c, i) => {
+          const b = btn({ class: 'choice set', 'aria-label': c + ' ' + kinds[i][1], onclick: () => {
+            if (b.classList.contains('right') || picked.includes(b)) return;
+            sfx.tap(); b.classList.add('picked'); picked.push(b);
+            if (picked.length < 2) return;
+            const [p, q] = picked;
+            if (+p.dataset.c === +q.dataset.c) { p.classList.add('right'); q.classList.add('right'); api.win(n + ' and ' + n + ' are the same!'); }
+            else { api.miss(q, 'Those two are not the same. Count again!'); setTimeout(() => { p.classList.remove('picked'); q.classList.remove('picked'); }, 700); picked = []; }
+          } }, iconGroup(c, kinds[i][0]));
+          b.dataset.c = c;
+          return b;
+        }));
+        box.append(grid);
+        return () => [...grid.children].forEach(b => +b.dataset.c === n && b.classList.add('hint'));
+      },
+    };
+  } },
+
+  t1compare: { area: 'math', label: 'Greater than, less than', curric: 'Chapter 1 test – circle the set with more or fewer, then fill in the blanks', start: 2, make(l) {
+    const [[ia, na], [ib, nb]] = sample(T1_SETS, 2);
+    let a = rnd(2, l === 1 ? 6 : 10), b;
+    do { b = rnd(2, l === 1 ? 6 : 10); } while (b === a || (l === 1 && Math.abs(a - b) < 2));
+    const more = Math.random() < 0.5, big = Math.max(a, b), small = Math.min(a, b);
+    const target = more ? big : small, order = more ? [big, small] : [small, big];
+    const rel = more ? ' is greater than ' : ' is less than ';
+    return {
+      prompt: 'Count. Tap the group that has ' + (more ? 'more.' : 'fewer.'), speak: 'Count. Tap the group that has ' + (more ? 'more.' : 'fewer.'),
+      build(box, api) {
+        let stage = 1, at = 0;
+        const blanks = [el('span', { class: 'blank' }, '?'), el('span', { class: 'blank' }, '?')];
+        const sentence = el('div', { class: 'bigword', hidden: true }, blanks[0], rel, blanks[1], '.');
+        const tiles = el('div', { class: 'tiles', hidden: true }, shuffle([a, b, ...sample(upto(1, 10).filter(x => x !== a && x !== b), 2)]).map(v => {
+          const t = btn({ class: 'tile', onclick: () => {
+            if (stage !== 2 || at >= 2) return;
+            if (v === order[at]) { sfx.tap(); say(String(v)); blanks[at].textContent = v; blanks[at].classList.add('filled'); t.classList.add('used'); at++; if (at === 2) api.win(order[0] + rel + order[1] + '!'); }
+            else api.miss(t);
+          } }, String(v));
+          return t;
+        }));
+        const groups = el('div', { class: 'sets two' }, [[a, ia, na], [b, ib, nb]].map(([c, ic, nm]) => {
+          const g = btn({ class: 'choice set', 'aria-label': c + ' ' + nm, onclick: () => {
+            if (stage !== 1) return;
+            if (c === target) { stage = 2; g.classList.add('right'); sfx.good(); say('Now fill in the blanks.'); sentence.hidden = false; tiles.hidden = false; }
+            else api.miss(g);
+          } }, iconGroup(c, ic));
+          g.dataset.c = c;
+          return g;
+        }));
+        box.append(groups, sentence, tiles);
+        return () => {
+          if (stage === 1) [...groups.children].forEach(g => +g.dataset.c === target && g.classList.add('hint'));
+          else { const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === String(order[at])); if (t) t.classList.add('hint'); }
+        };
+      },
+    };
+  } },
+
+  t1write: { area: 'math', label: 'Numbers and words', curric: 'Chapter 1 test – count, then write the number and the word', start: 2, make(l) {
+    const n = l === 1 ? rnd(1, 5) : rnd(1, 10), [ic, thing] = pick(T1_GROUPS);
+    return {
+      prompt: 'Count the ' + thing + '. Tap the number, then the word.', speak: 'Count the ' + thing + '. Tap the number, then the word.',
+      build(box, api) {
+        const num = el('span', { class: 'blank' }, '?'), word = el('span', { class: 'blank wide' }, '?');
+        const label = el('div', { class: 'labelbox' }, num, el('span', null, ' – '), word, el('small', null, thing));
+        const area = el('div');
+        let stage = 1, hint;
+        const words = () => {
+          area.replaceChildren();
+          const opts = shuffle([n, ...sample(near(n, 0, 10).filter(x => x !== n), 2)]);
+          hint = choiceRow(area, opts.map(v => ({ label: NUM_WORDS[v], ok: v === n, after: 'Yes, ' + n + ' ' + thing + '!' })), {
+            win: after => { word.textContent = NUM_WORDS[n]; word.classList.add('filled'); api.win(after); }, miss: api.miss }, 'word');
+        };
+        hint = choiceRow(area, near(n, 1, 10).map(v => ({ label: String(v), ok: v === n })), {
+          win: () => { stage = 2; num.textContent = n; num.classList.add('filled'); sfx.tap(); say(String(n) + '. Now tap the word.'); setTimeout(words, 400); },
+          miss: api.miss });
+        box.append(iconGroup(n, ic), label, area);
+        return () => hint && hint();
+      },
+    };
+  } },
+};
+const TEST_UNTIL = new Date(2026, 9, 6);   // practice mode ends by itself at midnight after the test (Monday Oct 5, local time)
+const TEST_SKILLS = Object.assign({}, T1, {
+  n10moreless: N10.n10moreless, n10compare: N10.n10compare, n10next: N10.n10next, n10back: N10.n10back,
+  n10order: N10.n10order, n10count: N10.n10count, n10readword: N10.n10readword, n10wordpick: N10.n10wordpick, n10spell: N10.n10spell });
+// How often each activity comes up in test practice (higher = more often).
+const TEST_WEIGHTS = { t1five: 6, n10moreless: 2, t1compare: 3, t1write: 3, t1same: 2, n10compare: 2, n10next: 2, n10back: 2,
+  n10order: 1, n10count: 1, n10readword: 1, n10wordpick: 1, n10spell: 1 };
+
 // Editions: the base game, or a week built from Ellie's school pages. Stars, stickers,
 // decorations and pets are shared; each activity keeps its own level.
 const EDITIONS = {
   base: { name: 'Base edition', note: 'All Grade 1 math and reading activities', skills: SKILLS },
   n10:  { name: 'Week of Sept 28', badge: 'Numbers to 10 · short o words', skills: N10,
           note: 'Math: Numbers to 10 (counting, comparing, counting on and back) · Reading: number words, short o words and heart words (UFLI 37a/b)' },
+  test1: { name: 'Chapter 1 test practice', badge: 'Test practice: Numbers to 10', skills: TEST_SKILLS, weights: TEST_WEIGHTS, temporary: true,
+          note: 'Only the Chapter 1 unit test topics, with extra "more than 5 / less than 10" questions. Ends by itself after Monday, October 5.' },
 };
-const ALL_SKILLS = Object.assign({}, SKILLS, N10);
-const edition = () => EDITIONS[S.edition] || EDITIONS.base;
+const ALL_SKILLS = Object.assign({}, SKILLS, N10, T1);
+const testOn = () => Date.now() < TEST_UNTIL && !S.testOff;
+const edition = () => testOn() ? EDITIONS.test1 : EDITIONS[S.edition] || EDITIONS.base;
+const levelOf = k => S.lvl[k] || (ALL_SKILLS[k] && ALL_SKILLS[k].start) || 1;
 const areaSkills = area => Object.keys(edition().skills).filter(k => ALL_SKILLS[k].area === area && !(ALL_SKILLS[k].needsVoice && !canSpeak));
 
 /* ================= screens ================= */
@@ -1468,7 +1622,8 @@ function showTitle() {
   screen(el('div', { class: 'title-wrap' }, el('div', { class: 'hero' }, poster, el('div', { class: 'title-card' },
     el('h1', null, S.name + "'s ", el('span', null, 'Animal'), ' Clinic'),
     el('div', { class: 'badge-doc' }, '🩺 Dr. ' + S.name + ', Veterinarian'),
-    S.edition !== 'base' && EDITIONS[S.edition] ? el('div', { class: 'week-badge' }, '📚 This week: ' + (edition().badge || edition().name)) : null,
+    testOn() ? el('div', { class: 'week-badge test' }, '📝 ' + edition().badge + ' · test on Monday')
+      : S.edition !== 'base' && EDITIONS[S.edition] ? el('div', { class: 'week-badge' }, '📚 This week: ' + (edition().badge || edition().name)) : null,
     el('p', null, 'The animals need your help! Count, read and solve to make them feel better.'),
     btn({ class: 'big', onclick: () => { sfx.good(); say('Welcome, Doctor ' + S.name + '! Your patients are waiting.'); showRoom(); } }, 'Open the clinic ▶'),
     btn({ class: 'linkbtn', onclick: () => showParentGate() }, 'Grown-ups')))));
@@ -1509,6 +1664,15 @@ function showRoom(fresh) {
 }
 
 function planSkills() {
+  const w = edition().weights;
+  if (w) {
+    // Weighted picks: the first step is always a "more than 5 / less than 10" style question.
+    const draw = pool => { let r = Math.random() * pool.reduce((s, k) => s + w[k], 0); return pool.find(k => (r -= w[k]) < 0) || pool[0]; };
+    const first = draw(['t1five', 'n10moreless'].filter(k => w[k]));
+    const plan = [first];
+    while (plan.length < 3) plan.push(draw(Object.keys(w).filter(k => !plan.includes(k) && !(ALL_SKILLS[k].needsVoice && !canSpeak))));
+    return plan;
+  }
   const mathOn = S.mix !== 'lang', langOn = S.mix !== 'math';
   let order;
   if (mathOn && langOn) order = Math.random() < 0.5 ? ['math', 'lang', 'math'] : ['lang', 'math', 'lang'];
@@ -1541,7 +1705,7 @@ function drawExam(isFirst) {
     el('ol', { class: 'steps' }, ail.steps.map(([tool, txt], i) => el('li', { class: i < step ? 'done' : i === step ? 'now' : null }, el('span', { class: 'tool' }, tool), txt))),
     DECOR.some(d => d.room === 'exam' && owns(d.id)) ? el('div', { class: 'shelf', 'aria-label': 'Exam room equipment' },
       DECOR.filter(d => d.room === 'exam' && owns(d.id)).map(d => el('span', { title: cap(d.name) }, d.emoji))) : null);
-  const skill = ALL_SKILLS[plan[step]], lvl = S.lvl[plan[step]] || 1;
+  const skill = ALL_SKILLS[plan[step]], lvl = levelOf(plan[step]);
   const act = skill.make(lvl, a);
   const work = el('div', { class: 'work' }), fb = el('div', { class: 'feedback', 'aria-live': 'polite' });
   const doc = ellie(76);
@@ -1591,7 +1755,7 @@ function drawExam(isFirst) {
 function record(skill, misses) {
   const st = S.stats[skill] || (S.stats[skill] = { done: 0, first: 0 });
   st.done++; if (!misses) st.first++;
-  const lv = S.lvl[skill] || 1;
+  const lv = levelOf(skill);
   let up = false;
   if (!misses) {
     S.streak[skill] = (S.streak[skill] || 0) + 1;
@@ -1850,7 +2014,7 @@ function showParent() {
   const nameIn = el('input', { type: 'text', id: 'kid-name', value: S.name, maxlength: '16', 'aria-label': "Child's name" });
   nameIn.addEventListener('change', () => { S.name = nameIn.value.trim() || 'Ellie'; save(); });
   const rows = Object.entries(edition().skills).map(([k, sk]) => {
-    const st = S.stats[k] || { done: 0, first: 0 }, lv = S.lvl[k] || 1;
+    const st = S.stats[k] || { done: 0, first: 0 }, lv = levelOf(k);
     const setLv = d => { S.lvl[k] = Math.min(3, Math.max(1, lv + d)); S.streak[k] = 0; save(); showParent(); };
     return el('tr', null,
       el('td', null, el('span', { class: 'chip ' + sk.area }, sk.area === 'math' ? 'Math' : 'Language')),
@@ -1861,10 +2025,17 @@ function showParent() {
   });
   screen(el('main', { class: 'screen' }, el('section', { class: 'parent' },
     el('h2', null, 'Grown-ups corner'),
+    Date.now() < TEST_UNTIL ? el('div', { class: 'editions' }, el('h3', null, '📝 Chapter 1 test practice'),
+      el('p', null, EDITIONS.test1.note + ' While it is on, it replaces the edition below.'),
+      el('div', { class: 'settings' }, el('span', null, 'Test practice'),
+        el('div', { class: 'seg', role: 'group' }, [[false, 'On'], [true, 'Off']].map(([v, lab]) =>
+          btn({ class: !!S.testOff === v ? 'on' : null, onclick: () => { S.testOff = v; save(); showParent(); } }, lab))))) : null,
     el('div', { class: 'editions' }, el('h3', null, 'Edition'),
-      el('div', { class: 'edition-pick' }, Object.entries(EDITIONS).map(([id, ed]) =>
-        btn({ class: 'edition' + (edition() === ed ? ' on' : ''), onclick: () => { S.edition = id; save(); showParent(); } },
-          el('b', null, (edition() === ed ? '✓ ' : '') + ed.name), el('small', null, ed.note))))),
+      el('div', { class: 'edition-pick' }, Object.entries(EDITIONS).filter(([, ed]) => !ed.temporary).map(([id, ed]) => {
+        const on = (EDITIONS[S.edition] || EDITIONS.base) === ed;
+        return btn({ class: 'edition' + (on ? ' on' : ''), onclick: () => { S.edition = id; save(); showParent(); } },
+          el('b', null, (on ? '✓ ' : '') + ed.name), el('small', null, ed.note));
+      }))),
     el('p', null, 'The skill table below shows the activities in the edition you picked. Stars, stickers, decorations and pets are shared by all editions.'),
     el('p', null, 'Every patient needs three treatment steps. Each step is a short activity from the Ontario Grade 1 Mathematics (2020) and Language (2023) curriculum. Levels go up by themselves after three first-try answers in a row, and go down after a struggle. You can also set them by hand below.'),
     el('div', { class: 'settings' },

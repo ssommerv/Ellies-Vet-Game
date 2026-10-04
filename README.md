@@ -41,6 +41,18 @@ Stars, stickers, decorations and pets are shared by all editions; each activity
 keeps its own level. A new week is a new entry in `EDITIONS` in `game.html`
 plus its lines in `tools/voice/lines.js`.
 
+### Chapter 1 test practice (until Monday, October 5, 2026)
+
+For the Chapter 1 unit test, a temporary **test practice** mode replaces the
+week's edition until midnight after the test, then turns itself off. Every
+patient's steps come from the test topics on the teacher's review note, and
+the first step is nearly always a "relate to 5 and 10" question ("8 is __ more
+than 5", "6 is __ less than 10", "3 more than 5 is __"). It adds four
+activities modelled on the review package: relating numbers to 5 and 10 on a
+number track, finding the 2 sets with the same number, tapping the set with
+more or fewer then filling in "__ is greater than __", and counting a group
+then picking its number and word. The Grown-ups corner can switch it off.
+
 ## Play
 
 Open `index.html` in Safari, or host the repo with GitHub Pages:
