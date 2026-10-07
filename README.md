@@ -41,6 +41,15 @@ Stars, stickers, decorations and pets are shared by all editions; each activity
 keeps its own level. A new week is a new entry in `EDITIONS` in `game.html`
 plus its lines in `tools/voice/lines.js`.
 
+- **Week of Oct 5** (the current week): reading from UFLI Lesson 38 (short
+  a, i, o review): word chains from the sheet (sat → sit → lit → lot, mix →
+  fix → fax → fox) as both reading and spelling steps, spelling the sample and
+  Roll and Read words, the 12 heart words (a, said, he, be, me, from, to, do,
+  of, see, the, I), Roll and Read with a die, the story "The Big Box" with
+  comprehension questions, and short sentences like "The pig ran from me."
+  Math reviews Numbers to 10. When a new week ships the game switches to it
+  once (`CURRENT_WEEK`); the Grown-ups corner can switch back.
+
 ### Chapter 1 test practice (until Monday, October 5, 2026)
 
 For the Chapter 1 unit test, a temporary **test practice** mode replaces the

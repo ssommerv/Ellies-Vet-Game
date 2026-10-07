@@ -166,6 +166,19 @@ window.voiceLines = function (T) {
   T.O_SCENE_ANIMALS.forEach(([a]) => T.O_SCENE_PLACES.forEach(([p]) => add('The ' + a + ' is on the ' + p + '.')));
   ['we', 'she', 'for', 'the', 'my'].forEach(w => add(w + '!'));
 
+  // Week of Oct 5: UFLI Lesson 38 (short a, i, o review)
+  T.U38_CHAINS.forEach(c => c.slice(1).forEach((to, i) => add(T.chainStep(c[i], to), 'This word is ' + c[i] + '.', c[i] + ', ' + to + '!', 'Change ' + c[i] + ' to ' + to + '.')));
+  add('Tap the letter to change.', 'Now pick the new letter.', 'Roll the die.', 'Then read your word.', 'Read your word.',
+    'Read the story by yourself.', 'Then answer the question.', 'It says');
+  [...new Set([...T.U38_SPELL, ...T.U38_SPELL_HARD])].forEach(w => add('Can you spell ' + w + '?', w + '.', w + '!', w.split('').join(', ') + '.', w.split('').join('... ') + '.'));
+  T.U38_HEART.forEach(w => add('Find the word: ' + w + '.', w + '.', w + '!'));
+  range(1, 6).forEach(n => add('You rolled ' + n + '.'));
+  T.U38_ROLL.flat().forEach(w => { add('Is this word ' + w + '?', 'It says ' + w + '!', 'No, it says ' + w + '!'); T.U38_ALIKE[w].forEach(x => add('Is this word ' + x + '?')); });
+  add(T.BIG_BOX, T.BIG_BOX_Q.map(q => q.q), T.BIG_BOX_THINGS.map(([w]) => 'A ' + w + '!'), ['Nils!', 'Jon!', 'Mag!', '3!', 'big!', 'little!', 'Yes!', 'No!']);
+  T.U38_QUESTIONS.forEach(([q]) => add(q));
+  add('The pig ran from me.');
+  T.U38_ANIMALS.forEach(([a]) => T.U38_PLACES.forEach(([p]) => add('The ' + a + ' sat on the ' + p + '.')));
+
   // Chapter 1 test practice
   range(6, 10).forEach(y => add(y + ' is how many more than 5?', y + ' is ' + (y - 5) + ' more than 5!'));
   range(4, 9).forEach(x => add(x + ' is how many less than 10?', x + ' is ' + (10 - x) + ' less than 10!'));
