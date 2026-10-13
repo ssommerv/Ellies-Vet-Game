@@ -41,7 +41,12 @@ Stars, stickers, decorations and pets are shared by all editions; each activity
 keeps its own level. A new week is a new entry in `EDITIONS` in `game.html`
 plus its lines in `tools/voice/lines.js`.
 
-- **Week of Oct 5** (the current week): reading from UFLI Lesson 38 (short
+- **Week of Oct 12** (the current week): reading from UFLI Lesson 39 (short u
+  review): read and then write (spell) the heart words said, look, book, are
+  and was, Roll and Read 39a, the story "Cub and Pup", short u spelling,
+  sentences, and short u word chains made from the week's words (no chain
+  sheet came home). Math reviews Numbers to 10.
+- **Week of Oct 5**: reading from UFLI Lesson 38 (short
   a, i, o review): word chains from the sheet (sat → sit → lit → lot, mix →
   fix → fax → fox) as both reading and spelling steps, spelling the sample and
   Roll and Read words, the 12 heart words (a, said, he, be, me, from, to, do,
@@ -49,6 +54,11 @@ plus its lines in `tools/voice/lines.js`.
   comprehension questions, and short sentences like "The pig ran from me."
   Math reviews Numbers to 10. When a new week ships the game switches to it
   once (`CURRENT_WEEK`); the Grown-ups corner can switch back.
+
+Each UFLI week is one config object (`U38_CFG`, `U39_CFG`, ...) that
+`ufliSkills()` turns into that week's activities, and `tools/voice/lines.js`
+reads the same configs, so adding a week is a config, an `EDITIONS` entry and
+recording its new lines.
 
 ### Chapter 1 test practice (until Monday, October 5, 2026)
 

@@ -292,6 +292,10 @@ button.slot.chainslot.picked{background:#FFF3CF;color:var(--coral)}
 .die{display:grid;grid-template-columns:repeat(3,10px);grid-template-rows:repeat(3,10px);gap:3px;padding:6px;background:#fff;border:2px solid var(--ink);border-radius:8px}
 .die i{display:block;border-radius:50%}
 .die i.pip{background:var(--ink)}
+.heartword .heartmark{color:var(--coral);font-size:.6em;margin-right:.2em;vertical-align:middle}
+.heartword .hw{transition:opacity .2s}
+.heartword.covered{background:repeating-linear-gradient(45deg,#FFE3DE 0 10px,#FFF3CF 10px 20px)}
+.heartword.covered .hw{opacity:0}
 .story{background:#FFFBEA;border:3px dashed var(--sun-deep);border-radius:18px;padding:12px 20px;max-width:620px;font:22px/1.5 var(--read);-webkit-user-select:text;user-select:text}
 .story b{display:block;text-align:center;font:700 26px var(--display);margin-bottom:4px}
 .story p{margin:0 0 6px;text-indent:1.5em}
@@ -1453,7 +1457,12 @@ const O_SCENE_ANIMALS = [['dog', '🐶'], ['frog', '🐸']];
 const O_SCENE_PLACES = [['box', '📦'], ['log', '🪵']];
 // The UFLI word-work instruction for one step of a chain ("Change the t to g.")
 function chainStep(a, b) {
-  if (a.length === b.length) { const i = [...a].findIndex((c, k) => c !== b[k]); return 'Change the ' + a[i] + ' to ' + b[i] + '.'; }
+  if (a.length === b.length) {
+    const i = [...a].findIndex((c, k) => c !== b[k]);
+    // "nun" → "fun": say which n when the letter appears twice
+    const which = a.split(a[i]).length > 2 ? (a.indexOf(a[i]) === i ? 'first ' : 'last ') : '';
+    return 'Change the ' + which + a[i] + ' to ' + b[i] + '.';
+  }
   if (b.length === a.length + 1) {
     const i = [...b].findIndex((c, k) => b.slice(0, k) + b.slice(k + 1) === a);
     return i === 0 ? 'Add ' + b[0] + ' to the start.' : i === b.length - 1 ? 'Add ' + b[i] + ' to the end.' : 'Add ' + b[i] + ' after the ' + b[i - 1] + '.';
@@ -1462,42 +1471,19 @@ function chainStep(a, b) {
   return 'Take away the ' + a[i] + '.';
 }
 
-/* ================= Week of Oct 5: UFLI Lesson 38 (short a, i, o review) =================
-   From Ellie's Home Practice 38a and Lesson 38 Practice pages: sample words, the Roll and Read
-   grid, heart words, word-work chains, the two practice sentences and the story "The Big Box". */
-const U38_SAMPLE = ['bag', 'wax', 'did', 'his', 'cob', 'rot'];
-const U38_ROLL = [['fat', 'big', 'am'], ['as', 'dog', 'hit'], ['hip', 'ban', 'mob'], ['cat', 'hog', 'fig'], ['cob', 'did', 'ham'], ['an', 'six', 'mom']];   // columns by die face
-const U38_ALIKE = { fat: ['fit', 'cat'], big: ['bag', 'dig'], am: ['an', 'ham'], as: ['at', 'an'], dog: ['dig', 'log'], hit: ['hot', 'hat'],
-  hip: ['hop', 'hit'], ban: ['bin', 'bat'], mob: ['mop', 'mom'], cat: ['cot', 'can'], hog: ['hot', 'log'], fig: ['fog', 'big'],
-  cob: ['cab', 'cot'], did: ['dad', 'dig'], ham: ['him', 'hat'], an: ['in', 'am'], six: ['sit', 'sax'], mom: ['mop', 'mob'] };
-const U38_HEART = ['a', 'said', 'he', 'be', 'me', 'from', 'to', 'do', 'of', 'see', 'the', 'I'];
-const U38_CHAINS = [['sat', 'sit', 'lit', 'lot'], ['mix', 'fix', 'fax', 'fox']];
-const U38_SPELL = ['bag', 'wax', 'did', 'his', 'cob', 'rot', 'fat', 'big', 'dog', 'hit', 'hip', 'ban', 'mob', 'cat', 'hog', 'fig', 'ham', 'six', 'mom'];
-const U38_SPELL_HARD = ['sat', 'sit', 'lit', 'lot', 'mix', 'fix', 'fax', 'fox'];
-const U38_PICS = { bag: '👜', cat: '🐱', dog: '🐶', cob: '🌽', hog: '🐗', six: '6️⃣', ham: '🍖', mom: '👩', fox: '🦊' };
-const BIG_BOX = ['Nils, Jon, and Mag got a big box.', 'What is in the box?', 'Nils looks in the box.', 'Nils sees a hat in the box.',
-  'Jon looks in the box.', 'Jon sees a map in the box.', 'Mag looks in the box.', 'Mag sees a book in the box.',
-  'Next, the kids see pots and pans and bats in the box.', 'A lot is in this box!'];
-const BIG_BOX_THINGS = [['hat', '🎩'], ['map', '🗺️'], ['book', '📖']];
-const BIG_BOX_Q = [
-  { q: 'What did Nils see in the box?', a: 'hat', pics: true }, { q: 'What did Jon see in the box?', a: 'map', pics: true },
-  { q: 'What did Mag see in the box?', a: 'book', pics: true }, { q: 'Who saw a hat?', a: 'Nils', words: ['Nils', 'Jon', 'Mag'] },
-  { q: 'Who saw a map?', a: 'Jon', words: ['Nils', 'Jon', 'Mag'] }, { q: 'Who saw a book?', a: 'Mag', words: ['Nils', 'Jon', 'Mag'] },
-  { q: 'How many kids looked in the box?', a: '3', words: ['2', '3', '4'] }, { q: 'Was the box big or little?', a: 'big', words: ['big', 'little'] },
-  { q: 'Is a lot in the box?', a: 'Yes', words: ['Yes', 'No'] }];
-const U38_ANIMALS = [['cat', '🐱'], ['dog', '🐶'], ['pig', '🐷'], ['hog', '🐗']];
-const U38_PLACES = [['log', '🪵'], ['box', '📦'], ['bag', '👜']];
-const U38_QUESTIONS = [['Can a cat sit on a mat?', true], ['Can a pig sit in a big box?', true], ['Can I fix the mop?', true],
-  ['Can a dog dig?', true], ['Can a fox hop?', true], ['Can a mop hop?', false], ['Is a hog a dog?', false],
-  ['Can a ham sit?', false], ['Can six cats fit in a bag?', false], ['Can a fig run?', false]];
-
-const U38 = {
-  u38chain: { area: 'lang', label: 'Word chains', curric: 'UFLI 38 – word chains: change one letter (sat, sit, lit, lot; mix, fix, fax, fox)', make(l) {
-    const chain = pick(U38_CHAINS), i = rnd(0, chain.length - 2), from = chain[i], to = chain[i + 1];
-    const pos = [...from].findIndex((c, k) => c !== to[k]);
+/* ================= UFLI weekly reading =================
+   Each week's UFLI Home Practice and Lesson Practice pages become one config below; ufliSkills()
+   turns a config into the week's reading activities (word chains, spelling, heart words, Roll and
+   Read, the story, and read-and-answer sentences). A new week = a new config + an EDITIONS entry. */
+function ufliSkills(c) {
+  const L = 'UFLI ' + c.lesson + ' – ', out = {};
+  const pairs = c.chains ? c.chains.flatMap(ch => ch.slice(1).map((to, i) => [ch[i], to])) : [];
+  if (c.chains) out[c.prefix + 'chain'] = { area: 'lang', label: 'Word chains', curric: L + 'word chains: ' + c.chains.map(ch => ch.join(', ')).join('; '), make(l) {
+    const same = pairs.filter(([a, b]) => a.length === b.length);
     if (l === 1 || Math.random() < 0.5) {
       // reading step: "Change the a to i. What word is this?"
-      const line = chainStep(from, to), others = sample(U38_CHAINS.flat().filter(w => w !== to && w !== from), 1);
+      const [from, to] = pick(l === 1 ? same : pairs), line = chainStep(from, to);
+      const others = sample([...new Set(c.chains.flat())].filter(w => w !== to && w !== from), 1);
       return {
         prompt: line + ' What word is this?', speak: 'This word is ' + from + '. ' + line + ' What word is this?',
         build(box, api) {
@@ -1507,55 +1493,61 @@ const U38 = {
       };
     }
     // spelling step: "Change sit to lit." Tap the letter that changes, then the new letter.
-    const line = 'Change ' + from + ' to ' + to + '.';
+    const [from, to] = pick(same), pos = [...from].findIndex((ch, k) => ch !== to[k]), line = 'Change ' + from + ' to ' + to + '.';
     return {
       prompt: line + ' Tap the letter to change.', speak: line + ' Tap the letter to change.',
       build(box, api) {
         let stage = 1;
-        const letters = el('div', { class: 'slots' }, [...from].map((c, k) => btn({ class: 'slot chainslot', 'aria-label': c, onclick: () => {
+        const letters = el('div', { class: 'slots' }, [...from].map((ch, k) => btn({ class: 'slot chainslot', 'aria-label': ch, onclick: () => {
           if (stage !== 1) return;
           if (k === pos) { stage = 2; sfx.tap(); letters.children[k].classList.add('picked'); letters.children[k].textContent = '?'; say('Now pick the new letter.'); tiles.hidden = false; }
           else api.miss(letters.children[k]);
-        } }, c)));
-        const tiles = el('div', { class: 'tiles', hidden: true }, shuffle([to[pos], ...sample('abdfgilmnopstx'.split('').filter(c => c !== to[pos] && c !== from[pos]), 2)]).map(c => {
+        } }, ch)));
+        const tiles = el('div', { class: 'tiles', hidden: true }, shuffle([to[pos], ...sample('abdfgilmnopstux'.split('').filter(ch => ch !== to[pos] && ch !== from[pos]), 2)]).map(ch => {
           const t = btn({ class: 'tile', onclick: () => {
             if (stage !== 2) return;
-            if (c === to[pos]) { stage = 3; letters.children[pos].textContent = c; letters.children[pos].classList.remove('picked'); api.win(from + ', ' + to + '!'); }
+            if (ch === to[pos]) { stage = 3; letters.children[pos].textContent = ch; letters.children[pos].classList.remove('picked'); api.win(from + ', ' + to + '!'); }
             else api.miss(t);
-          } }, c);
+          } }, ch);
           return t;
         }));
         box.append(letters, tiles);
         return () => stage === 1 ? letters.children[pos].classList.add('hint') : [...tiles.children].forEach(t => t.textContent === to[pos] && t.classList.add('hint'));
       },
     };
-  } },
+  } };
 
-  u38spell: { area: 'lang', label: 'Spelling short a, i, o words', curric: 'UFLI 38 – spelling short a, i and o words', make(l) {
-    const w = pick(l === 3 ? U38_SPELL.concat(U38_SPELL_HARD) : U38_SPELL), given = l === 1 ? 1 : 0;
-    const extra = sample('abcdfghilmnoprstx'.split('').filter(c => !w.includes(c)), l);
+  // letter tiles for spelling a word under `opts.top` (a picture, a hear button, or the heart word)
+  function tileSpell(box, api, w, opts) {
+    const given = opts.given || 0, extra = sample('abcdfghiklmnoprstuwx'.split('').filter(ch => !w.includes(ch)), opts.extra);
+    const slots = el('div', { class: 'slots' }, w.split('').map((ch, i) => el('div', { class: 'slot' + (i < given ? ' given' : '') }, i < given ? ch : '')));
+    let at = given;
+    const tiles = el('div', { class: 'tiles' }, shuffle(w.slice(given).split('').concat(extra)).map(ch => {
+      const t = btn({ class: 'tile', onclick: () => {
+        if (at >= w.length) return;
+        if (ch === w[at]) { sfx.tap(); slots.children[at].textContent = ch; t.classList.add('used'); at++; if (at === w.length) api.win(w.split('').join(', ') + '. ' + w + '!'); }
+        else api.miss(t);
+      } }, ch);
+      return t;
+    }));
+    box.append(opts.top, slots, tiles);
+    return () => { say(w.split('').join('... ')); const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === w[at]); if (t) t.classList.add('hint'); };
+  }
+
+  out[c.prefix + 'spell'] = { area: 'lang', label: 'Spelling ' + c.sound + ' words', curric: L + 'spelling ' + c.sound + ' words', make(l) {
+    const w = pick(l === 3 ? c.spell.concat(c.spellHard) : c.spell);
     return {
       prompt: 'Listen, then spell the word.', speak: 'Can you spell ' + w + '? ' + w + '.',
-      build(box, api) {
-        const slots = el('div', { class: 'slots' }, w.split('').map((c, i) => el('div', { class: 'slot' + (i < given ? ' given' : '') }, i < given ? c : '')));
-        let at = given;
-        const tiles = el('div', { class: 'tiles' }, shuffle(w.slice(given).split('').concat(extra)).map(c => {
-          const t = btn({ class: 'tile', onclick: () => {
-            if (at >= w.length) return;
-            if (c === w[at]) { sfx.tap(); slots.children[at].textContent = c; t.classList.add('used'); at++; if (at === w.length) api.win(w.split('').join(', ') + '. ' + w + '!'); }
-            else api.miss(t);
-          } }, c);
-          return t;
-        }));
-        box.append(U38_PICS[w] ? btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(w) }, el('span', { class: 'bigpic' }, U38_PICS[w]))
-          : btn({ class: 'big sun small', onclick: () => say(w) }, '🔊 Hear the word'), slots, tiles);
-        return () => { say(w.split('').join('... ')); const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === w[at]); if (t) t.classList.add('hint'); };
-      },
+      build: (box, api) => tileSpell(box, api, w, { given: l === 1 ? 1 : 0, extra: l,
+        top: c.pics[w] ? btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(w) }, el('span', { class: 'bigpic' }, c.pics[w]))
+          : btn({ class: 'big sun small', onclick: () => say(w) }, '🔊 Hear the word') }),
     };
-  } },
+  } };
 
-  u38heart: { area: 'lang', label: 'Heart words', curric: 'UFLI 38 – heart words: a, said, he, be, me, from, to, do, of, see, the, I', needsVoice: true, make(l) {
-    const ans = pick(U38_HEART), words = shuffle([ans, ...sample(U38_HEART.filter(w => w !== ans), l === 1 ? 2 : l === 2 ? 3 : 5)]);
+  out[c.prefix + 'heart'] = { area: 'lang', label: 'Heart words', curric: L + 'heart words: ' + c.heart.join(', '), needsVoice: true, make(l) {
+    const ans = pick(c.heart), n = l === 1 ? 2 : l === 2 ? 3 : 5;
+    const pool = c.heart.filter(w => w !== ans), extra = sample((c.heartReview || []).filter(w => !c.heart.includes(w)), Math.max(0, n - pool.length));
+    const words = shuffle([ans, ...sample(pool, n), ...extra]);
     return {
       prompt: 'Listen, then find the heart word you hear.', speak: 'Find the word: ' + ans + '. ' + ans + '.',
       build(box, api) {
@@ -1563,66 +1555,81 @@ const U38 = {
         return choiceRow(box, words.map(w => ({ label: w, ok: w === ans, after: ans + '!' })), api, 'word');
       },
     };
-  } },
+  } };
 
-  u38roll: { area: 'lang', label: 'Roll and Read', curric: 'UFLI 38 – Roll and Read: short a, i and o words', needsVoice: true, make() {
+  // "Practice reading the heart words and then write them": look at the word, then spell it.
+  // Level 1 keeps the word on screen; after that it is covered, with a Peek button.
+  if (c.heartSpell) out[c.prefix + 'heartspell'] = { area: 'lang', label: 'Writing heart words', curric: L + 'read, then write the heart words: ' + c.heart.join(', '), make(l) {
+    const w = pick(c.heart);
+    return {
+      prompt: l === 1 ? 'Look at the heart word. Spell it with the letters.' : 'Peek at the heart word, then spell it.',
+      speak: l === 1 ? 'Look at the heart word: ' + w + '. Spell it with the letters.' : 'Spell the heart word: ' + w + '. Tap peek if you need to look.',
+      build(box, api) {
+        const word = el('div', { class: 'bigword heartword' + (l === 1 ? '' : ' covered') }, el('span', { class: 'heartmark', 'aria-hidden': 'true' }, '♥'), el('span', { class: 'hw' }, w));
+        const top = el('div', { class: 'row' }, word, l === 1 ? null : btn({ class: 'big sun small', onclick: () => {
+          say(w); word.classList.remove('covered'); setTimeout(() => word.classList.add('covered'), 2000);
+        } }, '👀 Peek'));
+        return tileSpell(box, api, w, { extra: l === 3 ? 3 : 2, top });
+      },
+    };
+  } };
+
+  out[c.prefix + 'roll'] = { area: 'lang', label: 'Roll and Read', curric: L + 'Roll and Read: ' + c.sound + ' words', needsVoice: true, make() {
     return {
       prompt: 'Roll the die, then read your word.', speak: 'Roll the die. Then read your word.',
       build(box, api) {
         const face = n => el('div', { class: 'die', 'aria-label': n + ' on the die' }, upto(1, 9).map(i => el('i', { class: [0, [5], [1, 9], [1, 5, 9], [1, 3, 7, 9], [1, 3, 5, 7, 9], [1, 3, 4, 6, 7, 9]][n].includes(i) ? 'pip' : null })));
-        const grid = el('div', { class: 'rollgrid' }, U38_ROLL.map((col, c) => el('div', { class: 'rollcol' }, face(c + 1), col.map(w => el('span', null, w)))));
+        const grid = el('div', { class: 'rollgrid' }, c.roll.map((col, k) => el('div', { class: 'rollcol' }, face(k + 1), col.map(w => el('span', null, w)))));
         const die = btn({ class: 'big sun', 'aria-label': 'roll the die' }, '🎲 Roll');
         const ask = el('div', { class: 'row', hidden: true });
-        let rolled = false;
+        let rolled = false, hint = null;
         die.onclick = () => {
           if (rolled) return; rolled = true; die.disabled = true;
-          const n = rnd(1, 6), r = rnd(0, 2), w = U38_ROLL[n - 1][r];
+          const n = rnd(1, 6), r = rnd(0, 2), w = c.roll[n - 1][r];
           let spins = 0;
           const spin = setInterval(() => {
             const k = spins++ < 8 ? rnd(1, 6) : n;
-            [...grid.children].forEach((col, c) => col.classList.toggle('on', c === k - 1));
+            [...grid.children].forEach((col, j) => col.classList.toggle('on', j === k - 1));
             if (spins > 8) {
               clearInterval(spin);
-              const word = grid.children[n - 1].children[r + 1]; word.classList.add('pickedword');
+              grid.children[n - 1].children[r + 1].classList.add('pickedword');
               // Dr. Ellie says a word: is it the word Ellie rolled? (half the time it is)
-              const said = Math.random() < 0.5 ? w : pick(U38_ALIKE[w]), match = said === w;
+              const said = Math.random() < 0.5 ? w : pick(c.alike[w]), match = said === w;
               ask.hidden = false;
               ask.replaceChildren(el('div', { class: 'bigword' }, w));
               say('You rolled ' + n + '. Read your word. Is this word ' + said + '?');
-              const sayAgain = btn({ class: 'big sun small', onclick: () => say('Is this word ' + said + '?') }, '🔊 Hear it again');
               const yn = el('div');
-              box.append(sayAgain, yn);
+              box.append(btn({ class: 'big sun small', onclick: () => say('Is this word ' + said + '?') }, '🔊 Hear it again'), yn);
               hint = choiceRow(yn, ['Yes', 'No'].map(x => ({ label: x, ok: (x === 'Yes') === match, after: match ? 'Yes! It says ' + w + '!' : 'No, it says ' + w + '!' })), api, 'word');
             }
           }, 90);
         };
-        let hint = null;
         box.append(grid, die, ask);
         return () => hint ? hint() : die.classList.add('hint');
       },
     };
-  } },
+  } };
 
-  u38story: { area: 'lang', label: 'The Big Box', curric: 'UFLI 38 – reading the story "The Big Box"', make(l) {
-    const item = pick(BIG_BOX_Q);
+  const st = c.story;
+  out[c.prefix + 'story'] = { area: 'lang', label: st.title, curric: L + 'reading the story "' + st.title + '"', make(l) {
+    const item = pick(st.questions);
     return {
       prompt: item.q, speak: 'Read the story by yourself. Then answer the question. ' + item.q,
       build(box, api) {
-        const story = el('div', { class: 'story' }, el('b', null, 'The Big Box'), el('p', null, BIG_BOX.slice(0, 2).join(' ')),
-          el('p', null, BIG_BOX.slice(2, 8).join(' ')), el('p', null, BIG_BOX.slice(8).join(' ')));
-        const readIt = btn({ class: 'big sun small', hidden: l > 1, onclick: () => say(BIG_BOX.join(' ')) }, '🔊 Read it to me');
+        const story = el('div', { class: 'story' }, el('b', null, st.title), st.paras.map(([a, b]) => el('p', null, st.lines.slice(a, b).join(' '))));
+        const readIt = btn({ class: 'big sun small', hidden: l > 1, onclick: () => say(st.lines.join(' ')) }, '🔊 Read it to me');
         box.append(story, readIt);
-        const opts = item.pics ? BIG_BOX_THINGS.map(([w, e]) => ({ node: [el('span', { class: 'pic' }, e), el('span', { class: 'lbl' }, w)], aria: w, ok: w === item.a, after: 'A ' + w + '!' }))
+        const opts = item.pics ? st.things.map(([w, e, after]) => ({ node: [el('span', { class: 'pic' }, e), el('span', { class: 'lbl' }, w)], aria: w, ok: w === item.a, after: after || 'A ' + w + '!' }))
           : item.words.map(w => ({ label: w, ok: w === item.a, after: w + '!' }));
         const hint = choiceRow(box, opts, api, item.pics ? '' : 'word');
         return () => { readIt.hidden = false; hint(); };
       },
     };
-  } },
+  } };
 
-  u38read: { area: 'lang', label: 'Read and answer', curric: 'UFLI 38 – reading short a, i and o sentences', make(l) {
+  out[c.prefix + 'read'] = { area: 'lang', label: 'Read and answer', curric: L + 'reading ' + c.sound + ' sentences', make(l) {
     if (l > 1 && Math.random() < 0.5) {
-      const [q, yes] = pick(U38_QUESTIONS);
+      const [q, yes] = pick(c.questions);
       return {
         prompt: 'Read the question. Tap Yes or No.', speak: 'Read the question by yourself. Then tap yes or no.',
         build(box, api) {
@@ -1631,15 +1638,7 @@ const U38 = {
         },
       };
     }
-    let text, scenes, right;
-    if (Math.random() < 0.25) {
-      text = 'The pig ran from me.'; right = ['🐷', '💨'];
-      scenes = shuffle([right, ['🐱', '💨'], ['🐷', '💤']]);
-    } else {
-      const an = pick(U38_ANIMALS), pl = pick(U38_PLACES);
-      text = 'The ' + an[0] + ' sat on the ' + pl[0] + '.'; right = [an[1], pl[1]];
-      scenes = shuffle([right, [pick(U38_ANIMALS.filter(x => x !== an))[1], pl[1]], [an[1], pick(U38_PLACES.filter(x => x !== pl))[1]]]);
-    }
+    const { text, right, scenes } = c.note();
     return {
       prompt: 'Read the vet note. Tap the picture that matches.', speak: 'Read the vet note by yourself. Then tap the picture that matches.',
       build(box, api) {
@@ -1647,8 +1646,83 @@ const U38 = {
         return choiceRow(box, scenes.map(s => ({ node: el('span', { class: 'scene' }, el('span', null, s[0]), el('span', null, s[1])), aria: s.join(' '), ok: s === right, after: text })), api);
       },
     };
-  } },
+  } };
+  return out;
+}
+// "The {animal} sat on the {place}." notes, with one picture changed in each wrong choice
+function sceneNote(animals, places, verb) {
+  const an = pick(animals), pl = pick(places), right = [an[1], pl[1]];
+  return { text: 'The ' + an[0] + ' ' + verb + ' the ' + pl[0] + '.', right,
+    scenes: shuffle([right, [pick(animals.filter(x => x !== an))[1], pl[1]], [an[1], pick(places.filter(x => x !== pl))[1]]]) };
+}
+
+/* ---------- Week of Oct 5: UFLI Lesson 38 (short a, i, o review) ----------
+   From Home Practice 38a and Lesson 38 Practice: sample words, Roll and Read, heart words,
+   word-work chains, the two practice sentences and the story "The Big Box". */
+const U38_CFG = {
+  lesson: 38, prefix: 'u38', sound: 'short a, i, o',
+  chains: [['sat', 'sit', 'lit', 'lot'], ['mix', 'fix', 'fax', 'fox']],
+  spell: ['bag', 'wax', 'did', 'his', 'cob', 'rot', 'fat', 'big', 'dog', 'hit', 'hip', 'ban', 'mob', 'cat', 'hog', 'fig', 'ham', 'six', 'mom'],
+  spellHard: ['sat', 'sit', 'lit', 'lot', 'mix', 'fix', 'fax', 'fox'],
+  pics: { bag: '👜', cat: '🐱', dog: '🐶', cob: '🌽', hog: '🐗', six: '6️⃣', ham: '🍖', mom: '👩', fox: '🦊' },
+  heart: ['a', 'said', 'he', 'be', 'me', 'from', 'to', 'do', 'of', 'see', 'the', 'I'],
+  roll: [['fat', 'big', 'am'], ['as', 'dog', 'hit'], ['hip', 'ban', 'mob'], ['cat', 'hog', 'fig'], ['cob', 'did', 'ham'], ['an', 'six', 'mom']],   // columns by die face
+  alike: { fat: ['fit', 'cat'], big: ['bag', 'dig'], am: ['an', 'ham'], as: ['at', 'an'], dog: ['dig', 'log'], hit: ['hot', 'hat'],
+    hip: ['hop', 'hit'], ban: ['bin', 'bat'], mob: ['mop', 'mom'], cat: ['cot', 'can'], hog: ['hot', 'log'], fig: ['fog', 'big'],
+    cob: ['cab', 'cot'], did: ['dad', 'dig'], ham: ['him', 'hat'], an: ['in', 'am'], six: ['sit', 'sax'], mom: ['mop', 'mob'] },
+  story: { title: 'The Big Box', paras: [[0, 2], [2, 8], [8, 10]],
+    lines: ['Nils, Jon, and Mag got a big box.', 'What is in the box?', 'Nils looks in the box.', 'Nils sees a hat in the box.',
+      'Jon looks in the box.', 'Jon sees a map in the box.', 'Mag looks in the box.', 'Mag sees a book in the box.',
+      'Next, the kids see pots and pans and bats in the box.', 'A lot is in this box!'],
+    things: [['hat', '🎩'], ['map', '🗺️'], ['book', '📖']],
+    questions: [{ q: 'What did Nils see in the box?', a: 'hat', pics: true }, { q: 'What did Jon see in the box?', a: 'map', pics: true },
+      { q: 'What did Mag see in the box?', a: 'book', pics: true }, { q: 'Who saw a hat?', a: 'Nils', words: ['Nils', 'Jon', 'Mag'] },
+      { q: 'Who saw a map?', a: 'Jon', words: ['Nils', 'Jon', 'Mag'] }, { q: 'Who saw a book?', a: 'Mag', words: ['Nils', 'Jon', 'Mag'] },
+      { q: 'How many kids looked in the box?', a: '3', words: ['2', '3', '4'] }, { q: 'Was the box big or little?', a: 'big', words: ['big', 'little'] },
+      { q: 'Is a lot in the box?', a: 'Yes', words: ['Yes', 'No'] }] },
+  questions: [['Can a cat sit on a mat?', true], ['Can a pig sit in a big box?', true], ['Can I fix the mop?', true],
+    ['Can a dog dig?', true], ['Can a fox hop?', true], ['Can a mop hop?', false], ['Is a hog a dog?', false],
+    ['Can a ham sit?', false], ['Can six cats fit in a bag?', false], ['Can a fig run?', false]],
+  animals: [['cat', '🐱'], ['dog', '🐶'], ['pig', '🐷'], ['hog', '🐗']], places: [['log', '🪵'], ['box', '📦'], ['bag', '👜']], verb: 'sat on',
+  extraNotes: [{ text: 'The pig ran from me.', right: ['🐷', '💨'], wrong: [['🐱', '💨'], ['🐷', '💤']] }],
+  note() {
+    if (Math.random() < 0.25) { const x = pick(this.extraNotes); return { text: x.text, right: x.right, scenes: shuffle([x.right, ...x.wrong]) }; }
+    return sceneNote(this.animals, this.places, this.verb);
+  },
 };
+
+/* ---------- Week of Oct 12: UFLI Lesson 39 (short u review) ----------
+   From Lesson 39 Practice: read then write the heart words (said, look, book, are, was), the
+   Roll and Read 39a grid and the story "Cub and Pup". No word-chain sheet came home this week,
+   so the chains below are made only from this week's short u words. */
+const U39_CFG = {
+  lesson: 39, prefix: 'u39', sound: 'short u', heartSpell: true,
+  chains: [['bud', 'bug', 'mug', 'hug', 'hum'], ['cub', 'cut', 'nut', 'nun', 'fun'], ['fun', 'sun', 'spun'], ['lug', 'slug', 'snug']],
+  spell: ['bud', 'cub', 'hum', 'fun', 'nun', 'dug', 'mug', 'bug', 'hub', 'lug', 'sun', 'tub', 'mud', 'pup', 'up', 'us'],
+  spellHard: ['slug', 'spun', 'dusk', 'snug', 'punt'],
+  pics: { cub: '🐻', bug: '🐛', mug: '☕', sun: '☀️', tub: '🛁', pup: '🐶' },
+  heart: ['said', 'look', 'book', 'are', 'was'], heartReview: U38_CFG.heart,
+  roll: [['bud', 'nun', 'slug'], ['us', 'dug', 'spun'], ['cub', 'mug', 'dusk'], ['hum', 'bug', 'scum'], ['up', 'hub', 'snug'], ['fun', 'lug', 'punt']],
+  alike: { bud: ['bad', 'bug'], nun: ['nut', 'run'], slug: ['plug', 'snug'], us: ['as', 'up'], dug: ['dig', 'bug'], spun: ['span', 'spin'],
+    cub: ['cab', 'cut'], mug: ['hug', 'mud'], dusk: ['desk', 'duck'], hum: ['ham', 'hug'], bug: ['big', 'bag'], scum: ['scam', 'sum'],
+    up: ['us', 'pup'], hub: ['hug', 'hut'], snug: ['snag', 'slug'], fun: ['fan', 'sun'], lug: ['log', 'lag'], punt: ['pant', 'hunt'] },
+  story: { title: 'Cub and Pup', paras: [[0, 4], [4, 9]],
+    lines: ['Cub and Pup are buds.', 'Cub and Pup have lots of fun.', 'Cub runs in the sun.', 'Pup digs in the mud.',
+      'Cub and Pup are hot and wet.', 'The fun must stop.', 'Cub and Pup must get in the tub.', 'The buds have fun in the suds.', 'The fun did not stop!'],
+    things: [['sun', '☀️', 'In the sun!'], ['mud', '🟤', 'In the mud!'], ['tub', '🛁', 'In the tub!']],
+    questions: [{ q: 'Who runs in the sun?', a: 'Cub', words: ['Cub', 'Pup'] }, { q: 'Who digs in the mud?', a: 'Pup', words: ['Cub', 'Pup'] },
+      { q: 'Where does Cub run?', a: 'sun', pics: true }, { q: 'Where does Pup dig?', a: 'mud', pics: true },
+      { q: 'What must Cub and Pup get in?', a: 'tub', pics: true }, { q: 'Are Cub and Pup buds?', a: 'Yes', words: ['Yes', 'No'] },
+      { q: 'Did the fun stop?', a: 'No', words: ['Yes', 'No'] }, { q: 'Are Cub and Pup hot and wet?', a: 'Yes', words: ['Yes', 'No'] },
+      { q: 'What do the buds have fun in?', a: 'suds', words: ['suds', 'sun', 'mud'] }] },
+  questions: [['Can a bug hum?', true], ['Can a pup dig in the mud?', true], ['Can a cub run in the sun?', true], ['Is the sun hot?', true],
+    ['Can you look at a book?', true], ['Can a duck get wet?', true], ['Can a mug run?', false], ['Can a tub hum?', false],
+    ['Is a cub a bug?', false], ['Can a pup fit in a mug?', false]],
+  animals: [['cub', '🐻'], ['pup', '🐶'], ['bug', '🐛']], places: [['tub', '🛁'], ['bus', '🚌'], ['mug', '☕'], ['sun', '☀️']], verb: 'is in',
+  note() { return sceneNote(this.animals, this.places, this.verb); },
+};
+const UFLI_WEEKS = [U38_CFG, U39_CFG];
+const U38 = ufliSkills(U38_CFG), U39 = ufliSkills(U39_CFG);
 
 /* ================= Chapter 1 unit test practice (test on Monday, October 5, 2026) =================
    From the teacher's review note and the review package: counting to 10 in numbers and words,
@@ -1792,9 +1866,14 @@ const TEST_WEIGHTS = { t1five: 6, n10moreless: 2, t1compare: 3, t1write: 3, t1sa
 // Week of Oct 5: UFLI 38 reading, with Numbers to 10 math (including "more than 5 / less than 10") as review.
 const W1005 = Object.assign({ n10count: N10.n10count, n10compare: N10.n10compare, n10next: N10.n10next, n10moreless: N10.n10moreless,
   n10back: N10.n10back, n10order: N10.n10order, t1five: T1.t1five, t1compare: T1.t1compare }, U38);
-const CURRENT_WEEK = 'w1005';
+// Week of Oct 12: UFLI 39 reading, same math review.
+const W1012 = Object.assign({ n10count: N10.n10count, n10compare: N10.n10compare, n10next: N10.n10next, n10moreless: N10.n10moreless,
+  n10back: N10.n10back, n10order: N10.n10order, t1five: T1.t1five, t1compare: T1.t1compare }, U39);
+const CURRENT_WEEK = 'w1012';
 const EDITIONS = {
   base: { name: 'Base edition', note: 'All Grade 1 math and reading activities', skills: SKILLS },
+  w1012: { name: 'Week of Oct 12', badge: 'short u words · said, look, book, are, was', skills: W1012,
+           note: 'Reading: UFLI Lesson 39 (short u review): read and write the heart words said, look, book, are, was; Roll and Read; the story "Cub and Pup"; short u spelling, chains and sentences · Math: Numbers to 10 review' },
   w1005: { name: 'Week of Oct 5', badge: 'short a, i, o words · heart words', skills: W1005,
            note: 'Reading: UFLI Lesson 38 (short a, i, o review): word chains, spelling, 12 heart words, Roll and Read, the story "The Big Box" · Math: Numbers to 10 review' },
   n10:  { name: 'Week of Sept 28', badge: 'Numbers to 10 · short o words', skills: N10,
@@ -1802,7 +1881,7 @@ const EDITIONS = {
   test1: { name: 'Chapter 1 test practice', badge: 'Test practice: Numbers to 10', skills: TEST_SKILLS, weights: TEST_WEIGHTS, temporary: true,
           note: 'Only the Chapter 1 unit test topics, with extra "more than 5 / less than 10" questions. Ends by itself after Monday, October 5.' },
 };
-const ALL_SKILLS = Object.assign({}, SKILLS, N10, T1, U38);
+const ALL_SKILLS = Object.assign({}, SKILLS, N10, T1, U38, U39);
 // When a new week ships, switch to it once; after that the Grown-ups corner choice sticks.
 if (S.weekSeen !== CURRENT_WEEK) { S.edition = CURRENT_WEEK; S.weekSeen = CURRENT_WEEK; save(); }
 const testOn = () => Date.now() < TEST_UNTIL && !S.testOff;
