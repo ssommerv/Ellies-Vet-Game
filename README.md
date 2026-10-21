@@ -41,7 +41,13 @@ Stars, stickers, decorations and pets are shared by all editions; each activity
 keeps its own level. A new week is a new entry in `EDITIONS` in `game.html`
 plus its lines in `tools/voice/lines.js`.
 
-- **Week of Oct 12** (the current week): reading from UFLI Lesson 39 (short u
+- **Week of Oct 19** (the current week): reading first, about 9 in 10 steps.
+  UFLI Lesson 40 (short e review): read and then write the heart words said,
+  you, what and have, Roll and Read 40a, the story "The Pet Hen", short e
+  spelling, sentences and chains made from the week's words. A little Numbers
+  to 10 math stays in as review. Editions can set `weights` to choose how often
+  each activity comes up.
+- **Week of Oct 12**: reading from UFLI Lesson 39 (short u
   review): read and then write (spell) the heart words said, look, book, are
   and was, Roll and Read 39a, the story "Cub and Pup", short u spelling,
   sentences, and short u word chains made from the week's words (no chain

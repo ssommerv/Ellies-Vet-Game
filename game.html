@@ -1721,8 +1721,37 @@ const U39_CFG = {
   animals: [['cub', '🐻'], ['pup', '🐶'], ['bug', '🐛']], places: [['tub', '🛁'], ['bus', '🚌'], ['mug', '☕'], ['sun', '☀️']], verb: 'is in',
   note() { return sceneNote(this.animals, this.places, this.verb); },
 };
-const UFLI_WEEKS = [U38_CFG, U39_CFG];
-const U38 = ufliSkills(U38_CFG), U39 = ufliSkills(U39_CFG);
+/* ---------- Week of Oct 19: UFLI Lesson 40 (short e review) ----------
+   From Lesson 40 Practice: read then write the heart words (said, you, what, have), the Roll and
+   Read 40a grid and the story "The Pet Hen". Chains are made from this week's short e words. */
+const U40_CFG = {
+  lesson: 40, prefix: 'u40', sound: 'short e', heartSpell: true,
+  chains: [['get', 'set', 'net', 'pet', 'pen'], ['bed', 'red', 'led', 'leg', 'beg'], ['ten', 'hen', 'men', 'met', 'wet'], ['wet', 'went', 'vent'], ['pet', 'pelt', 'belt']],
+  spell: ['get', 'bed', 'hen', 'net', 'led', 'set', 'leg', 'red', 'beg', 'ten', 'men', 'pet', 'vet', 'web', 'jet', 'yes'],
+  spellHard: ['went', 'kept', 'dent', 'pelt', 'vent', 'sped', 'tend', 'rest', 'welt'],
+  pics: { bed: '🛏️', hen: '🐔', net: '🥅', leg: '🦵', ten: '🔟', jet: '✈️', web: '🕸️', red: '🔴' },
+  heart: ['said', 'you', 'what', 'have'], heartReview: U39_CFG.heart.concat(U38_CFG.heart),
+  roll: [['get', 'bed', 'went'], ['hen', 'net', 'kept'], ['led', 'set', 'dent'], ['leg', 'red', 'pelt'], ['beg', 'ten', 'vent'], ['men', 'pet', 'sped']],
+  alike: { get: ['got', 'gut'], bed: ['bad', 'bid'], went: ['want', 'wet'], hen: ['him', 'ten'], net: ['nut', 'not'], kept: ['kelp', 'pet'],
+    led: ['lid', 'bed'], set: ['sit', 'sat'], dent: ['tent', 'den'], leg: ['log', 'lag'], red: ['rod', 'rid'], pelt: ['belt', 'pet'],
+    beg: ['bag', 'big'], ten: ['tan', 'tin'], vent: ['vet', 'went'], men: ['man', 'hen'], pet: ['pit', 'pot'], sped: ['spud', 'red'] },
+  story: { title: 'The Pet Hen', paras: [[0, 4], [4, 8]],
+    lines: ['Dex has a pet hen.', 'The hen is big and red.', 'Dex let his hen run.', 'But the hen ran into a pig pen.',
+      'The hen has a big welt.', 'Dex must tend to his red hen.', '“You must rest,” Dex said.', 'He gets the hen in its bed.'],
+    things: [['hen', '🐔', 'A hen!'], ['pig pen', '🐷', 'Into a pig pen!'], ['bed', '🛏️', 'In its bed!']],
+    questions: [{ q: 'What pet does Dex have?', a: 'hen', pics: true }, { q: 'Where did the hen run?', a: 'pig pen', pics: true },
+      { q: 'Where does Dex put the hen?', a: 'bed', pics: true }, { q: 'What color is the hen?', a: 'red', words: ['red', 'tan', 'pink'] },
+      { q: 'Is the hen big?', a: 'Yes', words: ['Yes', 'No'] }, { q: 'What did the hen get?', a: 'a welt', words: ['a welt', 'a hat', 'a net'] },
+      { q: 'What must the hen do?', a: 'rest', words: ['rest', 'run', 'dig'] }, { q: 'Who has a pet hen?', a: 'Dex', words: ['Dex', 'Jon', 'Mag'] },
+      { q: 'Did Dex help his hen?', a: 'Yes', words: ['Yes', 'No'] }] },
+  questions: [['Can a hen get wet?', true], ['Can a vet help a pet?', true], ['Can you get in a bed?', true], ['Can you have a pet hen?', true],
+    ['Can a pet rest?', true], ['Can a hen sit on a bed?', true], ['Can a bed run?', false], ['Is a net a pet?', false],
+    ['Can a jet beg?', false], ['Can a hen have ten legs?', false]],
+  animals: [['hen', '🐔'], ['pup', '🐶'], ['cat', '🐱']], places: [['bed', '🛏️'], ['net', '🥅'], ['tent', '⛺'], ['jet', '✈️']], verb: 'is in',
+  note() { return sceneNote(this.animals, this.places, this.verb); },
+};
+const UFLI_WEEKS = [U38_CFG, U39_CFG, U40_CFG];
+const U38 = ufliSkills(U38_CFG), U39 = ufliSkills(U39_CFG), U40 = ufliSkills(U40_CFG);
 
 /* ================= Chapter 1 unit test practice (test on Monday, October 5, 2026) =================
    From the teacher's review note and the review package: counting to 10 in numbers and words,
@@ -1869,19 +1898,26 @@ const W1005 = Object.assign({ n10count: N10.n10count, n10compare: N10.n10compare
 // Week of Oct 12: UFLI 39 reading, same math review.
 const W1012 = Object.assign({ n10count: N10.n10count, n10compare: N10.n10compare, n10next: N10.n10next, n10moreless: N10.n10moreless,
   n10back: N10.n10back, n10order: N10.n10order, t1five: T1.t1five, t1compare: T1.t1compare }, U39);
-const CURRENT_WEEK = 'w1012';
+// Week of Oct 19: UFLI 40 reading comes first; a little Numbers to 10 math stays in as review.
+const W1019 = Object.assign({ n10moreless: N10.n10moreless, t1five: T1.t1five, n10compare: N10.n10compare }, U40);
+// About 9 in 10 steps are reading; the heart words and spelling come up most.
+const W1019_WEIGHTS = { u40heartspell: 4, u40spell: 4, u40heart: 3, u40roll: 3, u40story: 3, u40read: 3, u40chain: 2,
+  n10moreless: 1, t1five: 1, n10compare: 1 };
+const CURRENT_WEEK = 'w1019';
 const EDITIONS = {
   base: { name: 'Base edition', note: 'All Grade 1 math and reading activities', skills: SKILLS },
+  w1019: { name: 'Week of Oct 19', badge: 'short e words · said, you, what, have', skills: W1019, weights: W1019_WEIGHTS,
+           note: 'Reading first (about 9 in 10 steps): UFLI Lesson 40 (short e review): read and write the heart words said, you, what, have; Roll and Read; the story "The Pet Hen"; short e spelling, chains and sentences · A little Numbers to 10 math review' },
   w1012: { name: 'Week of Oct 12', badge: 'short u words · said, look, book, are, was', skills: W1012,
            note: 'Reading: UFLI Lesson 39 (short u review): read and write the heart words said, look, book, are, was; Roll and Read; the story "Cub and Pup"; short u spelling, chains and sentences · Math: Numbers to 10 review' },
   w1005: { name: 'Week of Oct 5', badge: 'short a, i, o words · heart words', skills: W1005,
            note: 'Reading: UFLI Lesson 38 (short a, i, o review): word chains, spelling, 12 heart words, Roll and Read, the story "The Big Box" · Math: Numbers to 10 review' },
   n10:  { name: 'Week of Sept 28', badge: 'Numbers to 10 · short o words', skills: N10,
           note: 'Math: Numbers to 10 (counting, comparing, counting on and back) · Reading: number words, short o words and heart words (UFLI 37a/b)' },
-  test1: { name: 'Chapter 1 test practice', badge: 'Test practice: Numbers to 10', skills: TEST_SKILLS, weights: TEST_WEIGHTS, temporary: true,
+  test1: { name: 'Chapter 1 test practice', badge: 'Test practice: Numbers to 10', skills: TEST_SKILLS, weights: TEST_WEIGHTS, first: ['t1five', 'n10moreless'], temporary: true,
           note: 'Only the Chapter 1 unit test topics, with extra "more than 5 / less than 10" questions. Ends by itself after Monday, October 5.' },
 };
-const ALL_SKILLS = Object.assign({}, SKILLS, N10, T1, U38, U39);
+const ALL_SKILLS = Object.assign({}, SKILLS, N10, T1, U38, U39, U40);
 // When a new week ships, switch to it once; after that the Grown-ups corner choice sticks.
 if (S.weekSeen !== CURRENT_WEEK) { S.edition = CURRENT_WEEK; S.weekSeen = CURRENT_WEEK; save(); }
 const testOn = () => Date.now() < TEST_UNTIL && !S.testOff;
@@ -1956,11 +1992,15 @@ function showRoom(fresh) {
 function planSkills() {
   const w = edition().weights;
   if (w) {
-    // Weighted picks: the first step is always a "more than 5 / less than 10" style question.
+    // Weighted picks (higher weight = comes up more often). An edition can name the activities its
+    // first step comes from (test practice starts with "more than 5 / less than 10"). The Grown-ups
+    // "Subjects" setting still applies.
+    const ok = k => !(ALL_SKILLS[k].needsVoice && !canSpeak) && (S.mix === 'both' || !S.mix || ALL_SKILLS[k].area === S.mix);
+    const keys = Object.keys(w).filter(ok).length >= 3 ? Object.keys(w).filter(ok) : Object.keys(w);
     const draw = pool => { let r = Math.random() * pool.reduce((s, k) => s + w[k], 0); return pool.find(k => (r -= w[k]) < 0) || pool[0]; };
-    const first = draw(['t1five', 'n10moreless'].filter(k => w[k]));
-    const plan = [first];
-    while (plan.length < 3) plan.push(draw(Object.keys(w).filter(k => !plan.includes(k) && !(ALL_SKILLS[k].needsVoice && !canSpeak))));
+    const firsts = (edition().first || []).filter(k => keys.includes(k));
+    const plan = [draw(firsts.length ? firsts : keys)];
+    while (plan.length < 3) plan.push(draw(keys.filter(k => !plan.includes(k))));
     return plan;
   }
   const mathOn = S.mix !== 'lang', langOn = S.mix !== 'math';

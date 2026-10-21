@@ -1,0 +1,2410 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Vet Clinic">
+<meta name="theme-color" content="#DDF3EE">
+<link rel="apple-touch-icon" href="art/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Ellie's Animal Clinic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
+<style>
+/* One bright look on purpose: this is a kids' game, so it stays light in every theme. */
+:root{
+  --wall:#DDF3EE; --wall-tile:#CFEDE6; --floor:#9FD9CB;
+  --ink:#1F3A48; --ink-soft:#4E6B78;
+  --teal:#11807F; --teal-deep:#0B5E5E;
+  --sun:#FFC53D; --sun-deep:#E3A413;
+  --coral:#FF7563; --coral-deep:#D9503F;
+  --lilac:#8F7CEB; --lilac-deep:#6C58C9;
+  --card:#FFFFFF; --line:#B9DDD5;
+  --good:#23A55E; --good-soft:#DDF6E7;
+  --display:'Fredoka','Baloo 2','Arial Rounded MT Bold',system-ui,sans-serif;
+  --read:'Andika','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{
+  margin:0; background:var(--wall); color:var(--ink);
+  font-family:var(--read); font-size:20px; line-height:1.35;
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  background-image:
+    linear-gradient(transparent calc(100% - 90px), var(--floor) calc(100% - 90px)),
+    repeating-linear-gradient(0deg, transparent 0 58px, var(--wall-tile) 58px 60px),
+    repeating-linear-gradient(90deg, transparent 0 58px, var(--wall-tile) 58px 60px);
+  background-attachment:fixed;
+}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible{outline:4px solid var(--lilac);outline-offset:3px}
+#app{min-height:100%;display:flex;flex-direction:column;padding-inline:16px;box-sizing:border-box}
+
+/* ---------- top bar ---------- */
+.bar{display:flex;align-items:center;gap:12px;padding-block:12px;flex-wrap:wrap}
+.sign{display:flex;align-items:center;gap:10px;background:var(--card);border:3px solid var(--teal);border-radius:18px;padding:6px 16px 6px 8px;font:700 24px/1 var(--display);color:var(--teal-deep);box-shadow:0 5px 0 var(--teal)}
+.sign .ellie{margin-block:-4px}
+/* Dr. Ellie's headshot */
+.ellie{flex:none;border-radius:50%;background:var(--wall);border:3px solid #fff;box-shadow:0 0 0 3px var(--teal);object-fit:cover;display:block}
+.ellie.hop{animation:hop .3s ease-in-out 4 alternate}
+.ellie.tilt{animation:tilt .5s ease-in-out}
+@keyframes tilt{30%{transform:rotate(-10deg)}70%{transform:rotate(8deg)}}
+button.ellie-btn{border:none;background:none;padding:0;border-radius:50%}
+.says{display:flex;align-items:center;gap:14px}
+.bubble{position:relative;background:#EEF8F6;border:3px solid var(--line);border-radius:22px;padding:10px 18px;flex:1;min-width:0}
+.bubble::before{content:'';position:absolute;left:-13px;top:50%;margin-top:-10px;border:10px solid transparent;border-right:12px solid var(--line);border-left:0}
+.bubble::after{content:'';position:absolute;left:-8px;top:50%;margin-top:-8px;border:8px solid transparent;border-right:9px solid #EEF8F6;border-left:0}
+.bar .spacer{flex:1}
+.pill{display:flex;align-items:center;gap:6px;background:var(--card);border:3px solid var(--sun-deep);border-radius:999px;padding:6px 14px;font:700 22px/1 var(--display);box-shadow:0 4px 0 var(--sun-deep);font-variant-numeric:tabular-nums}
+.iconbtn{min-width:56px;height:56px;border-radius:16px;border:3px solid var(--line);background:var(--card);font-size:28px;box-shadow:0 4px 0 var(--line);display:grid;place-items:center;padding:0 10px}
+.iconbtn:active,.big:active,.choice:active,.tile:active,.coin:active,.arrow:active{transform:translateY(3px);box-shadow:none}
+
+.screen{flex:1;display:flex;flex-direction:column;gap:16px;padding-block:8px 24px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+.big{border:none;border-radius:22px;padding:18px 34px;font:700 30px/1 var(--display);background:var(--coral);color:#fff;box-shadow:0 7px 0 var(--coral-deep);min-height:72px}
+.big.teal{background:var(--teal);box-shadow:0 7px 0 var(--teal-deep)}
+.big.sun{background:var(--sun);color:var(--ink);box-shadow:0 7px 0 var(--sun-deep)}
+.big.small{font-size:24px;padding:12px 22px;min-height:60px}
+
+/* ---------- pet (photo or stand-in) ---------- */
+.pet{position:relative;width:var(--s,200px);height:var(--s,200px);max-width:100%;display:grid;place-items:center;flex:none}
+.pet img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 6px rgba(20,60,60,.28))}
+.pet .emo{font-size:calc(var(--s,200px)*.72);line-height:1;filter:drop-shadow(0 6px 4px rgba(20,60,60,.25))}
+.pet.sick img,.pet.sick .emo{filter:saturate(.45) brightness(.97) drop-shadow(0 8px 6px rgba(20,60,60,.28));transform:rotate(-4deg)}
+.pet.better img,.pet.better .emo{filter:saturate(.8) drop-shadow(0 8px 6px rgba(20,60,60,.28))}
+.pet .ail{position:absolute;right:2%;bottom:6%;font-size:calc(var(--s,200px)*.24);animation:bob 1.6s ease-in-out infinite}
+.pet.happy{animation:hop .7s ease-in-out infinite alternate}
+@keyframes bob{50%{transform:translateY(-6px) rotate(6deg)}}
+@keyframes hop{to{transform:translateY(-18px)}}
+
+/* ---------- title ---------- */
+.title-wrap{flex:1;display:grid;place-items:center;text-align:center}
+.title-card{display:flex;flex-direction:column;align-items:center;gap:18px;max-width:720px}
+.title-card h1{font-size:clamp(44px,8vw,84px);line-height:.95;color:var(--teal-deep)}
+.title-card h1 span{color:var(--coral)}
+.title-card p{font-size:24px;margin:0;color:var(--ink-soft)}
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:40px;align-items:center;max-width:1020px;padding-block:12px}
+.hero .title-card{align-items:flex-start;text-align:left}
+.poster{margin:0;transform:rotate(-2.5deg)}
+.poster img{display:block;width:100%;height:auto;border-radius:26px;border:8px solid #fff;box-shadow:0 10px 0 var(--teal),0 18px 40px rgba(17,80,80,.18)}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;gap:26px;justify-items:center}
+  .hero .title-card{align-items:center;text-align:center}
+  .poster{max-width:min(330px,80vw)}
+}
+.badge-doc{display:inline-flex;align-items:center;gap:10px;background:var(--card);border:3px dashed var(--teal);border-radius:16px;padding:8px 18px;font:600 24px var(--display);color:var(--teal-deep)}
+.linkbtn{background:none;border:none;color:var(--ink-soft);font:600 18px var(--display);text-decoration:underline;padding:12px}
+
+/* ---------- waiting room ---------- */
+.room-head{display:flex;flex-direction:column;gap:4px}
+.room-head .says{margin-top:6px;max-width:640px}
+.room-head .bubble p{margin:0;font-size:22px;color:var(--ink)}
+.room-head h2{font-size:34px}
+.room-head p{margin:0;color:var(--ink-soft)}
+.benches{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.patient{background:var(--card);border:4px solid var(--line);border-radius:28px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;box-shadow:0 8px 0 var(--line)}
+.patient h3{font-size:28px}
+.patient .what{margin:0;color:var(--ink-soft);min-height:2.7em}
+.patient .big{width:100%}
+
+/* ---------- exam ---------- */
+.exam{display:grid;grid-template-columns:minmax(260px,2fr) 3fr;gap:18px;align-items:start}
+.table{background:var(--card);border:4px solid var(--teal);border-radius:30px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 8px 0 var(--teal)}
+.mat{background:radial-gradient(ellipse at 50% 80%,#CDEFE7 0 55%,transparent 56%);width:100%;display:grid;place-items:center}
+.nametag{font:700 28px var(--display);background:var(--sun);border-radius:12px;padding:4px 16px;box-shadow:0 4px 0 var(--sun-deep)}
+.complaint{margin:0;text-align:center;color:var(--ink-soft)}
+.hearts{font-size:34px;letter-spacing:4px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;width:100%}
+.steps li{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;background:#F1F8F6;font-size:19px}
+.steps li .tool{font-size:26px}
+.steps li.now{background:#FFF3CF;outline:3px solid var(--sun)}
+.steps li.done{background:var(--good-soft);color:#1B6B42}
+.steps li.done::after{content:'✓';margin-left:auto;font:700 24px var(--display);color:var(--good)}
+
+.task{background:var(--card);border:4px solid var(--line);border-radius:30px;padding:18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 8px 0 var(--line);min-height:420px}
+.task-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.chip{font:600 17px var(--display);padding:5px 12px;border-radius:999px;color:#fff;letter-spacing:.02em}
+.chip.math{background:var(--sun-deep)}
+.chip.lang{background:var(--lilac)}
+.stepno{margin-left:auto;font:600 17px var(--display);color:var(--ink-soft)}
+.prompt{display:flex;align-items:center;gap:12px}
+.prompt .bubble p{margin:0;font-size:28px;font-weight:700;line-height:1.25}
+.speak{flex:none;width:60px;height:60px;border-radius:50%;border:3px solid var(--lilac);background:#F1EEFF;font-size:28px;box-shadow:0 4px 0 var(--lilac)}
+.work{display:flex;flex-direction:column;align-items:center;gap:16px;flex:1}
+.feedback{min-height:44px;text-align:center;font:700 28px var(--display);color:var(--good)}
+.feedback.try{color:var(--coral-deep)}
+
+.choices{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.choice{min-width:100px;min-height:100px;border-radius:22px;background:var(--card);border:4px solid var(--line);box-shadow:0 6px 0 var(--line);font:700 44px/1.1 var(--read);padding:10px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.choice .pic{font-size:60px;line-height:1}
+.choice .lbl{font-size:24px}
+.choice.word{font-size:40px;min-width:150px}
+.choice.right{border-color:var(--good);background:var(--good-soft);box-shadow:0 6px 0 var(--good)}
+.choice.nope{opacity:.45}
+.hint{animation:glow 1s ease-in-out infinite alternate}
+@keyframes glow{to{box-shadow:0 0 0 8px rgba(255,197,61,.7)}}
+.wobble{animation:wob .4s}
+@keyframes wob{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+.bigpic{font-size:110px;line-height:1}
+.bigword{font:700 64px/1 var(--read);letter-spacing:.04em;background:#FFFBEA;border:3px dashed var(--sun-deep);border-radius:18px;padding:14px 30px}
+.bigword .hl{color:var(--coral-deep)}
+.eq{font:700 40px var(--read);font-variant-numeric:tabular-nums}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}
+.group{display:flex;flex-wrap:wrap;gap:4px;max-width:260px;justify-content:center;font-size:40px;line-height:1;background:#F4FAF8;border-radius:18px;padding:10px}
+.gone{opacity:.25;position:relative}
+.gone::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;height:4px;background:var(--coral);transform:rotate(-30deg);border-radius:2px}
+.op{font:700 48px var(--display);color:var(--ink-soft)}
+
+/* ten frames */
+.frames{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.frame{display:grid;grid-template-columns:repeat(5,46px);grid-auto-rows:46px;border:3px solid var(--teal);border-radius:8px;background:var(--teal);gap:3px;overflow:hidden}
+.frame span{background:#fff;display:grid;place-items:center;font-size:30px;line-height:1}
+
+/* base-ten */
+.rods{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;justify-content:center}
+.rod{display:grid;grid-template-rows:repeat(10,20px);gap:2px;background:var(--teal-deep);padding:2px;border-radius:6px}
+.rod i,.unit{display:block;width:26px;height:20px;background:var(--sun);border-radius:3px}
+.units{display:grid;grid-template-columns:repeat(3,26px);gap:3px;align-content:end}
+.unit{box-shadow:0 0 0 2px var(--sun-deep) inset}
+
+/* count & feed */
+.tray,.bowl{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:12px;border-radius:22px;width:100%;box-sizing:border-box}
+.tray{background:#F4FAF8;border:3px dashed var(--line)}
+.bowl{background:#FFF3CF;border:4px solid var(--sun-deep);min-height:90px;border-radius:22px 22px 80px 80px}
+.tray button,.bowl button{font-size:42px;line-height:1;width:60px;height:60px;border:none;background:none;padding:0}
+.count-label{font:700 22px var(--display);color:var(--ink-soft)}
+
+/* jars / compare */
+.jar{min-width:150px}
+.jar .group{font-size:30px;max-width:180px;background:none;padding:0}
+.jar .num{font:700 54px var(--read)}
+
+/* pattern */
+.pattern{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;background:#FDF6E4;border:3px solid #EAD9AE;border-radius:40px;padding:10px 16px}
+.pattern span{font-size:44px;line-height:1;width:52px;text-align:center}
+.pattern .q{border:3px dashed var(--coral);border-radius:50%;color:var(--coral);font:700 34px/46px var(--display);height:46px}
+
+/* skip count bottles */
+.seq{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.seq span{min-width:74px;height:96px;border-radius:14px 14px 20px 20px;background:#E8F4FF;border:3px solid #7FB4E0;display:grid;place-items:center;font:700 36px var(--read);position:relative;font-variant-numeric:tabular-nums}
+.seq span::before{content:'';position:absolute;top:-12px;width:34px;height:12px;background:#7FB4E0;border-radius:4px 4px 0 0}
+.seq .q{background:#FFF3CF;border-color:var(--coral);color:var(--coral)}
+
+/* coins */
+.coin{border:none;border-radius:50%;display:grid;place-items:center;align-content:center;gap:0;padding:0;font:700 18px/1 var(--display);color:#3C4650;box-shadow:0 4px 0 rgba(0,0,0,.25), inset 0 0 0 4px rgba(255,255,255,.35)}
+.coin .ic{font-size:24px;line-height:1}
+.coin.c5{width:76px;height:76px;background:radial-gradient(circle at 35% 30%,#F4F6F8,#B7BFC6)}
+.coin.c10{width:64px;height:64px;background:radial-gradient(circle at 35% 30%,#F4F6F8,#AEB6BE);font-size:16px}
+.coin.c25{width:88px;height:88px;background:radial-gradient(circle at 35% 30%,#F7F8FA,#A9B2BA)}
+.coin.c100{width:92px;height:92px;border-radius:0;background:radial-gradient(circle at 35% 30%,#FFE9A3,#C99A28);clip-path:polygon(50% 0%,77% 8%,95% 29%,100% 56%,89% 80%,65% 97%,35% 97%,11% 80%,0% 56%,5% 29%,23% 8%);box-shadow:none}
+.coin.c200{width:98px;height:98px;background:radial-gradient(circle,#E8B84A 0 52%,#C9CFD5 53%);}
+.coin.photo{background:none;box-shadow:none;border-radius:50%;clip-path:none}
+.coin.photo img{width:100%;height:100%;display:block;filter:drop-shadow(0 4px 0 rgba(0,0,0,.18))}
+.coinwrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.coinval{font:600 16px var(--display);color:var(--ink-soft)}
+.wallet{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center}
+.pricetag{font:700 40px var(--read);background:var(--card);border:3px solid var(--coral);border-radius:12px 40px 40px 12px;padding:8px 26px 8px 18px;color:var(--coral-deep)}
+
+/* coding grid */
+.grid{display:grid;gap:4px;background:#BFE3DA;padding:6px;border-radius:16px}
+.grid .cell{width:62px;height:62px;background:#F2FBF8;border-radius:10px;display:grid;place-items:center;font-size:40px;line-height:1;overflow:hidden}
+.grid .cell .pet{--s:58px}
+.grid .cell .pet .ail{display:none}
+.grid .cell .ellie{border-width:2px;box-shadow:0 0 0 2px var(--teal)}
+.grid .cell.path{background:#FFF0BF}
+.grid .cell.bump{background:#FFD7D0}
+.program{display:flex;flex-wrap:wrap;gap:6px;min-height:58px;align-items:center;justify-content:center;background:#F4F0FF;border:3px dashed var(--lilac);border-radius:16px;padding:6px 10px;width:100%;box-sizing:border-box}
+.program span{font-size:36px;line-height:1}
+.program span.on{outline:3px solid var(--sun-deep);border-radius:8px}
+.program .empty{color:var(--ink-soft);font-size:18px}
+.arrows{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.arrow{width:72px;height:72px;border-radius:18px;border:3px solid var(--lilac);background:var(--card);font-size:38px;box-shadow:0 5px 0 var(--lilac)}
+
+/* spelling */
+.slots{display:flex;gap:10px}
+.slot{width:76px;height:88px;border-bottom:6px solid var(--teal);display:grid;place-items:center;font:700 58px var(--read)}
+.slot.given{color:var(--ink-soft)}
+.tiles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.tile{width:78px;height:78px;border-radius:18px;border:4px solid var(--lilac);background:#F4F0FF;font:700 44px var(--read);box-shadow:0 5px 0 var(--lilac)}
+.tile.used{visibility:hidden}
+
+/* syllable drum */
+.drum{width:150px;height:150px;border-radius:50%;border:none;background:radial-gradient(circle at 50% 40%,#FFE1A6,#F2A93B);box-shadow:0 10px 0 #B8741B, inset 0 -8px 0 rgba(0,0,0,.08);font:700 26px var(--display);color:#7A4A0F}
+.drum.tap{transform:scale(.94)}
+.claps{display:flex;gap:10px;min-height:40px}
+.claps i{width:34px;height:34px;border-radius:50%;background:var(--coral);display:block}
+
+/* sentence scenes */
+.scene{font-size:54px;line-height:1;min-width:170px;min-height:110px;display:flex;align-items:center;justify-content:center;gap:.25em}
+
+/* ---------- healed ---------- */
+.healed{flex:1;display:grid;place-items:center;text-align:center;position:relative}
+.healed-card{display:flex;flex-direction:column;align-items:center;gap:14px}
+.duo{display:flex;align-items:flex-end;gap:10px}
+.duo .ellie{margin-bottom:24px}
+.healed h2{font-size:clamp(34px,6vw,56px);color:var(--teal-deep)}
+.healed p{margin:0;font-size:24px}
+.earned{font:700 28px var(--display);color:var(--sun-deep)}
+.btnrow{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.confetti i{position:absolute;top:-30px;font-style:normal;font-size:30px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+
+/* ---------- stickers ---------- */
+.book{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.sticker{background:var(--card);border-radius:24px;border:4px solid var(--line);padding:10px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.sticker .pet{--s:110px}
+.sticker.locked .pet{filter:grayscale(1) brightness(1.6) opacity(.35)}
+.sticker b{font-family:var(--display);font-size:20px}
+.sticker small{color:var(--ink-soft);font-size:15px}
+
+/* ---------- week edition ---------- */
+.week-badge{font:700 20px var(--display);background:var(--sun);color:var(--ink);border-radius:999px;padding:6px 16px;box-shadow:0 4px 0 var(--sun-deep)}
+.editions h3{font-size:22px;margin:0 0 8px}
+.edition-pick{display:flex;flex-wrap:wrap;gap:12px}
+.edition{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:3px solid var(--line);background:var(--card);border-radius:16px;padding:10px 16px;max-width:360px}
+.edition b{font:700 19px var(--display)}
+.edition small{color:var(--ink-soft);font-size:15px}
+.edition.on{border-color:var(--teal);background:#E6F6F3}
+.match{display:flex;flex-direction:column;gap:10px;background:#F4FAF8;border-radius:18px;padding:12px 16px}
+.matchrow{display:grid;grid-auto-flow:column;grid-auto-columns:46px;gap:4px;font-size:38px;line-height:1;justify-content:start}
+.track{display:grid;grid-template-columns:repeat(10,minmax(0,52px));border:3px solid var(--teal);border-radius:10px;overflow:hidden;background:var(--teal);gap:3px;max-width:100%}
+.tcell{background:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0 8px}
+.tcell small{font:700 16px var(--read);color:var(--ink-soft)}
+.dot{width:30px;height:30px;border-radius:50%;background:#4F5D66;display:block}
+.dot.hot{background:var(--coral)}
+.dot.empty{background:none;border:2px dashed var(--line)}
+.dot.empty.gap{border:3px solid var(--coral);background:#FFE3DE}
+.track .tcell:nth-child(5){margin-right:5px}   /* a thicker line after 5 makes "more than 5" easy to see */
+/* test practice */
+.week-badge.test{background:var(--coral);color:#fff;box-shadow:0 4px 0 var(--coral-deep)}
+.sets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;max-width:640px}
+.sets .choice.set{min-height:130px;padding:10px}
+.sets .group{font-size:30px;max-width:230px;background:none;padding:0}
+.choice.set.picked{border-color:var(--sun-deep);background:#FFF3CF;box-shadow:0 6px 0 var(--sun-deep)}
+.blank{display:inline-block;min-width:1.2em;padding:0 .2em;border-bottom:5px solid var(--teal);color:var(--coral);text-align:center}
+.blank.filled{color:var(--ink)}
+.blank.wide{min-width:3em}
+.labelbox{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;justify-content:center;font:700 44px var(--read);background:#FFFBEA;border:3px dashed var(--sun-deep);border-radius:18px;padding:8px 22px}
+.labelbox small{font-size:22px;color:var(--ink-soft)}
+/* UFLI 38: word chains, Roll and Read, story */
+button.slot.chainslot{background:#F4F0FF;border:none;border-bottom:6px solid var(--teal);border-radius:10px 10px 0 0;padding:0}
+button.slot.chainslot.picked{background:#FFF3CF;color:var(--coral)}
+.rollgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;width:100%;max-width:640px}
+.rollcol{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 4px;border-radius:14px;background:#F4FAF8;border:3px solid transparent;font:700 22px var(--read)}
+.rollcol.on{border-color:var(--sun-deep);background:#FFF3CF}
+.rollcol span{padding:2px 6px;border-radius:8px}
+.rollcol .pickedword{background:var(--sun);box-shadow:0 3px 0 var(--sun-deep)}
+.die{display:grid;grid-template-columns:repeat(3,10px);grid-template-rows:repeat(3,10px);gap:3px;padding:6px;background:#fff;border:2px solid var(--ink);border-radius:8px}
+.die i{display:block;border-radius:50%}
+.die i.pip{background:var(--ink)}
+.heartword .heartmark{color:var(--coral);font-size:.6em;margin-right:.2em;vertical-align:middle}
+.heartword .hw{transition:opacity .2s}
+.heartword.covered{background:repeating-linear-gradient(45deg,#FFE3DE 0 10px,#FFF3CF 10px 20px)}
+.heartword.covered .hw{opacity:0}
+.story{background:#FFFBEA;border:3px dashed var(--sun-deep);border-radius:18px;padding:12px 20px;max-width:620px;font:22px/1.5 var(--read);-webkit-user-select:text;user-select:text}
+.story b{display:block;text-align:center;font:700 26px var(--display);margin-bottom:4px}
+.story p{margin:0 0 6px;text-indent:1.5em}
+@media (max-width:520px){ .rollcol{font-size:17px} .story{font-size:19px} }
+.towers{display:flex;align-items:flex-end;justify-content:center;gap:14px;flex-wrap:wrap;min-height:250px}
+.tower{border:none;background:none;padding:6px;display:flex;flex-direction:column;align-items:center;gap:6px;border-radius:14px}
+.tower .cubes{display:flex;flex-direction:column;gap:2px}
+.tower .cubes i{display:block;width:34px;height:20px;background:var(--sun);border-radius:3px;box-shadow:inset 0 0 0 2px var(--sun-deep)}
+.tower.placed .cubes i{background:var(--good-soft);box-shadow:inset 0 0 0 2px var(--good)}
+.tower .tag{font:700 24px var(--display);min-height:28px;color:var(--good)}
+.mini .frame{grid-template-columns:repeat(5,34px);grid-auto-rows:34px}
+.mini .frame span{font-size:24px}
+.frame .paw{width:100%;height:100%}
+.frame .paw svg{width:78%;height:78%;fill:#7A5230;display:block}
+@media (max-width:520px){
+  .track{grid-template-columns:repeat(10,minmax(0,1fr))}
+  .dot{width:20px;height:20px}
+  .matchrow{grid-auto-columns:32px;font-size:28px}
+}
+
+/* ---------- clinic picture (waiting room) ---------- */
+.clinic-room{position:relative;height:190px;border-radius:26px;overflow:hidden;border:4px solid var(--line);box-shadow:0 8px 0 var(--line);
+  background:linear-gradient(#FBF6EE 0 56%,#CDEBE5 56% 64%,#A9DBCF 64%)}
+.deco{position:absolute;line-height:1;transform:translateX(-50%);filter:drop-shadow(0 3px 2px rgba(0,0,0,.15))}
+.deco.fly{animation:flutter 3.2s ease-in-out infinite}
+@keyframes flutter{50%{transform:translate(-50%,-7px) rotate(10deg)}}
+.rug{position:absolute;left:50%;bottom:5%;width:48%;height:24%;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(ellipse at center,#FFF 0 18%,#FFD6E0 19% 34%,#FFE9A8 35% 50%,#CFEFC4 51% 66%,#C9E3FF 67% 82%,#E3D4FF 83%)}
+.tank{position:absolute;left:78%;top:14%;width:98px;height:62px;transform:translateX(-50%);border:4px solid #7FB4E0;border-radius:10px;
+  background:linear-gradient(#DDF4FF,#7CC6EC);overflow:hidden;box-shadow:0 4px 0 #5E93BF}
+.tank .fish{position:absolute;top:10px;font-size:24px;line-height:1;animation:swim 7s linear infinite}
+.tank .f2{top:30px;font-size:20px;animation-duration:9s;animation-delay:-4s}
+@keyframes swim{from{left:-34px}to{left:104px}}
+.room-pet{position:absolute;bottom:3%;transform:translateX(-50%);border:none;background:none;padding:0;z-index:2}
+.room-pet .pet .ail{display:none}
+.room-empty{position:absolute;left:0;right:0;top:34%;margin:0;padding-inline:16px;text-align:center;font:600 20px var(--display);color:var(--ink-soft)}
+.fresh{animation:popin .9s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes popin{0%{opacity:0;scale:.2}100%{opacity:1;scale:1}}
+.shelf{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;width:100%;padding:6px 10px 4px;border-bottom:8px solid #D9B58A;border-radius:0 0 6px 6px;font-size:34px;line-height:1.1;box-sizing:border-box}
+
+/* ---------- shop ---------- */
+.shop-tabs{align-self:flex-start}
+.shop-tabs button{font-size:20px;padding:12px 18px}
+.shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.item{background:var(--card);border:4px solid var(--line);border-radius:24px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;box-shadow:0 6px 0 var(--line)}
+.item-pic{height:100px;display:grid;place-items:center}
+.item-emoji{font-size:64px;line-height:1}
+.item b{font-family:var(--display);font-size:20px}
+.item small{color:var(--ink-soft);font-size:15px;min-height:1.2em}
+.item .big{width:100%}
+.item .big.dim{background:#C9D6D3;box-shadow:0 7px 0 #A9BAB6;color:#fff}
+.item.locked .pet{filter:grayscale(1) brightness(1.6) opacity(.35)}
+.got{font:700 17px var(--display);color:var(--good);padding-block:14px}
+.big-emoji{font-size:120px}
+.fresh-pop{animation:popin .9s cubic-bezier(.3,1.6,.5,1) both}
+
+/* checkout */
+.modal{position:fixed;inset:0;z-index:20;background:rgba(31,58,72,.45);display:grid;place-items:center;padding:16px;overflow:auto}
+.modal-card{background:var(--card);border-radius:30px;border:4px solid var(--teal);box-shadow:0 10px 0 var(--teal);padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:560px;width:100%;box-sizing:border-box;text-align:center}
+.modal-card h3{font-size:30px}
+.modal-card p{margin:0;color:var(--ink-soft)}
+.bag{width:84px;height:92px;border:none;padding:0;border-radius:42% 42% 48% 48%/34% 34% 62% 62%;background:radial-gradient(circle at 40% 35%,#FFE08A,#E3A413);
+  box-shadow:0 5px 0 #B98208;display:grid;place-items:center;align-content:center;font:700 26px/1 var(--display);color:#6B4A00;position:relative}
+.bag::before{content:'';position:absolute;top:-8px;left:50%;width:34px;height:14px;margin-left:-17px;background:#C98E0C;border-radius:8px 8px 3px 3px}
+.bag span{font-size:22px}
+.bags-paid{min-height:110px;justify-content:center;align-items:center}
+.bags-paid .bag{width:66px;height:72px;font-size:20px}
+.paid{font:700 26px var(--display);color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* adoption certificate */
+.cert{background:#FFFBEA;border:6px double var(--sun-deep);border-radius:22px;padding:18px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;max-width:520px}
+.cert-top{font:700 26px var(--display);color:var(--sun-deep);letter-spacing:.02em}
+.cert p{margin:0;font-size:22px}
+.cert small{color:var(--ink-soft)}
+
+/* pet visits */
+.pet-home{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.pet-home .table{flex:1 1 320px;max-width:560px}
+.pet-stage{position:relative;display:grid;place-items:center}
+.pet-list{display:flex;flex-wrap:wrap;gap:10px;flex:1 1 200px;align-content:flex-start}
+.pet-pick{border:4px solid var(--line);background:var(--card);border-radius:20px;padding:6px;box-shadow:0 4px 0 var(--line)}
+.pet-pick.on{border-color:var(--teal);box-shadow:0 4px 0 var(--teal)}
+.pet-pick .ail{display:none}
+.care{background:var(--sun);color:var(--ink);box-shadow:0 7px 0 var(--sun-deep)}
+.care.did{background:var(--good-soft);box-shadow:0 7px 0 var(--good);color:#1B6B42}
+.floaty{position:absolute;left:50%;top:40%;font-size:54px;pointer-events:none;animation:floatup 1.4s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,40px) scale(.6);opacity:0}25%{opacity:1}100%{transform:translate(-50%,-90px) scale(1.2);opacity:0}}
+
+/* ---------- grown-ups ---------- */
+.parent{background:var(--card);border-radius:24px;border:3px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:16px;-webkit-user-select:text;user-select:text}
+.parent h2{font-size:30px}
+.parent p{margin:0;max-width:65ch;font-size:18px;color:var(--ink-soft)}
+.settings{display:flex;flex-wrap:wrap;gap:18px;align-items:center;font-size:18px}
+.settings label{display:flex;gap:8px;align-items:center}
+.settings input[type=text]{font:inherit;padding:6px 10px;border-radius:10px;border:2px solid var(--line);width:9em}
+.seg{display:flex;border:2px solid var(--teal);border-radius:12px;overflow:hidden}
+.seg button{border:none;background:var(--card);padding:8px 12px;font:600 16px var(--display)}
+.seg button.on{background:var(--teal);color:#fff}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:16px;font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #E1EEEA;vertical-align:middle}
+th{font:600 14px var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+td.n{font-variant-numeric:tabular-nums}
+.lv{display:flex;align-items:center;gap:6px}
+.lv button{width:34px;height:34px;border-radius:8px;border:2px solid var(--line);background:var(--card);font-weight:700}
+.credits{margin:0;padding-left:1.2em;font:15px/1.5 system-ui,sans-serif;color:var(--ink-soft);columns:2 320px}
+.credits a{color:var(--teal-deep)}
+.hold{position:relative;overflow:hidden}
+.hold .fill{position:absolute;inset:0;background:rgba(255,255,255,.35);transform-origin:left;transform:scaleX(0)}
+.hold.go .fill{transition:transform 1.6s linear;transform:scaleX(1)}
+
+@media (max-width:860px){
+  .exam{grid-template-columns:1fr}
+  .table{flex-direction:row;flex-wrap:wrap;justify-content:center}
+  .table .pet{--s:150px!important}
+  .steps{flex-direction:row;flex-wrap:wrap}
+  .steps li{flex:1 1 180px}
+  .task{min-height:0}
+}
+@media (max-width:520px){
+  body{font-size:18px}
+  .prompt .bubble p{font-size:22px}
+  .prompt .ellie{width:54px!important;height:54px!important}
+  .prompt .speak{display:none}
+  .choice{min-width:84px;min-height:84px;font-size:34px}
+  .choice .pic{font-size:46px}
+  .grid .cell{width:52px;height:52px;font-size:32px}
+  .grid .cell .pet{--s:48px}
+  .frame{grid-template-columns:repeat(5,38px);grid-auto-rows:38px}
+  .bigword{font-size:48px}
+  .sign{font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}
+}
+</style>
+
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ================= helpers ================= */
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const sample = (a, n) => shuffle(a).slice(0, n);
+const uniq = a => [...new Set(a)];
+function el(tag, props, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (v == null || v === false) continue;
+    if (k === 'class') n.className = v;
+    else if (k === 'style') n.style.cssText = v;
+    else if (k === 'html') n.innerHTML = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat(Infinity)) { if (c == null || c === false) continue; n.append(c.nodeType ? c : document.createTextNode(c)); }
+  return n;
+}
+const btn = (props, ...kids) => el('button', Object.assign({ type: 'button' }, props), ...kids);
+
+/* ================= saved progress ================= */
+const KEY = 'ellies-vet-game-v1';
+function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const S = Object.assign({ name: 'Ellie', stars: 0, healed: {}, lvl: {}, streak: {}, stats: {}, voice: true, mix: 'both', queue: null,
+  owned: [], pets: {}, checkoutMath: true, edition: 'n10' }, load());
+
+/* ================= sound & voice ================= */
+let AC = null;
+const audio = () => (AC = AC || new (window.AudioContext || window.webkitAudioContext)());
+// iPad Safari only lets sound start from a tap, so wake the audio on the first one.
+document.addEventListener('pointerdown', () => { try { audio().resume(); } catch (e) {} }, { once: true });
+function tone(f, at, dur, type, vol) {
+  try {
+    audio();
+    const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime + at;
+    o.type = type || 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.18, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(AC.destination); o.start(t); o.stop(t + dur + 0.05);
+  } catch (e) {}
+}
+const sfx = {
+  tap() { tone(620, 0, 0.08, 'sine', 0.1); },
+  good() { tone(660, 0, 0.18); tone(990, 0.12, 0.3); },
+  bad() { tone(260, 0, 0.18, 'triangle', 0.15); tone(200, 0.12, 0.25, 'triangle', 0.12); },
+  fanfare() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.13, 0.35, 'triangle', 0.16)); },
+};
+
+// The narrator: recorded clips from voice/ (made by tools/voice), one per sentence.
+// Any sentence without a clip is read by the device's own voice instead.
+const canSpeak = 'speechSynthesis' in window;
+let voice = null;
+function chooseVoice() {
+  if (!canSpeak) return;
+  const vs = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
+  const pref = ['Ava', 'Samantha', 'Karen', 'Moira', 'Tessa', 'Google US English', 'Microsoft Aria', 'Microsoft Jenny'];
+  const better = vs.filter(v => /enhanced|premium/i.test(v.name));
+  voice = pref.map(p => better.find(v => v.name.includes(p))).find(Boolean) || better[0]
+    || pref.map(p => vs.find(v => v.name.includes(p))).find(Boolean) || vs.find(v => /en-(CA|US)/i.test(v.lang)) || vs[0] || null;
+}
+if (canSpeak) { chooseVoice(); speechSynthesis.onvoiceschanged = chooseVoice; }
+
+const clipKey = t => t.toLowerCase().replace(/’/g, "'").replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
+const sentences = t => (String(t).match(/[^.!?]+[.!?]*/g) || []).map(x => x.trim()).filter(x => clipKey(x));
+const VOICE = { index: null, packs: [], clips: new Map() };
+VOICE.ready = fetch('voice/index.json').then(r => r.ok ? r.json() : null).then(j => {
+  if (!j) return;
+  VOICE.index = j;
+  VOICE.packs = j.packs.map(p => fetch('voice/' + p).then(r => r.arrayBuffer()));
+}).catch(() => {});
+function clip(k) {
+  const hit = VOICE.index && VOICE.index.clips[k];
+  if (!hit) return Promise.resolve(null);
+  if (!VOICE.clips.has(k)) {
+    VOICE.clips.set(k, VOICE.packs[hit[0]].then(buf => new Promise((ok, bad) =>
+      audio().decodeAudioData(buf.slice(hit[1], hit[1] + hit[2]), ok, bad))).catch(() => null));
+  }
+  return VOICE.clips.get(k);
+}
+let sayId = 0, playing = null;
+function playClip(buf, id) {
+  return new Promise(done => {
+    if (id !== sayId) return done();
+    const src = audio().createBufferSource(); src.buffer = buf; src.connect(AC.destination);
+    src.onended = () => { if (playing === src) playing = null; done(); };
+    playing = src; src.start();
+  });
+}
+function speakDevice(text, id) {
+  return new Promise(done => {
+    if (!canSpeak || id !== sayId) return done();
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      if (voice) u.voice = voice;
+      u.rate = 0.88; u.pitch = 1.1; u.onend = u.onerror = () => done();
+      speechSynthesis.speak(u);
+      setTimeout(done, 1500 + text.length * 120);
+    } catch (e) { done(); }
+  });
+}
+function hush() {
+  sayId++;
+  try { if (playing) playing.stop(); } catch (e) {}
+  playing = null;
+  try { canSpeak && speechSynthesis.cancel(); } catch (e) {}
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let speaking = Promise.resolve();
+async function speak(text, id) {
+  const parts = sentences(text);
+  await Promise.race([VOICE.ready, sleep(1500)]);
+  const bufs = parts.map(p => clip(clipKey(p)));   // start decoding everything at once
+  for (let i = 0; i < parts.length; i++) {
+    const buf = await bufs[i];
+    if (id !== sayId) return;
+    if (buf) await playClip(buf, id); else await speakDevice(parts[i], id);
+    if (id !== sayId) return;
+    // a breath between sentences; a shorter one between sounded-out letters ("c... a... t")
+    if (i < parts.length - 1) await sleep(/\.\.\.$/.test(parts[i]) ? 350 : 550);
+  }
+}
+// Say something now, cutting off whatever is being said. Resolves when finished.
+function say(text) {
+  hush();
+  if (!S.voice || !text) return (speaking = Promise.resolve());
+  return (speaking = speak(text, sayId));
+}
+// Say something after the current line has finished (dropped if something cuts in first).
+function sayNext(text) {
+  const id = sayId;
+  if (!S.voice || !text) return speaking;
+  return (speaking = speaking.then(() => sleep(450)).then(() => id === sayId ? speak(text, id) : null));
+}
+
+/* ================= animals ================= */
+// Each animal shows a real cut-out photo from animals/<id>.png when that file exists,
+// and falls back to its emoji until it does.
+const ANIMALS = [
+  { id: 'kitten',   name: 'Kitty',   kind: 'kitten',    emoji: '🐱', food: '🐟', foods: 'fish treats' },
+  { id: 'puppy',    name: 'Biscuit', kind: 'puppy',     emoji: '🐶', food: '🦴', foods: 'dog bones' },
+  { id: 'bunny',    name: 'Clover',  kind: 'bunny',     emoji: '🐰', food: '🥕', foods: 'carrots' },
+  { id: 'hamster',  name: 'Peanut',  kind: 'hamster',   emoji: '🐹', food: '🌻', foods: 'sunflower seeds' },
+  { id: 'duckling', name: 'Waddles', kind: 'duckling',  emoji: '🦆', food: '🫐', foods: 'blueberries' },
+  { id: 'piglet',   name: 'Rosie',   kind: 'piglet',    emoji: '🐷', food: '🍎', foods: 'apples' },
+  { id: 'lamb',     name: 'Cotton',  kind: 'lamb',      emoji: '🐑', food: '🍀', foods: 'clover leaves' },
+  { id: 'pony',     name: 'Maple',   kind: 'pony',      emoji: '🐴', food: '🥕', foods: 'carrots' },
+  { id: 'calf',     name: 'Daisy',   kind: 'calf',      emoji: '🐮', food: '🍏', foods: 'green apples' },
+  { id: 'turtle',   name: 'Shelly',  kind: 'turtle',    emoji: '🐢', food: '🍓', foods: 'strawberries' },
+  { id: 'hedgehog', name: 'Spike',   kind: 'hedgehog',  emoji: '🦔', food: '🐛', foods: 'mealworms' },
+  { id: 'fox',      name: 'Rusty',   kind: 'fox kit',   emoji: '🦊', food: '🥚', foods: 'eggs' },
+  { id: 'parrot',   name: 'Kiwi',    kind: 'parrot',    emoji: '🦜', food: '🥜', foods: 'peanuts' },
+  { id: 'raccoon',  name: 'Bandit',  kind: 'raccoon',   emoji: '🦝', food: '🍒', foods: 'cherries' },
+  { id: 'beaver',   name: 'Chomper', kind: 'beaver',    emoji: '🦫', food: '🪵', foods: 'sticks' },
+  { id: 'chick',    name: 'Sunny',   kind: 'chick',     emoji: '🐤', food: '🌽', foods: 'corn treats' },
+  { id: 'panda',    name: 'Bao',     kind: 'panda cub', emoji: '🐼', food: '🎋', foods: 'bamboo shoots' },
+  { id: 'koala',    name: 'Kip',     kind: 'koala',     emoji: '🐨', food: '🌿', foods: 'gum leaves' },
+  { id: 'penguin',  name: 'Pip',     kind: 'penguin',   emoji: '🐧', food: '🐟', foods: 'little fish' },
+  { id: 'guineapig', name: 'Nibbles', kind: 'guinea pig', emoji: '🐹', food: '🥒', foods: 'cucumber slices' },
+  { id: 'squirrel', name: 'Hazel',   kind: 'squirrel',  emoji: '🐿️', food: '🌰', foods: 'acorns' },
+  { id: 'fawn',     name: 'Fern',    kind: 'fawn',      emoji: '🦌', food: '🍎', foods: 'apple slices' },
+  { id: 'seal',     name: 'Splash',  kind: 'seal pup',  emoji: '🦭', food: '🐟', foods: 'fish' },
+  { id: 'otter',    name: 'Ollie',   kind: 'otter',     emoji: '🦦', food: '🦐', foods: 'shrimp' },
+  { id: 'mouse',    name: 'Squeak',  kind: 'mouse',     emoji: '🐭', food: '🧀', foods: 'cheese bites' },
+  { id: 'sloth',    name: 'Mo',      kind: 'sloth',     emoji: '🦥', food: '🌺', foods: 'hibiscus flowers' },
+];
+// Photographer and licence for each photo in animals/ (full details in animals/CREDITS.md).
+const PHOTO_CREDITS = [["kitten", "Kun-cats", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%BE%D1%82%D1%8F%D1%82%D0%B0_%D0%BF%D0%B8%D1%82%D0%BE%D0%BC%D0%BD%D0%B8%D0%BA%D0%B0_%D0%BC%D0%B5%D0%B9%D0%BD_%D0%BA%D1%83%D0%BD%D0%BE%D0%B2_Khrustal_Orchid.JPG"], ["puppy", "Szczenie Jack Russell Terrier.jpg: Siristru derivative work: Wuhazet", "Public domain", "https://commons.wikimedia.org/wiki/File:Szczenie_Jack_Russell_Terrier3.jpg"], ["bunny", "ClearGraphics", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Netherland_Dwarf_-_Sable_Point.jpg"], ["hamster", "Wschlitz", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Juvenile_Female_Mesocricetus_auratus_in_Pet_Store_enclosure,_Illinois,_USA.jpg"], ["duckling", "Luis Miguel Bugallo Sánchez (Lmbuga Commons)(Lmbuga Galipedia) Publicada por/Publish by: Luis Miguel Bugallo Sánchez", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Parrulo_-Muscovy_duckling.jpg"], ["piglet", "Amanda Slater from Coventry, England", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Gloucester_Old_Spot.jpg"], ["lamb", "Peter Shanks from Lithgow, Australia", "CC BY 3.0", "https://commons.wikimedia.org/wiki/File:Lamb_first_steps_(edited).jpg"], ["pony", "Ealdgyth", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Standingarabianfoalone.jpg"], ["calf", "Hayden Soloviev", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Hereford_cow,_Souris,_Prince_Edward_Island.jpg"], ["turtle", "Kobie Mercury-Clarke", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Chrysemys_picta_marginata_(27730831161)_(mirrored).jpg"], ["hedgehog", "Pueri Michał Klimont", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Atelerix_albiventris_young.jpg"], ["fox", "ClaudiaTen", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Portrait_of_a_red_fox_in_Rautas_fj%C3%A4llurskog_(cropped).jpg"], ["parrot", "Corinne Waheed", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Sunny_D_Pheonix,_hand_fed_Sun_Conure_in_captivity._Photo_by_Cory_Waheed.jpg"], ["raccoon", "Paxson Woelber", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Curious_Raccoon.jpg"], ["beaver", "Steve from Washington, DC, USA", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:American_Beaver.jpg"], ["chick", "GrinningIodize", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:A_young_chicken_standing,_April_2022.jpg"], ["panda", "Harald", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Giant_panda_on_a_white_background.png"], ["koala", "Diliff", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Koala_climbing_tree.jpg"], ["penguin", "Ben Tubby", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Falkland_Islands_Penguins_05.jpg"], ["guineapig", "Unknown", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:George_the_amazing_guinea_pig.jpg"], ["squirrel", "JeffreyGammon", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:EasternGraySquirrel_GAm.jpg"], ["fawn", "Jan Bo Kristensen", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Kid-jbk.jpg"], ["seal", "Boyd Amanda, U.S. Fish and Wildlife Service", "Public domain", "https://commons.wikimedia.org/wiki/File:Harbor_seal_mammal_phoca_vitulina.jpg"], ["otter", "USFWS Mountain-Prairie", "Public domain", "https://commons.wikimedia.org/wiki/File:Northern_River_Otter_on_Seedskadee_NWR_(22802102984).jpg"], ["mouse", "Christian Fischer", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:ApodemusSylvaticus.jpg"], ["sloth", "Daniella Maraschiello", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Bicho-pregui%C3%A7a_3.jpg"]];
+const A = id => ANIMALS.find(a => a.id === id);
+const photoOK = {};
+ANIMALS.forEach(a => {
+  const im = new Image();
+  im.onload = () => { photoOK[a.id] = true; document.querySelectorAll('.pet[data-id="' + a.id + '"]').forEach(swapPhoto); };
+  im.src = 'animals/' + a.id + '.png';
+});
+function swapPhoto(p) {
+  const a = A(p.dataset.id); const emo = p.querySelector('.emo');
+  if (!emo || !photoOK[a.id]) return;
+  emo.replaceWith(el('img', { src: 'animals/' + a.id + '.png', alt: a.name + ' the ' + a.kind, draggable: 'false' }));
+}
+// Dr. Ellie's headshot (cropped from art/ellie-clinic.jpg); it quietly disappears if the file is missing.
+function ellie(size, cls) {
+  return el('img', { class: 'ellie' + (cls ? ' ' + cls : ''), src: 'art/ellie-head.png', alt: 'Dr. ' + S.name, width: size, height: size,
+    draggable: 'false', style: 'width:' + size + 'px;height:' + size + 'px', onerror: e => { e.target.hidden = true; } });
+}
+function pet(a, size, opts) {
+  opts = opts || {};
+  const p = el('div', { class: 'pet' + (opts.cls ? ' ' + opts.cls : ''), 'data-id': a.id, style: '--s:' + size + 'px' },
+    photoOK[a.id] ? el('img', { src: 'animals/' + a.id + '.png', alt: a.name + ' the ' + a.kind, draggable: 'false' })
+                  : el('span', { class: 'emo', role: 'img', 'aria-label': a.name + ' the ' + a.kind }, a.emoji),
+    opts.ail ? el('span', { class: 'ail', 'aria-hidden': 'true' }, opts.ail) : null);
+  return p;
+}
+
+const AILMENTS = [
+  { id: 'foot',     says: 'has a sore foot',          badge: '🩹', steps: [['🔍', 'Look at the sore foot'], ['🧴', 'Clean it gently'], ['🩹', 'Wrap a bandage']] },
+  { id: 'fever',    says: 'feels hot and sleepy',     badge: '🌡️', steps: [['🌡️', 'Take the temperature'], ['💊', 'Mix the medicine'], ['🛏️', 'Tuck into a cozy bed']] },
+  { id: 'muddy',    says: 'rolled in the mud',        badge: '🟤', steps: [['🛁', 'Fill the bathtub'], ['🧽', 'Scrub scrub scrub'], ['🌬️', 'Blow dry']] },
+  { id: 'tummy',    says: 'has a tummy ache',         badge: '😖', steps: [['🩺', 'Listen to the tummy'], ['💊', 'Give tummy medicine'], ['🥣', 'Serve a healthy snack']] },
+  { id: 'sniffles', says: 'has the sniffles',         badge: '🤧', steps: [['🔦', 'Check the nose'], ['🍵', 'Give a warm drink'], ['🧣', 'Wrap up warm']] },
+  { id: 'checkup',  says: 'is here for a check-up',   badge: '📋', steps: [['⚖️', 'Weigh in on the scale'], ['👂', 'Check the ears'], ['🪥', 'Brush the teeth']] },
+];
+const AIL = id => AILMENTS.find(x => x.id === id);
+
+/* ================= word banks ================= */
+const CVC = [
+  ['cat','🐱'],['dog','🐶'],['pig','🐷'],['hen','🐔'],['fox','🦊'],['bug','🐛'],['rat','🐀'],['bat','🦇'],
+  ['sun','☀️'],['bed','🛏️'],['cup','☕'],['hat','👒'],['map','🗺️'],['net','🥅'],['pen','🖊️'],['bus','🚌'],
+  ['box','📦'],['web','🕸️'],['van','🚐'],['log','🪵'],['six','6️⃣'],['ten','🔟'],['bag','👜'],['pin','📌'],
+  ['nut','🥜'],['tub','🛁'],['leg','🦵'],['jet','✈️'],['cab','🚕'],['hug','🤗'],
+];
+const BLENDS = [
+  ['frog','🐸'],['crab','🦀'],['fish','🐟'],['duck','🦆'],['ship','🚢'],['shell','🐚'],['chick','🐤'],['star','⭐'],
+  ['drum','🥁'],['sled','🛷'],['skunk','🦨'],['clock','🕐'],['truck','🚚'],['tent','⛺'],['milk','🥛'],['bell','🔔'],
+  ['snail','🐌'],['snake','🐍'],['plant','🪴'],['gift','🎁'],['flag','🚩'],['hand','✋'],
+];
+const RHYMES = [
+  [['cat','🐱'],['hat','👒'],['bat','🦇'],['rat','🐀']],
+  [['dog','🐶'],['log','🪵'],['frog','🐸']],
+  [['hen','🐔'],['pen','🖊️'],['ten','🔟']],
+  [['fox','🦊'],['box','📦']],
+  [['bee','🐝'],['tree','🌳'],['three','3️⃣']],
+  [['cake','🍰'],['snake','🐍']],
+  [['moon','🌙'],['spoon','🥄']],
+  [['star','⭐'],['car','🚗']],
+  [['bear','🐻'],['pear','🍐'],['chair','🪑']],
+  [['goat','🐐'],['boat','⛵'],['coat','🧥']],
+  [['mouse','🐭'],['house','🏠']],
+  [['clock','🕐'],['sock','🧦'],['rock','🪨']],
+  [['king','🤴'],['ring','💍']],
+  [['bell','🔔'],['shell','🐚']],
+  [['fish','🐟'],['dish','🍽️']],
+  [['snail','🐌'],['mail','📬']],
+  [['bug','🐛'],['hug','🤗']],
+];
+const SIGHT = [
+  ['the','and','is','a','I','to','in','it','my','see','can','we'],
+  ['was','have','said','you','he','she','go','like','are','look','me','no'],
+  ['they','what','come','here','where','there','do','of','was','said','have','little'],
+];
+const DIGRAPH = {
+  sh: [['ship','🚢'],['sheep','🐑'],['shark','🦈'],['shell','🐚'],['shoe','👟'],['shirt','👕']],
+  ch: [['chick','🐤'],['cheese','🧀'],['cherry','🍒'],['chair','🪑'],['chocolate','🍫']],
+  th: [['thumb','👍'],['three','3️⃣'],['thread','🧵'],['thermometer','🌡️']],
+};
+const SYLL = [
+  ['dog','🐶'],['cat','🐱'],['fox','🦊'],['duck','🦆'],['frog','🐸'],['fish','🐟'],['bee','🐝'],['bear','🐻'],
+  ['pup-py','🐶'],['kit-ten','🐱'],['rab-bit','🐰'],['ham-ster','🐹'],['tur-tle','🐢'],['par-rot','🦜'],['pig-let','🐷'],
+  ['bea-ver','🦫'],['rac-coon','🦝'],['mon-key','🐒'],['ze-bra','🦓'],['pan-da','🐼'],['ti-ger','🐯'],
+  ['el-e-phant','🐘'],['but-ter-fly','🦋'],['kan-ga-roo','🦘'],['di-no-saur','🦕'],['oc-to-pus','🐙'],['go-ril-la','🦍'],['la-dy-bug','🐞'],['fla-min-go','🦩'],
+  ['cat-er-pil-lar','🐛'],['al-li-ga-tor','🐊'],
+];
+const COINS = {
+  5:   { name: 'nickel',  value: '5¢',  ic: '🦫', txt: '5', photo: true },
+  10:  { name: 'dime',    value: '10¢', ic: '⛵', txt: '10', photo: true },
+  25:  { name: 'quarter', value: '25¢', ic: '🦌', txt: '25', photo: true },
+  100: { name: 'loonie',  value: '$1',  ic: '🦆', txt: '$1', photo: true },
+  200: { name: 'toonie',  value: '$2',  ic: '🐻‍❄️', txt: '$2', photo: true },
+};
+const cents = v => v >= 100 ? (v / 100) + (v === 100 ? ' dollar' : ' dollars') : v + ' cents';
+function coinEl(v, props, tag) {
+  const c = COINS[v];
+  // Real coin photos live in art/coins/<name>.png; a coin whose photo fails to load is drawn instead.
+  const drawn = () => [el('span', { class: 'ic' }, c.ic), el('span', null, c.txt)];
+  const face = c.photo ? [el('img', { src: 'art/coins/' + c.name + '.png', alt: '', draggable: 'false', onerror: e => {
+    const coin = e.target.parentNode; coin.classList.remove('photo'); e.target.replaceWith(...drawn()); } })] : drawn();
+  const cls = 'coin c' + v + (c.photo ? ' photo' : '');
+  // Coins shown inside a choice button are plain spans (a button can't hold a button).
+  if (tag === 'span') return el('span', { class: cls }, face);
+  return btn(Object.assign({ class: cls, 'aria-label': c.name }, props || {}), face);
+}
+function numberChoices(ans, spread, min) {
+  min = min == null ? 0 : min;
+  const opts = new Set([ans]);
+  const cands = shuffle(spread.map(d => ans + d).filter(x => x >= min && x !== ans));
+  for (const c of cands) { if (opts.size >= 3) break; opts.add(c); }
+  for (let k = 1; opts.size < 3; k++) opts.add(ans + k);
+  return shuffle([...opts]);
+}
+// A single paw print (the 🐾 emoji shows two, which is easy to count twice).
+const PAW_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="16.2" rx="5.2" ry="4.4"/>' +
+  '<circle cx="5.6" cy="10" r="2.3"/><circle cx="9.6" cy="6.4" r="2.4"/><circle cx="14.4" cy="6.4" r="2.4"/><circle cx="18.4" cy="10" r="2.3"/></svg>';
+function tenFrames(n, icon) {
+  const wrap = el('div', { class: 'frames' });
+  const frames = Math.max(1, Math.ceil(n / 10));
+  for (let f = 0; f < frames; f++) {
+    const fr = el('div', { class: 'frame' });
+    for (let i = 0; i < 10; i++) {
+      const full = f * 10 + i < n;
+      fr.append(icon === 'paw' ? el('span', { class: 'paw', html: full ? PAW_SVG : '' }) : el('span', null, full ? icon : ''));
+    }
+    wrap.append(fr);
+  }
+  return wrap;
+}
+function iconGroup(n, icon, goneFrom) {
+  const g = el('div', { class: 'group' });
+  for (let i = 0; i < n; i++) g.append(el('span', { class: goneFrom != null && i >= goneFrom ? 'gone' : null }, icon));
+  return g;
+}
+
+/* ================= activities =================
+   Each maker gets (level 1-3, animal) and returns
+   { prompt, speak, build(box, api) -> optional hint function } */
+const PRAISE = ['Great job!', 'You did it!', 'Super!', 'Wow, well done!', 'Yes! That is right!', 'Amazing, Doctor!'];
+const OOPS = ['Almost! Try again.', 'Good try! Have another go.', 'Oops! Try again.', 'Not quite. You can do it!'];
+
+function choiceRow(box, opts, api, cls) {
+  const row = el('div', { class: 'choices' });
+  const buttons = opts.map(o => {
+    const b = btn({ class: 'choice ' + (cls || ''), 'aria-label': o.aria || null, onclick: () => {
+      if (b.classList.contains('right')) return;
+      if (o.ok) { b.classList.add('right'); api.win(o.after); } else { b.classList.add('nope'); api.miss(b); }
+    } }, o.node || o.label);
+    return b;
+  });
+  row.append(...buttons); box.append(row);
+  return () => buttons.forEach((b, i) => opts[i].ok && b.classList.add('hint'));
+}
+
+const SKILLS = {
+  /* ---------- MATH ---------- */
+  countTap: { area: 'math', label: 'Counting', curric: 'Number – counting objects to 20', make(l, a) {
+    const n = l === 1 ? rnd(3, 10) : l === 2 ? rnd(8, 15) : rnd(12, 20);
+    const total = Math.min(24, n + rnd(3, 6));
+    return {
+      prompt: 'Give ' + a.name + ' ' + n + ' ' + a.foods + '.',
+      speak: 'Give ' + a.name + ' ' + n + ' ' + a.foods + '. Tap them into the bowl, then press done.',
+      build(box, api) {
+        const tray = el('div', { class: 'tray' }), bowl = el('div', { class: 'bowl', 'aria-label': 'food bowl' });
+        const label = el('div', { class: 'count-label' });
+        let showCount = l === 1;
+        const update = () => { const c = bowl.children.length; label.textContent = showCount ? 'In the bowl: ' + c : ''; };
+        const move = item => { sfx.tap(); (item.parentNode === tray ? bowl : tray).append(item); update(); };
+        for (let i = 0; i < total; i++) { const it = btn({ 'aria-label': 'food' }, a.food); it.onclick = () => move(it); tray.append(it); }
+        box.append(tray, label, bowl, btn({ class: 'big teal small', onclick: () => {
+          const c = bowl.children.length;
+          if (c === n) api.win(n + '! Yum yum!');
+          else { api.miss(bowl, c < n ? 'You gave ' + c + '. ' + a.name + ' needs more.' : 'You gave ' + c + '. That is too many!'); showCount = true; update(); }
+        } }, 'Done ✓'));
+        update();
+        return () => { showCount = true; update(); };
+      },
+    };
+  } },
+
+  howMany: { area: 'math', label: 'How many?', curric: 'Number – quantities to 50, ten frames', make(l, a) {
+    const n = l === 1 ? rnd(3, 10) : l === 2 ? rnd(11, 20) : rnd(21, 50);
+    const thing = pick([['🩹', 'bandages'], ['💊', 'vitamins'], ['🦴', 'chew toys'], ['🧸', 'toys']]);
+    return {
+      prompt: 'How many ' + thing[1] + ' are in the boxes?',
+      speak: 'How many ' + thing[1] + ' are in the boxes? Each full box has ten.',
+      build(box, api) {
+        box.append(tenFrames(n, thing[0]));
+        return choiceRow(box, numberChoices(n, l === 3 ? [10, -10, 1, -1] : [1, -1, 2, -2], 1).map(x => ({ label: String(x), ok: x === n, after: 'Yes, ' + n + ' ' + thing[1] + '!' })), api);
+      },
+    };
+  } },
+
+  addSub: { area: 'math', label: 'Adding & taking away', curric: 'Number – adding and subtracting within 20', make(l, a) {
+    const max = l === 1 ? 5 : l === 2 ? 10 : 20;
+    const sub = l > 1 && Math.random() < 0.5;
+    let x, y, ans;
+    if (sub) { x = rnd(3, max); y = rnd(1, x - 1); ans = x - y; }
+    else { x = rnd(1, max - 1); y = rnd(1, Math.min(max - x, l === 3 ? 9 : max)); ans = x + y; }
+    const prompt = sub ? a.name + ' has ' + x + ' ' + a.foods + '. ' + a.name + ' eats ' + y + '. How many are left?'
+                       : a.name + ' has ' + x + ' ' + a.foods + '. You give ' + y + ' more. How many now?';
+    return {
+      prompt, speak: prompt,
+      build(box, api) {
+        if (sub) box.append(iconGroup(x, a.food, x - y), el('div', { class: 'eq' }, x + ' − ' + y + ' = ?'));
+        else box.append(el('div', { class: 'row' }, iconGroup(x, a.food), el('span', { class: 'op' }, '+'), iconGroup(y, a.food)), el('div', { class: 'eq' }, x + ' + ' + y + ' = ?'));
+        return choiceRow(box, numberChoices(ans, [1, -1, 2, -2], 0).map(v => ({ label: String(v), ok: v === ans, after: (sub ? x + ' take away ' + y : x + ' plus ' + y) + ' is ' + ans + '!' })), api);
+      },
+    };
+  } },
+
+  compare: { area: 'math', label: 'More or fewer', curric: 'Number – comparing numbers to 50', make(l) {
+    const max = l === 1 ? 10 : l === 2 ? 20 : 50;
+    let p = rnd(1, max), q; do { q = rnd(1, max); } while (q === p || (l === 1 && Math.abs(p - q) < 2));
+    const more = l === 1 || Math.random() < 0.6;
+    const ans = more ? Math.max(p, q) : Math.min(p, q);
+    const pets = sample(ANIMALS, 2).map(x => x.emoji);
+    const prompt = l === 1 ? 'Which jar has MORE treats?' : more ? 'Which pet is HEAVIER on the scale?' : 'Which pet is LIGHTER on the scale?';
+    return {
+      prompt,
+      speak: l === 1 ? prompt : prompt + ' ' + p + ' kilograms. Or ' + q + ' kilograms?',
+      build(box, api) {
+        const node = (v, i) => l === 1 ? el('div', { class: 'jar' }, iconGroup(v, '🍪'))
+          : el('div', { class: 'jar' }, el('span', { class: 'pic' }, pets[i]), el('span', { class: 'num' }, '⚖️ ' + v), el('span', { class: 'lbl' }, 'kilograms'));
+        return choiceRow(box, [p, q].map((v, i) => ({ node: node(v, i), ok: v === ans, aria: v + ' kilograms',
+          after: l === 1 ? ans + ' is more than ' + (ans === p ? q : p) + '!' : ans + ' kilograms is ' + (more ? 'heavier' : 'lighter') + '!' })), api);
+      },
+    };
+  } },
+
+  skip: { area: 'math', label: 'Skip counting', curric: 'Number – counting by 2s, 5s and 10s', make(l) {
+    const step = l === 1 ? 10 : l === 2 ? 5 : 2;
+    const len = 5, maxStart = Math.floor(50 / step) - len + 1;
+    const start = rnd(step === 10 ? 0 : 1, Math.max(1, maxStart));
+    const seq = Array.from({ length: len }, (_, i) => (start + i) * step);
+    const hole = rnd(1, len - 1), ans = seq[hole];
+    return {
+      prompt: 'Count by ' + step + 's. Which number is missing?',
+      speak: 'Count by ' + { 10: 'tens', 5: 'fives', 2: 'twos' }[step] + '. ' + seq.map((v, i) => i === hole ? 'hmm' : v).join(', ') + '. Which number is missing?',
+      build(box, api) {
+        box.append(el('div', { class: 'seq' }, seq.map((v, i) => el('span', { class: i === hole ? 'q' : null }, i === hole ? '?' : v))));
+        return choiceRow(box, numberChoices(ans, [1, -1, step, -step], 1).map(v => ({ label: String(v), ok: v === ans, after: seq.join(', ') + '!' })), api);
+      },
+    };
+  } },
+
+  tens: { area: 'math', label: 'Tens and ones', curric: 'Number – tens and ones (place value)', make(l) {
+    const t = l === 1 ? 1 : l === 2 ? rnd(2, 3) : rnd(2, 4);
+    const o = rnd(l === 1 ? 1 : 0, 9), n = t * 10 + o;
+    return {
+      prompt: 'Each stick has 10 blocks. How many blocks in all?',
+      speak: 'The vet built a block tower for the waiting room. Each stick has 10 blocks. How many blocks are there in all?',
+      build(box, api) {
+        const rods = el('div', { class: 'rods' });
+        for (let i = 0; i < t; i++) { const r = el('div', { class: 'rod', 'aria-hidden': 'true' }); for (let k = 0; k < 10; k++) r.append(el('i')); rods.append(r); }
+        const u = el('div', { class: 'units', 'aria-hidden': 'true' }); for (let i = 0; i < o; i++) u.append(el('i', { class: 'unit' }));
+        rods.append(u);
+        box.append(rods, l === 1 ? el('div', { class: 'count-label' }, t + (t === 1 ? ' ten' : ' tens') + ' and ' + o + (o === 1 ? ' one' : ' ones')) : null);
+        return choiceRow(box, numberChoices(n, [10, -10, 1, -1, 9], 1).map(v => ({ label: String(v), ok: v === n, after: t + (t === 1 ? ' ten and ' : ' tens and ') + o + (o === 1 ? ' one make ' : ' ones make ') + n + '!' })), api);
+      },
+    };
+  } },
+
+  pattern: { area: 'math', label: 'Patterns', curric: 'Algebra – repeating patterns', make(l) {
+    const cols = shuffle(['❤️', '💙', '💛', '💚', '💜', '🧡']);
+    const cores = l === 1 ? ['AB'] : l === 2 ? ['AAB', 'ABB', 'AABB'] : ['ABC', 'ABBC', 'AABC'];
+    const core = pick(cores).split('').map(ch => cols[ch.charCodeAt(0) - 65]);
+    const shown = core.length * 2 + rnd(0, core.length - 1);
+    const seq = Array.from({ length: shown }, (_, i) => core[i % core.length]);
+    const ans = core[shown % core.length];
+    return {
+      prompt: 'Finish the bandage pattern! What comes next?',
+      speak: 'Let us decorate the bandage with a pattern. What comes next?',
+      build(box, api) {
+        box.append(el('div', { class: 'pattern' }, seq.map(c => el('span', null, c)), el('span', { class: 'q' }, '?')));
+        const opts = uniq([ans, ...shuffle(cols.slice(0, Math.max(3, uniq(core).length + 1)))]).slice(0, 3);
+        return choiceRow(box, shuffle(opts).map(c => ({ label: c, ok: c === ans })), api);
+      },
+    };
+  } },
+
+  coins: { area: 'math', label: 'Coins', curric: 'Financial literacy – Canadian coins and their values', make(l) {
+    if (l === 1) {
+      const vals = sample([5, 10, 25, 100, 200], 3), t = pick(vals), c = COINS[t];
+      const byName = Math.random() < 0.5;
+      const prompt = byName ? 'Tap the ' + c.name + '.' : 'Which coin is worth ' + c.value + '?';
+      return {
+        prompt, speak: byName ? prompt : 'Which coin is worth ' + cents(t) + '?',
+        build(box, api) {
+          box.append(el('div', { class: 'pricetag' }, '🪙 Coin check'));
+          return choiceRow(box, vals.map(v => ({ node: coinEl(v, null, 'span'), aria: COINS[v].name, ok: v === t, after: 'A ' + c.name + ' is worth ' + cents(t) + '!' })), api, 'coinchoice');
+        },
+      };
+    }
+    const bank = l === 2 ? [5, 10] : [5, 10, 25];
+    const price = l === 2 ? pick([10, 15, 20, 25, 30]) : pick([20, 30, 35, 40, 45, 50]);
+    return {
+      prompt: 'The medicine costs ' + price + '¢. Tap coins to pay.',
+      speak: 'The medicine costs ' + price + ' cents. Tap coins to pay, then press pay.',
+      build(box, api) {
+        const paid = el('div', { class: 'bowl wallet', 'aria-label': 'coins paid' });
+        const label = el('div', { class: 'count-label' });
+        let showTotal = false;
+        const sum = () => [...paid.children].reduce((s, c) => s + Number(c.dataset.v), 0);
+        const upd = () => { label.textContent = showTotal ? 'You paid ' + sum() + '¢' : ''; };
+        const wallet = el('div', { class: 'wallet' }, bank.map(v => el('div', { class: 'coinwrap' }, coinEl(v, { onclick: () => {
+          sfx.tap(); say(COINS[v].name);
+          const c = coinEl(v, { 'data-v': v }); c.onclick = () => { c.remove(); upd(); }; paid.append(c); upd();
+        } }), el('span', { class: 'coinval' }, COINS[v].name + ' · ' + COINS[v].value))));
+        box.append(el('div', { class: 'pricetag' }, '💊 ' + price + '¢'), wallet, el('div', { class: 'count-label' }, '⬇ Your coins'), paid, label,
+          btn({ class: 'big teal small', onclick: () => {
+            const s = sum();
+            if (s === price) api.win('Exactly ' + price + ' cents. Thank you!');
+            else { showTotal = true; upd(); api.miss(paid, s < price ? 'That is ' + s + ' cents. You need more.' : 'That is ' + s + ' cents. Too much! Tap a coin to take it back.'); }
+          } }, 'Pay 💳'));
+        return () => { showTotal = true; upd(); };
+      },
+    };
+  } },
+
+  code: { area: 'math', label: 'Coding', curric: 'Algebra – coding with step-by-step instructions', make(l, a) {
+    const W = 5, H = 4;
+    let start, goal, blocks = [];
+    const key = (x, y) => x + ',' + y;
+    function path(bl) {
+      const bset = new Set(bl.map(b => key(b[0], b[1])));
+      const q = [[start, []]], seen = new Set([key(...start)]);
+      while (q.length) {
+        const [[x, y], p] = q.shift();
+        if (x === goal[0] && y === goal[1]) return p;
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nx = x + dx, ny = y + dy, k = key(nx, ny);
+          if (nx < 0 || ny < 0 || nx >= W || ny >= H || bset.has(k) || seen.has(k)) continue;
+          seen.add(k); q.push([[nx, ny], p.concat([[nx, ny]])]);
+        }
+      }
+      return null;
+    }
+    for (let tries = 0; tries < 200; tries++) {
+      start = [rnd(0, W - 1), rnd(0, H - 1)];
+      if (l === 1) { goal = Math.random() < 0.5 ? [rnd(0, W - 1), start[1]] : [start[0], rnd(0, H - 1)]; }
+      else goal = [rnd(0, W - 1), rnd(0, H - 1)];
+      const d = Math.abs(goal[0] - start[0]) + Math.abs(goal[1] - start[1]);
+      if (d < 2 || d > (l === 1 ? 4 : 6)) continue;
+      if (l === 2 && (goal[0] === start[0] || goal[1] === start[1])) continue;
+      blocks = [];
+      if (l === 3) {
+        const free = [];
+        for (let x = 0; x < W; x++) for (let y = 0; y < H; y++) if (!(x === start[0] && y === start[1]) && !(x === goal[0] && y === goal[1])) free.push([x, y]);
+        blocks = sample(free, rnd(2, 3));
+      }
+      const p = path(blocks);
+      if (p && (l < 3 || p.length > d || blocks.some(b => (b[0] === start[0] || b[1] === start[1]))) && p.length <= 7) break;
+    }
+    if (!path(blocks)) blocks = [];
+    const best = path(blocks) || [];
+    return {
+      prompt: 'Help Dr. ' + S.name + ' walk to ' + a.name + '! Make a plan with the arrows, then press Go.',
+      speak: 'Help Doctor ' + S.name + ' walk to ' + a.name + '. Tap the arrows to make a plan, then press go.',
+      build(box, api) {
+        const grid = el('div', { class: 'grid', style: 'grid-template-columns:repeat(' + W + ',auto)' });
+        const cells = {};
+        for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const c = el('div', { class: 'cell' }); cells[key(x, y)] = c; grid.append(c); }
+        blocks.forEach(b => { cells[key(...b)].textContent = pick(['🪴', '📦']); });
+        cells[key(...goal)].append(pet(a, 58));
+        const doc = ellie(50);
+        let pos = start.slice(), running = false;
+        const place = () => cells[key(...pos)].append(doc);
+        place();
+        const prog = [], progEl = el('div', { class: 'program', 'aria-label': 'your plan' });
+        const ARROWS = { up: ['⬆️', 0, -1], right: ['➡️', 1, 0], down: ['⬇️', 0, 1], left: ['⬅️', -1, 0] };
+        const drawProg = hi => { progEl.replaceChildren(...(prog.length ? prog.map((d, i) => el('span', { class: i === hi ? 'on' : null }, ARROWS[d][0])) : [el('span', { class: 'empty' }, 'Your plan goes here')])); };
+        drawProg();
+        const arrows = el('div', { class: 'arrows' },
+          ['left', 'up', 'down', 'right'].map(d => btn({ class: 'arrow', 'aria-label': d, onclick: () => { if (running || prog.length >= 12) return; sfx.tap(); prog.push(d); drawProg(); } }, ARROWS[d][0])),
+          btn({ class: 'arrow', 'aria-label': 'undo', onclick: () => { if (running) return; prog.pop(); drawProg(); } }, '↩️'));
+        const go = btn({ class: 'big teal small', onclick: run }, 'Go ▶');
+        function reset() { pos = start.slice(); place(); Object.values(cells).forEach(c => c.classList.remove('bump')); running = false; drawProg(); }
+        function run() {
+          if (running || !prog.length) return;
+          running = true; pos = start.slice(); place();
+          let i = 0;
+          const stepFn = () => {
+            if (i >= prog.length) {
+              if (pos[0] === goal[0] && pos[1] === goal[1]) { api.win('You made it to ' + a.name + '!'); }
+              else { api.miss(grid, 'Not there yet. Fix your plan and try again!'); setTimeout(reset, 900); }
+              return;
+            }
+            drawProg(i);
+            const [, dx, dy] = ARROWS[prog[i]];
+            const nx = pos[0] + dx, ny = pos[1] + dy;
+            const blocked = nx < 0 || ny < 0 || nx >= W || ny >= H || blocks.some(b => b[0] === nx && b[1] === ny);
+            if (blocked) {
+              const c = cells[key(nx, ny)]; if (c) c.classList.add('bump');
+              api.miss(grid, 'Bonk! Something is in the way.'); setTimeout(reset, 1100); return;
+            }
+            pos = [nx, ny]; place(); sfx.tap(); i++;
+            setTimeout(stepFn, 480);
+          };
+          setTimeout(stepFn, 250);
+        }
+        box.append(grid, progEl, arrows, go);
+        return () => best.forEach(p => cells[key(...p)].classList.add('path'));
+      },
+    };
+  } },
+
+  /* ---------- LANGUAGE ---------- */
+  firstSound: { area: 'lang', label: 'Sounds in words', curric: 'Foundations – beginning, middle and end sounds', make(l) {
+    const [w, e] = pick(CVC);
+    const pos = l === 1 ? 0 : l === 2 ? pick([0, 2]) : pick([0, 1, 2]);
+    const ans = w[pos];
+    const pool = pos === 1 ? ['a', 'e', 'i', 'o', 'u'] : 'bcdfghjlmnprstvwxz'.split('');
+    const opts = shuffle([ans, ...sample(pool.filter(x => x !== ans), 2)]);
+    const where = ['start with', 'have in the middle', 'end with'][pos];
+    return {
+      prompt: 'What sound does this word ' + where + '?',
+      speak: w + '. What sound does ' + w + ' ' + where + '?',
+      build(box, api) {
+        const word = el('div', { class: 'bigword', hidden: true });
+        box.append(btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(w) }, el('span', { class: 'bigpic' }, e)), word);
+        return choiceRow(box, opts.map(ch => ({ label: ch, ok: ch === ans, after: () => {
+          word.hidden = false; word.replaceChildren(...w.split('').map((c, i) => el('span', { class: i === pos ? 'hl' : null }, c)));
+          return [w + ' starts with ' + ch + '!', w + ' has ' + ch + ' in the middle!', w + ' ends with ' + ch + '!'][pos];
+        } })), api);
+      },
+    };
+  } },
+
+  spell: { area: 'lang', label: 'Spelling', curric: 'Foundations – spelling short-vowel words', make(l) {
+    const [w, e] = pick(l === 3 ? BLENDS.filter(b => b[0].length === 4) : CVC);
+    const given = l === 1 ? 1 : 0;
+    const extra = sample('abcdefghilmnoprstu'.split('').filter(c => !w.includes(c)), l);
+    return {
+      prompt: 'Spell the word. Tap the letters in order.',
+      speak: 'Can you spell ' + w + '? ' + w + '.',
+      build(box, api) {
+        const slots = el('div', { class: 'slots' }, w.split('').map((c, i) => el('div', { class: 'slot' + (i < given ? ' given' : '') }, i < given ? c : '')));
+        let at = given;
+        const letters = shuffle(w.slice(given).split('').concat(extra));
+        const tiles = el('div', { class: 'tiles' }, letters.map(c => {
+          const t = btn({ class: 'tile', onclick: () => {
+            if (at >= w.length) return;
+            if (c === w[at]) { sfx.tap(); slots.children[at].textContent = c; t.classList.add('used'); at++; if (at === w.length) api.win(w.split('').join(', ') + '. ' + w + '!'); }
+            else api.miss(t);
+          } }, c);
+          return t;
+        }));
+        box.append(btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(w) }, el('span', { class: 'bigpic' }, e)), slots, tiles);
+        return () => { say(w.split('').join('... ')); const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === w[at]); if (t) t.classList.add('hint'); };
+      },
+    };
+  } },
+
+  readWord: { area: 'lang', label: 'Reading words', curric: 'Foundations – decoding (sounding out) words', make(l) {
+    const bank = l === 3 ? BLENDS : CVC;
+    const [w, e] = pick(bank);
+    let others;
+    if (l === 2) {
+      const near = bank.filter(b => b[0] !== w && (b[0][0] === w[0] || b[0][1] === w[1] || b[0].slice(-1) === w.slice(-1)));
+      others = sample(near.length >= 2 ? near : bank.filter(b => b[0] !== w), 2);
+    } else others = sample(bank.filter(b => b[0] !== w && b[1] !== e), 2);
+    return {
+      prompt: 'Read the word. Tap the matching picture.',
+      speak: 'Sound out the word. Then tap the picture that matches.',
+      build(box, api) {
+        box.append(el('div', { class: 'bigword' }, w));
+        return choiceRow(box, shuffle([[w, e], ...others]).map(([ww, ee]) => ({ node: el('span', { class: 'pic' }, ee), aria: ww, ok: ww === w, after: w + '!' })), api);
+      },
+    };
+  } },
+
+  rhyme: { area: 'lang', label: 'Rhyming', curric: 'Foundations – hearing rhymes', make() {
+    const fam = pick(RHYMES);
+    const [target, match] = sample(fam, 2);
+    const others = sample(RHYMES.filter(f => f !== fam).flat(), 2);
+    const opts = shuffle([match, ...others]);
+    return {
+      prompt: 'Which word rhymes with ' + target[0] + '?',
+      speak: 'Which word rhymes with ' + target[0] + '? ' + opts[0][0] + '? ' + opts[1][0] + '? Or ' + opts[2][0] + '?',
+      build(box, api) {
+        box.append(el('div', { class: 'row' }, el('span', { class: 'bigpic' }, target[1]), el('span', { class: 'bigword' }, target[0])));
+        return choiceRow(box, opts.map(o => ({ node: [el('span', { class: 'pic' }, o[1]), el('span', { class: 'lbl' }, o[0])], aria: o[0], ok: o === match, after: target[0] + ', ' + match[0] + '. They rhyme!' })), api);
+      },
+    };
+  } },
+
+  sight: { area: 'lang', label: 'Sight words', curric: 'Foundations – high-frequency words', needsVoice: true, make(l) {
+    const list = SIGHT[l - 1];
+    const words = sample(uniq(list), l === 1 ? 3 : 4), ans = pick(words);
+    return {
+      prompt: 'Listen, then find the word you hear.',
+      speak: 'Find the word: ' + ans + '. ' + ans + '.',
+      build(box, api) {
+        box.append(btn({ class: 'big sun small', onclick: () => say(ans) }, '🔊 Hear the word again'));
+        return choiceRow(box, words.map(w => ({ label: w, ok: w === ans, after: ans + '!' })), api, 'word');
+      },
+    };
+  } },
+
+  digraph: { area: 'lang', label: 'sh, ch, th', curric: 'Foundations – letter teams sh, ch and th', make(l) {
+    const keys = l === 1 ? sample(['sh', 'ch', 'th'], 2) : ['sh', 'ch', 'th'];
+    const k = pick(keys), [w, e] = pick(DIGRAPH[k]);
+    return {
+      prompt: 'Which letter team does it start with?',
+      speak: w + '. Does ' + w + ' start with ' + keys.join(', or ') + '?',
+      build(box, api) {
+        box.append(btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(w) }, el('span', { class: 'bigpic' }, e)));
+        return choiceRow(box, shuffle(keys).map(x => ({ label: x, ok: x === k, after: w + ' starts with ' + k.split('').join(' ') + '!' })), api, 'word');
+      },
+    };
+  } },
+
+  syllable: { area: 'lang', label: 'Syllables', curric: 'Foundations – clapping syllables', make(l) {
+    const pool = SYLL.filter(s => { const n = s[0].split('-').length; return l === 1 ? n <= 2 : l === 2 ? n <= 3 : n >= 2; });
+    const [split, e] = pick(pool), word = split.replace(/-/g, ''), n = split.split('-').length;
+    return {
+      prompt: 'Tap the drum once for each beat in the word.',
+      speak: word + '. Tap the drum for each beat in ' + word + ', then press done.',
+      build(box, api) {
+        let c = 0;
+        const claps = el('div', { class: 'claps' });
+        const drum = btn({ class: 'drum', onclick: () => { if (c >= 6) return; c++; tone(180, 0, .15, 'sine', .25); claps.append(el('i')); drum.classList.add('tap'); setTimeout(() => drum.classList.remove('tap'), 120); } }, 'Tap!');
+        box.append(btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(word) }, el('span', { class: 'bigpic' }, e)), drum, claps,
+          el('div', { class: 'btnrow' },
+            btn({ class: 'big sun small', onclick: () => { c = 0; claps.replaceChildren(); } }, 'Start over ↺'),
+            btn({ class: 'big teal small', onclick: () => {
+              if (c === n) api.win(split.split('-').join(', ') + '. ' + n + (n === 1 ? ' beat!' : ' beats!'));
+              else { api.miss(claps, 'You tapped ' + c + '. Listen again: ' + word + '.'); c = 0; claps.replaceChildren(); }
+            } }, 'Done ✓')));
+        return () => say(split.split('-').join('... '));
+      },
+    };
+  } },
+
+  sentence: { area: 'lang', label: 'Reading sentences', curric: 'Comprehension – reading a simple sentence', make(l) {
+    const ANI = [['cat', '🐱'], ['dog', '🐶'], ['pig', '🐷'], ['hen', '🐔'], ['fox', '🦊'], ['bug', '🐛']];
+    const PLACE = [['tub', '🛁'], ['bed', '🛏️'], ['box', '📦'], ['van', '🚐']];
+    const THING = [['hat', '👒'], ['cup', '☕'], ['map', '🗺️'], ['bag', '👜'], ['net', '🥅']];
+    const tpl = l === 1 ? 'in' : pick(['in', 'has']);
+    const an = pick(ANI), ob = pick(tpl === 'in' ? PLACE : THING);
+    const text = tpl === 'in' ? 'The ' + an[0] + ' is in the ' + ob[0] + '.' : 'The ' + an[0] + ' has a ' + ob[0] + '.';
+    const pool = tpl === 'in' ? PLACE : THING;
+    const opts = shuffle([[an, ob], [pick(ANI.filter(x => x !== an)), ob], [an, pick(pool.filter(x => x !== ob))]]);
+    return {
+      prompt: 'Read the vet note. Tap the picture that matches.',
+      speak: 'Read the vet note by yourself. Then tap the picture that matches.',
+      build(box, api) {
+        box.append(el('div', { class: 'bigword', style: 'font-size:44px' }, text));
+        return choiceRow(box, opts.map(([x, y]) => ({ node: el('span', { class: 'scene' }, el('span', null, x[1]), el('span', null, y[1])), aria: x[0] + ' and ' + y[0], ok: x === an && y === ob, after: text })), api);
+      },
+    };
+  } },
+};
+/* ================= week edition: Numbers to 10 =================
+   Made from Ellie's Chapter 1 worksheets (Online Workbook 1A / Revisit 1A):
+   counting to 10 in numbers and words, comparing (more / fewer / same, greater / less than),
+   counting on and back, 1-4 more or less, "how many more", ten frames and ordering towers.
+   Every number stays within 0-10. */
+const NUM_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const N10_THINGS = [['🩹', 'bandages'], ['💊', 'vitamins'], ['🦴', 'chew toys'], ['🧸', 'toys']];
+const N10_PAIRS = [[['🦴', 'bones'], ['🐶', 'puppies']], [['🥕', 'carrots'], ['🐰', 'bunnies']], [['🐟', 'fish'], ['🐱', 'kittens']],
+  [['🪱', 'worms'], ['🐦', 'birds']], [['🥣', 'bowls'], ['🐹', 'hamsters']]];
+const upto = (a, b) => { const r = []; for (let i = a; i <= b; i++) r.push(i); return r; };
+// three answer choices near the answer, all within lo..hi
+function near(ans, lo, hi) {
+  lo = lo == null ? 0 : lo; hi = hi == null ? 10 : hi;
+  const c = shuffle([1, -1, 2, -2, 3, -3].map(d => ans + d).filter(x => x >= lo && x <= hi));
+  return shuffle([ans, c[0], c[1]]);
+}
+// the worksheet's number track: cells 1-10, counters up to n, the ones above `from` highlighted
+function track(n, from) {
+  return el('div', { class: 'track', 'aria-hidden': 'true' }, upto(1, 10).map(i =>
+    el('div', { class: 'tcell' }, el('small', null, String(i)), el('span', { class: 'dot' + (i > n ? ' empty' : from != null && i > from ? ' hot' : '') }))));
+}
+const N10 = {
+  n10count: { area: 'math', label: 'Counting to 10', curric: 'Numbers to 10 – counting objects 0 to 10', make(l) {
+    const n = l === 1 ? rnd(1, 5) : l === 2 ? rnd(1, 10) : rnd(0, 10);
+    const [ic, thing] = pick(N10_THINGS);
+    return {
+      prompt: 'How many ' + thing + ' are in the box?', speak: 'How many ' + thing + ' are in the box?',
+      build(box, api) {
+        box.append(tenFrames(n, ic));
+        return choiceRow(box, near(n).map(x => ({ label: String(x), ok: x === n, after: 'Yes, ' + n + ' ' + thing + '!' })), api);
+      },
+    };
+  } },
+
+  n10compare: { area: 'math', label: 'More, fewer, same', curric: 'Numbers to 10 – comparing: more, fewer, same, greater than, less than', make(l) {
+    if (l >= 2 && Math.random() < 0.4) {
+      const greater = Math.random() < 0.5, k = greater ? rnd(0, 8) : rnd(2, 10);
+      const ok = greater ? rnd(k + 1, 10) : rnd(0, k - 1);
+      const wrong = sample(upto(0, 10).filter(x => greater ? x <= k : x >= k), 2);
+      const rel = greater ? ' is greater than ' : ' is less than ';
+      return {
+        prompt: '__' + rel + k + '.', speak: 'Which number is ' + (greater ? 'greater' : 'less') + ' than ' + k + '?',
+        build(box, api) {
+          box.append(el('div', { class: 'bigword' }, el('span', { class: 'hl' }, '?'), rel + k));
+          return choiceRow(box, shuffle([ok, ...wrong]).map(x => ({ label: String(x), ok: x === ok, after: ok + rel + k + '!' })), api);
+        },
+      };
+    }
+    const [[ia, na], [ib, nb]] = pick(N10_PAIRS), max = l === 1 ? 5 : 10;
+    const a = rnd(1, max);
+    let b = a;
+    if (Math.random() >= (l === 3 ? 0.35 : 0.2)) { do { b = rnd(1, max); } while (b === a || (l === 1 && Math.abs(a - b) < 2)); }
+    const q = pick(['more', 'fewer', 'same']);
+    const truth = q === 'more' ? a > b : q === 'fewer' ? a < b : a === b;
+    const prompt = q === 'same' ? 'Is the number of ' + na + ' and ' + nb + ' the same?' : 'Are there ' + q + ' ' + na + ' than ' + nb + '?';
+    const why = a === b ? a + ' and ' + b + ' are the same!' : a > b ? a + ' is more than ' + b + '!' : a + ' is less than ' + b + '!';
+    return {
+      prompt, speak: prompt,
+      build(box, api) {
+        const row = (n, ic) => el('div', { class: 'matchrow' }, upto(1, n).map(() => el('span', null, ic)));
+        box.append(el('div', { class: 'match' }, row(a, ia), row(b, ib)));
+        return choiceRow(box, ['Yes', 'No'].map(w => ({ label: w, ok: (w === 'Yes') === truth, after: (truth ? 'Yes! ' : 'No! ') + why })), api, 'word');
+      },
+    };
+  } },
+
+  n10next: { area: 'math', label: 'What comes next?', curric: 'Numbers to 10 – counting on and back, missing numbers', make(l) {
+    const down = l > 1 && Math.random() < 0.5, start = rnd(0, 6);
+    const seq = upto(start, start + 4); if (down) seq.reverse();
+    const hole = l === 3 ? rnd(0, 4) : 4, ans = seq[hole];
+    const ask = hole === 4 ? 'What comes next?' : 'Which number is missing?';
+    return {
+      prompt: ask, speak: (down ? 'Count back. ' : 'Count on. ') + seq.map((v, i) => i === hole ? 'hmm' : v).join(', ') + '. ' + ask,
+      build(box, api) {
+        box.append(el('div', { class: 'seq' }, seq.map((v, i) => el('span', { class: i === hole ? 'q' : null }, i === hole ? '?' : v))));
+        return choiceRow(box, near(ans).map(x => ({ label: String(x), ok: x === ans, after: seq.join(', ') + '!' })), api);
+      },
+    };
+  } },
+
+  n10moreless: { area: 'math', label: 'More and less', curric: 'Numbers to 10 – 1, 2, 3 or 4 more or less; how many more', make(l) {
+    if (l === 3 && Math.random() < 0.4) {
+      const x = rnd(0, 8), y = rnd(x + 1, Math.min(10, x + 5)), d = y - x, more = Math.random() < 0.5;
+      return {
+        prompt: more ? y + ' is __ more than ' + x + '.' : x + ' is __ less than ' + y + '.',
+        speak: more ? y + ' is how many more than ' + x + '?' : x + ' is how many less than ' + y + '?',
+        build(box, api) {
+          box.append(track(y, x));
+          return choiceRow(box, near(d, 1, 10).map(v => ({ label: String(v), ok: v === d, after: more ? y + ' is ' + d + ' more than ' + x + '!' : x + ' is ' + d + ' less than ' + y + '!' })), api);
+        },
+      };
+    }
+    const k = l === 1 ? 1 : l === 2 ? rnd(1, 2) : rnd(1, 4), more = Math.random() < 0.5;
+    const n = more ? rnd(0, 10 - k) : rnd(k, 10), ans = more ? n + k : n - k;
+    const rel = k + (more ? ' more than ' : ' less than ') + n;
+    return {
+      prompt: rel + ' is __.', speak: 'What is ' + rel + '?',
+      build(box, api) {
+        box.append(track(n));
+        return choiceRow(box, near(ans).map(v => ({ label: String(v), ok: v === ans, after: rel + ' is ' + ans + '!' })), api);
+      },
+    };
+  } },
+
+  n10back: { area: 'math', label: 'Count on and back', curric: 'Numbers to 10 – counting back with ten frames', make(l) {
+    const down = l < 3 || Math.random() < 0.5, start = down ? rnd(4, 10) : rnd(0, 6);
+    const seq = upto(0, 4).map(i => down ? start - i : start + i);
+    const blanks = l === 1 ? [2] : l === 2 ? [2, 3] : sample(upto(0, 4), 2).sort((p, q) => p - q);
+    const line = (down ? 'Count back.' : 'Count on.') + ' Fill in the missing numbers.';
+    return {
+      prompt: line, speak: line,
+      build(box, api) {
+        let at = 0;
+        const frameBox = el('div');
+        const showFrame = () => {   // the ten frame shows the number just before the next blank
+          const i = at < blanks.length ? blanks[at] : 4;
+          frameBox.replaceChildren(tenFrames(i === 0 ? seq[0] : seq[i - 1], '🟣'));
+        };
+        const slots = seq.map((v, i) => el('span', { class: blanks.includes(i) ? 'q' : null }, blanks.includes(i) ? '?' : v));
+        const pool = shuffle([...blanks.map(i => seq[i]), ...sample(upto(0, 10).filter(x => !seq.includes(x)), 2)]);
+        const tiles = el('div', { class: 'tiles' }, pool.map(v => {
+          const t = btn({ class: 'tile', onclick: () => {
+            if (at >= blanks.length) return;
+            if (v === seq[blanks[at]]) {
+              sfx.tap(); say(String(v)); slots[blanks[at]].textContent = v; slots[blanks[at]].classList.remove('q'); t.classList.add('used'); at++; showFrame();
+              if (at === blanks.length) api.win(seq.join(', ') + '!');
+            } else api.miss(t);
+          } }, String(v));
+          return t;
+        }));
+        showFrame();
+        box.append(frameBox, el('div', { class: 'seq' }, slots), tiles);
+        return () => { const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === String(seq[blanks[at]])); if (t) t.classList.add('hint'); };
+      },
+    };
+  } },
+
+  n10order: { area: 'math', label: 'Tower order', curric: 'Numbers to 10 – putting numbers in order', make(l) {
+    const count = l === 1 ? 3 : l === 2 ? 4 : 5, hs = sample(upto(1, 10), count);
+    const tallFirst = l === 3 && Math.random() < 0.4;
+    const order = hs.slice().sort((p, q) => tallFirst ? q - p : p - q);
+    const line = 'Put the towers in order. Tap the ' + (tallFirst ? 'tallest' : 'shortest') + ' tower first.';
+    return {
+      prompt: line, speak: line,
+      build(box, api) {
+        let at = 0;
+        const towers = el('div', { class: 'towers' }, hs.map(h => {
+          const tag = el('b', { class: 'tag' }, '');
+          const t = btn({ class: 'tower', 'aria-label': 'tower', onclick: () => {
+            if (t.classList.contains('placed') || at >= count) return;
+            if (h === order[at]) {
+              sfx.tap(); say(String(h)); t.classList.add('placed'); tag.textContent = h; at++;
+              if (at === count) api.win('They are in order!');
+            } else api.miss(t);
+          } }, tag, el('div', { class: 'cubes' }, upto(1, h).map(() => el('i'))));
+          t.dataset.h = h;
+          return t;
+        }));
+        box.append(towers);
+        return () => { const t = [...towers.children].find(x => +x.dataset.h === order[at]); if (t) t.classList.add('hint'); };
+      },
+    };
+  } },
+
+  n10readword: { area: 'lang', label: 'Reading number words', curric: 'Numbers to 10 – reading number words zero to ten', make(l) {
+    const n = l === 1 ? rnd(1, 5) : rnd(0, 10);
+    const others = l === 3 ? near(n).filter(x => x !== n) : sample(upto(0, l === 1 ? 6 : 10).filter(x => x !== n), 2);
+    return {
+      prompt: 'Read the number word. Tap the box that matches.', speak: 'Read the number word by yourself. Then tap the box that matches.',
+      build(box, api) {
+        box.append(el('div', { class: 'bigword' }, NUM_WORDS[n]));
+        return choiceRow(box, shuffle([n, ...others]).map(v => ({ node: el('span', { class: 'mini' }, tenFrames(v, 'paw')), aria: String(v), ok: v === n, after: NUM_WORDS[n] + '!' })), api);
+      },
+    };
+  } },
+
+  n10wordpick: { area: 'lang', label: 'Tap the number word', curric: 'Numbers to 10 – matching amounts to number words', make(l) {
+    const n = l === 1 ? rnd(1, 5) : rnd(1, 10), [ic, thing] = pick(N10_THINGS);
+    const words = l === 3 ? near(n, 0, 10).concat(sample(upto(0, 10).filter(x => Math.abs(x - n) > 3), 1)) : shuffle([n, ...sample(upto(0, 10).filter(x => x !== n), 2)]);
+    const line = 'Count the ' + thing + '. Tap the correct word.';
+    return {
+      prompt: line, speak: line,
+      build(box, api) {
+        box.append(iconGroup(n, ic));
+        return choiceRow(box, shuffle([...new Set(words)]).map(v => ({ label: NUM_WORDS[v], ok: v === n, after: 'Yes, ' + n + ' ' + thing + '!' })), api, 'word');
+      },
+    };
+  } },
+
+  n10spell: { area: 'lang', label: 'Spelling number words', curric: 'Numbers to 10 – spelling number words', make(l) {
+    const n = l === 1 ? pick([1, 2, 6, 10]) : rnd(0, 10), w = NUM_WORDS[n], given = l === 1 ? 1 : 0;
+    const extra = sample('abcdfghilmnoprstuvwxz'.split('').filter(c => !w.includes(c)), l);
+    return {
+      prompt: 'Spell the number word. Tap the letters in order.', speak: 'Can you spell ' + w + '? ' + w + '.',
+      build(box, api) {
+        const slots = el('div', { class: 'slots' }, w.split('').map((c, i) => el('div', { class: 'slot' + (i < given ? ' given' : '') }, i < given ? c : '')));
+        let at = given;
+        const tiles = el('div', { class: 'tiles' }, shuffle(w.slice(given).split('').concat(extra)).map(c => {
+          const t = btn({ class: 'tile', onclick: () => {
+            if (at >= w.length) return;
+            if (c === w[at]) { sfx.tap(); slots.children[at].textContent = c; t.classList.add('used'); at++; if (at === w.length) api.win(w.split('').join(', ') + '. ' + w + '!'); }
+            else api.miss(t);
+          } }, c);
+          return t;
+        }));
+        box.append(el('span', { class: 'mini' }, tenFrames(n, 'paw')), slots, tiles);
+        return () => { say(w.split('').join('... ')); const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === w[at]); if (t) t.classList.add('hint'); };
+      },
+    };
+  } },
+
+  /* ---------- reading from UFLI Home Practice, Lessons 37a and 37b (short o) ---------- */
+  oChain: { area: 'lang', label: 'Word chains', curric: 'UFLI 37 – short o word chains (change one letter)', make(l) {
+    const chain = pick(l === 1 ? O_CHAINS.slice(0, 2) : l === 2 ? O_CHAINS.slice(0, 3) : O_CHAINS);
+    const i = rnd(0, chain.length - 2), from = chain[i], to = chain[i + 1], line = chainStep(from, to);
+    const others = sample([...new Set(O_CHAINS.flat())].filter(w => w !== to && w !== from), 1);
+    return {
+      prompt: line + ' What word is this?', speak: 'This word is ' + from + '. ' + line + ' What word is this?',
+      build(box, api) {
+        box.append(el('div', { class: 'row' }, el('div', { class: 'bigword' }, from), el('span', { class: 'op' }, '→'), el('div', { class: 'bigword' }, el('span', { class: 'hl' }, '?'))));
+        return choiceRow(box, shuffle([to, from, ...others]).map(w => ({ label: w, ok: w === to, after: from + ', ' + to + '!' })), api, 'word');
+      },
+    };
+  } },
+
+  oSpell: { area: 'lang', label: 'Spelling short o words', curric: 'UFLI 37 – spelling short o words', make(l) {
+    const w = pick(l === 3 ? O_WORDS_B : O_WORDS_A), given = l === 1 ? 1 : 0;
+    const extra = sample('abcdefghiklmnprstuz'.split('').filter(c => !w.includes(c)), l);
+    return {
+      prompt: 'Listen, then spell the word.', speak: 'Can you spell ' + w + '? ' + w + '.',
+      build(box, api) {
+        const slots = el('div', { class: 'slots' }, w.split('').map((c, i) => el('div', { class: 'slot' + (i < given ? ' given' : '') }, i < given ? c : '')));
+        let at = given;
+        const tiles = el('div', { class: 'tiles' }, shuffle(w.slice(given).split('').concat(extra)).map(c => {
+          const t = btn({ class: 'tile', onclick: () => {
+            if (at >= w.length) return;
+            if (c === w[at]) { sfx.tap(); slots.children[at].textContent = c; t.classList.add('used'); at++; if (at === w.length) api.win(w.split('').join(', ') + '. ' + w + '!'); }
+            else api.miss(t);
+          } }, c);
+          return t;
+        }));
+        box.append(O_PICS[w] ? btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(w) }, el('span', { class: 'bigpic' }, O_PICS[w]))
+          : btn({ class: 'big sun small', onclick: () => say(w) }, '🔊 Hear the word'), slots, tiles);
+        return () => { say(w.split('').join('... ')); const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === w[at]); if (t) t.classList.add('hint'); };
+      },
+    };
+  } },
+
+  oHeart: { area: 'lang', label: 'Heart words', curric: 'UFLI 37 – heart words he, be, me, from', needsVoice: true, make(l) {
+    const ans = pick(HEART_WORDS);
+    const words = l === 1 ? shuffle([ans, ...sample(HEART_WORDS.filter(w => w !== ans), 2)])
+      : l === 2 ? shuffle(HEART_WORDS.slice())
+      : shuffle([ans, ...sample(HEART_WORDS.filter(w => w !== ans), 1), ...sample(['we', 'she', 'for', 'the', 'my'], 2)]);
+    return {
+      prompt: 'Listen, then find the heart word you hear.', speak: 'Find the word: ' + ans + '. ' + ans + '.',
+      build(box, api) {
+        box.append(btn({ class: 'big sun small', onclick: () => say(ans) }, '🔊 Hear the word again'));
+        return choiceRow(box, words.map(w => ({ label: w, ok: w === ans, after: ans + '!' })), api, 'word');
+      },
+    };
+  } },
+
+  oRead: { area: 'lang', label: 'Read and answer', curric: 'UFLI 37 – reading short o sentences', make(l) {
+    if (l > 1 && Math.random() < 0.5) {
+      const [q, yes] = pick(O_QUESTIONS);
+      return {
+        prompt: 'Read the question. Tap Yes or No.', speak: 'Read the question by yourself. Then tap yes or no.',
+        build(box, api) {
+          box.append(el('div', { class: 'bigword', style: 'font-size:44px' }, q));
+          return choiceRow(box, ['Yes', 'No'].map(w => ({ label: w, ok: (w === 'Yes') === yes, after: q + ' ' + (yes ? 'Yes!' : 'No!') })), api, 'word');
+        },
+      };
+    }
+    const an = pick(O_SCENE_ANIMALS), pl = pick(O_SCENE_PLACES);
+    const text = 'The ' + an[0] + ' is on the ' + pl[0] + '.';
+    const opts = shuffle([[an, pl], [O_SCENE_ANIMALS.find(x => x !== an), pl], [an, O_SCENE_PLACES.find(x => x !== pl)]]);
+    return {
+      prompt: 'Read the vet note. Tap the picture that matches.', speak: 'Read the vet note by yourself. Then tap the picture that matches.',
+      build(box, api) {
+        box.append(el('div', { class: 'bigword', style: 'font-size:44px' }, text));
+        return choiceRow(box, opts.map(([x, y]) => ({ node: el('span', { class: 'scene' }, el('span', null, x[1]), el('span', null, y[1])), aria: x[0] + ' and ' + y[0], ok: x === an && y === pl, after: text })), api);
+      },
+    };
+  } },
+};
+// UFLI 37a (short o review) and 37b (short o advanced review) word lists, heart words and chains.
+const O_WORDS_A = ['not', 'sob', 'dog', 'hop', 'box', 'jog'];
+const O_WORDS_B = ['frog', 'spot', 'drop', 'plot', 'cost', 'soft'];
+const HEART_WORDS = ['he', 'be', 'me', 'from'];
+const O_PICS = { dog: '🐶', box: '📦', frog: '🐸', drop: '💧', jog: '🏃' };
+const O_CHAINS = [['lot', 'log', 'dog', 'dot', 'not'], ['top', 'hop', 'hot', 'pot', 'pop'], ['cost', 'lost', 'lot', 'slot'], ['plot', 'slot', 'slop', 'stop']];
+const O_QUESTIONS = [['Can a frog hop?', true], ['Can a box hop?', false], ['Can a dog jog?', true], ['Can a log jog?', false],
+  ['Is a frog a dog?', false], ['Can he jog?', true], ['Can a frog sit on a log?', true], ['Can a dog sit in a box?', true],
+  ['Can a pot hop?', false], ['Can a mop jog?', false], ['Is a log soft?', false], ['Is a dog a frog?', false]];
+const O_SCENE_ANIMALS = [['dog', '🐶'], ['frog', '🐸']];
+const O_SCENE_PLACES = [['box', '📦'], ['log', '🪵']];
+// The UFLI word-work instruction for one step of a chain ("Change the t to g.")
+function chainStep(a, b) {
+  if (a.length === b.length) {
+    const i = [...a].findIndex((c, k) => c !== b[k]);
+    // "nun" → "fun": say which n when the letter appears twice
+    const which = a.split(a[i]).length > 2 ? (a.indexOf(a[i]) === i ? 'first ' : 'last ') : '';
+    return 'Change the ' + which + a[i] + ' to ' + b[i] + '.';
+  }
+  if (b.length === a.length + 1) {
+    const i = [...b].findIndex((c, k) => b.slice(0, k) + b.slice(k + 1) === a);
+    return i === 0 ? 'Add ' + b[0] + ' to the start.' : i === b.length - 1 ? 'Add ' + b[i] + ' to the end.' : 'Add ' + b[i] + ' after the ' + b[i - 1] + '.';
+  }
+  const i = [...a].findIndex((c, k) => a.slice(0, k) + a.slice(k + 1) === b);
+  return 'Take away the ' + a[i] + '.';
+}
+
+/* ================= UFLI weekly reading =================
+   Each week's UFLI Home Practice and Lesson Practice pages become one config below; ufliSkills()
+   turns a config into the week's reading activities (word chains, spelling, heart words, Roll and
+   Read, the story, and read-and-answer sentences). A new week = a new config + an EDITIONS entry. */
+function ufliSkills(c) {
+  const L = 'UFLI ' + c.lesson + ' – ', out = {};
+  const pairs = c.chains ? c.chains.flatMap(ch => ch.slice(1).map((to, i) => [ch[i], to])) : [];
+  if (c.chains) out[c.prefix + 'chain'] = { area: 'lang', label: 'Word chains', curric: L + 'word chains: ' + c.chains.map(ch => ch.join(', ')).join('; '), make(l) {
+    const same = pairs.filter(([a, b]) => a.length === b.length);
+    if (l === 1 || Math.random() < 0.5) {
+      // reading step: "Change the a to i. What word is this?"
+      const [from, to] = pick(l === 1 ? same : pairs), line = chainStep(from, to);
+      const others = sample([...new Set(c.chains.flat())].filter(w => w !== to && w !== from), 1);
+      return {
+        prompt: line + ' What word is this?', speak: 'This word is ' + from + '. ' + line + ' What word is this?',
+        build(box, api) {
+          box.append(el('div', { class: 'row' }, el('div', { class: 'bigword' }, from), el('span', { class: 'op' }, '→'), el('div', { class: 'bigword' }, el('span', { class: 'hl' }, '?'))));
+          return choiceRow(box, shuffle([to, from, ...others]).map(w => ({ label: w, ok: w === to, after: from + ', ' + to + '!' })), api, 'word');
+        },
+      };
+    }
+    // spelling step: "Change sit to lit." Tap the letter that changes, then the new letter.
+    const [from, to] = pick(same), pos = [...from].findIndex((ch, k) => ch !== to[k]), line = 'Change ' + from + ' to ' + to + '.';
+    return {
+      prompt: line + ' Tap the letter to change.', speak: line + ' Tap the letter to change.',
+      build(box, api) {
+        let stage = 1;
+        const letters = el('div', { class: 'slots' }, [...from].map((ch, k) => btn({ class: 'slot chainslot', 'aria-label': ch, onclick: () => {
+          if (stage !== 1) return;
+          if (k === pos) { stage = 2; sfx.tap(); letters.children[k].classList.add('picked'); letters.children[k].textContent = '?'; say('Now pick the new letter.'); tiles.hidden = false; }
+          else api.miss(letters.children[k]);
+        } }, ch)));
+        const tiles = el('div', { class: 'tiles', hidden: true }, shuffle([to[pos], ...sample('abdfgilmnopstux'.split('').filter(ch => ch !== to[pos] && ch !== from[pos]), 2)]).map(ch => {
+          const t = btn({ class: 'tile', onclick: () => {
+            if (stage !== 2) return;
+            if (ch === to[pos]) { stage = 3; letters.children[pos].textContent = ch; letters.children[pos].classList.remove('picked'); api.win(from + ', ' + to + '!'); }
+            else api.miss(t);
+          } }, ch);
+          return t;
+        }));
+        box.append(letters, tiles);
+        return () => stage === 1 ? letters.children[pos].classList.add('hint') : [...tiles.children].forEach(t => t.textContent === to[pos] && t.classList.add('hint'));
+      },
+    };
+  } };
+
+  // letter tiles for spelling a word under `opts.top` (a picture, a hear button, or the heart word)
+  function tileSpell(box, api, w, opts) {
+    const given = opts.given || 0, extra = sample('abcdfghiklmnoprstuwx'.split('').filter(ch => !w.includes(ch)), opts.extra);
+    const slots = el('div', { class: 'slots' }, w.split('').map((ch, i) => el('div', { class: 'slot' + (i < given ? ' given' : '') }, i < given ? ch : '')));
+    let at = given;
+    const tiles = el('div', { class: 'tiles' }, shuffle(w.slice(given).split('').concat(extra)).map(ch => {
+      const t = btn({ class: 'tile', onclick: () => {
+        if (at >= w.length) return;
+        if (ch === w[at]) { sfx.tap(); slots.children[at].textContent = ch; t.classList.add('used'); at++; if (at === w.length) api.win(w.split('').join(', ') + '. ' + w + '!'); }
+        else api.miss(t);
+      } }, ch);
+      return t;
+    }));
+    box.append(opts.top, slots, tiles);
+    return () => { say(w.split('').join('... ')); const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === w[at]); if (t) t.classList.add('hint'); };
+  }
+
+  out[c.prefix + 'spell'] = { area: 'lang', label: 'Spelling ' + c.sound + ' words', curric: L + 'spelling ' + c.sound + ' words', make(l) {
+    const w = pick(l === 3 ? c.spell.concat(c.spellHard) : c.spell);
+    return {
+      prompt: 'Listen, then spell the word.', speak: 'Can you spell ' + w + '? ' + w + '.',
+      build: (box, api) => tileSpell(box, api, w, { given: l === 1 ? 1 : 0, extra: l,
+        top: c.pics[w] ? btn({ class: 'choice', style: 'border:none;box-shadow:none', 'aria-label': 'hear the word', onclick: () => say(w) }, el('span', { class: 'bigpic' }, c.pics[w]))
+          : btn({ class: 'big sun small', onclick: () => say(w) }, '🔊 Hear the word') }),
+    };
+  } };
+
+  out[c.prefix + 'heart'] = { area: 'lang', label: 'Heart words', curric: L + 'heart words: ' + c.heart.join(', '), needsVoice: true, make(l) {
+    const ans = pick(c.heart), n = l === 1 ? 2 : l === 2 ? 3 : 5;
+    const pool = c.heart.filter(w => w !== ans), extra = sample((c.heartReview || []).filter(w => !c.heart.includes(w)), Math.max(0, n - pool.length));
+    const words = shuffle([ans, ...sample(pool, n), ...extra]);
+    return {
+      prompt: 'Listen, then find the heart word you hear.', speak: 'Find the word: ' + ans + '. ' + ans + '.',
+      build(box, api) {
+        box.append(btn({ class: 'big sun small', onclick: () => say(ans) }, '🔊 Hear the word again'));
+        return choiceRow(box, words.map(w => ({ label: w, ok: w === ans, after: ans + '!' })), api, 'word');
+      },
+    };
+  } };
+
+  // "Practice reading the heart words and then write them": look at the word, then spell it.
+  // Level 1 keeps the word on screen; after that it is covered, with a Peek button.
+  if (c.heartSpell) out[c.prefix + 'heartspell'] = { area: 'lang', label: 'Writing heart words', curric: L + 'read, then write the heart words: ' + c.heart.join(', '), make(l) {
+    const w = pick(c.heart);
+    return {
+      prompt: l === 1 ? 'Look at the heart word. Spell it with the letters.' : 'Peek at the heart word, then spell it.',
+      speak: l === 1 ? 'Look at the heart word: ' + w + '. Spell it with the letters.' : 'Spell the heart word: ' + w + '. Tap peek if you need to look.',
+      build(box, api) {
+        const word = el('div', { class: 'bigword heartword' + (l === 1 ? '' : ' covered') }, el('span', { class: 'heartmark', 'aria-hidden': 'true' }, '♥'), el('span', { class: 'hw' }, w));
+        const top = el('div', { class: 'row' }, word, l === 1 ? null : btn({ class: 'big sun small', onclick: () => {
+          say(w); word.classList.remove('covered'); setTimeout(() => word.classList.add('covered'), 2000);
+        } }, '👀 Peek'));
+        return tileSpell(box, api, w, { extra: l === 3 ? 3 : 2, top });
+      },
+    };
+  } };
+
+  out[c.prefix + 'roll'] = { area: 'lang', label: 'Roll and Read', curric: L + 'Roll and Read: ' + c.sound + ' words', needsVoice: true, make() {
+    return {
+      prompt: 'Roll the die, then read your word.', speak: 'Roll the die. Then read your word.',
+      build(box, api) {
+        const face = n => el('div', { class: 'die', 'aria-label': n + ' on the die' }, upto(1, 9).map(i => el('i', { class: [0, [5], [1, 9], [1, 5, 9], [1, 3, 7, 9], [1, 3, 5, 7, 9], [1, 3, 4, 6, 7, 9]][n].includes(i) ? 'pip' : null })));
+        const grid = el('div', { class: 'rollgrid' }, c.roll.map((col, k) => el('div', { class: 'rollcol' }, face(k + 1), col.map(w => el('span', null, w)))));
+        const die = btn({ class: 'big sun', 'aria-label': 'roll the die' }, '🎲 Roll');
+        const ask = el('div', { class: 'row', hidden: true });
+        let rolled = false, hint = null;
+        die.onclick = () => {
+          if (rolled) return; rolled = true; die.disabled = true;
+          const n = rnd(1, 6), r = rnd(0, 2), w = c.roll[n - 1][r];
+          let spins = 0;
+          const spin = setInterval(() => {
+            const k = spins++ < 8 ? rnd(1, 6) : n;
+            [...grid.children].forEach((col, j) => col.classList.toggle('on', j === k - 1));
+            if (spins > 8) {
+              clearInterval(spin);
+              grid.children[n - 1].children[r + 1].classList.add('pickedword');
+              // Dr. Ellie says a word: is it the word Ellie rolled? (half the time it is)
+              const said = Math.random() < 0.5 ? w : pick(c.alike[w]), match = said === w;
+              ask.hidden = false;
+              ask.replaceChildren(el('div', { class: 'bigword' }, w));
+              say('You rolled ' + n + '. Read your word. Is this word ' + said + '?');
+              const yn = el('div');
+              box.append(btn({ class: 'big sun small', onclick: () => say('Is this word ' + said + '?') }, '🔊 Hear it again'), yn);
+              hint = choiceRow(yn, ['Yes', 'No'].map(x => ({ label: x, ok: (x === 'Yes') === match, after: match ? 'Yes! It says ' + w + '!' : 'No, it says ' + w + '!' })), api, 'word');
+            }
+          }, 90);
+        };
+        box.append(grid, die, ask);
+        return () => hint ? hint() : die.classList.add('hint');
+      },
+    };
+  } };
+
+  const st = c.story;
+  out[c.prefix + 'story'] = { area: 'lang', label: st.title, curric: L + 'reading the story "' + st.title + '"', make(l) {
+    const item = pick(st.questions);
+    return {
+      prompt: item.q, speak: 'Read the story by yourself. Then answer the question. ' + item.q,
+      build(box, api) {
+        const story = el('div', { class: 'story' }, el('b', null, st.title), st.paras.map(([a, b]) => el('p', null, st.lines.slice(a, b).join(' '))));
+        const readIt = btn({ class: 'big sun small', hidden: l > 1, onclick: () => say(st.lines.join(' ')) }, '🔊 Read it to me');
+        box.append(story, readIt);
+        const opts = item.pics ? st.things.map(([w, e, after]) => ({ node: [el('span', { class: 'pic' }, e), el('span', { class: 'lbl' }, w)], aria: w, ok: w === item.a, after: after || 'A ' + w + '!' }))
+          : item.words.map(w => ({ label: w, ok: w === item.a, after: w + '!' }));
+        const hint = choiceRow(box, opts, api, item.pics ? '' : 'word');
+        return () => { readIt.hidden = false; hint(); };
+      },
+    };
+  } };
+
+  out[c.prefix + 'read'] = { area: 'lang', label: 'Read and answer', curric: L + 'reading ' + c.sound + ' sentences', make(l) {
+    if (l > 1 && Math.random() < 0.5) {
+      const [q, yes] = pick(c.questions);
+      return {
+        prompt: 'Read the question. Tap Yes or No.', speak: 'Read the question by yourself. Then tap yes or no.',
+        build(box, api) {
+          box.append(el('div', { class: 'bigword', style: 'font-size:44px' }, q));
+          return choiceRow(box, ['Yes', 'No'].map(w => ({ label: w, ok: (w === 'Yes') === yes, after: q + ' ' + (yes ? 'Yes!' : 'No!') })), api, 'word');
+        },
+      };
+    }
+    const { text, right, scenes } = c.note();
+    return {
+      prompt: 'Read the vet note. Tap the picture that matches.', speak: 'Read the vet note by yourself. Then tap the picture that matches.',
+      build(box, api) {
+        box.append(el('div', { class: 'bigword', style: 'font-size:44px' }, text));
+        return choiceRow(box, scenes.map(s => ({ node: el('span', { class: 'scene' }, el('span', null, s[0]), el('span', null, s[1])), aria: s.join(' '), ok: s === right, after: text })), api);
+      },
+    };
+  } };
+  return out;
+}
+// "The {animal} sat on the {place}." notes, with one picture changed in each wrong choice
+function sceneNote(animals, places, verb) {
+  const an = pick(animals), pl = pick(places), right = [an[1], pl[1]];
+  return { text: 'The ' + an[0] + ' ' + verb + ' the ' + pl[0] + '.', right,
+    scenes: shuffle([right, [pick(animals.filter(x => x !== an))[1], pl[1]], [an[1], pick(places.filter(x => x !== pl))[1]]]) };
+}
+
+/* ---------- Week of Oct 5: UFLI Lesson 38 (short a, i, o review) ----------
+   From Home Practice 38a and Lesson 38 Practice: sample words, Roll and Read, heart words,
+   word-work chains, the two practice sentences and the story "The Big Box". */
+const U38_CFG = {
+  lesson: 38, prefix: 'u38', sound: 'short a, i, o',
+  chains: [['sat', 'sit', 'lit', 'lot'], ['mix', 'fix', 'fax', 'fox']],
+  spell: ['bag', 'wax', 'did', 'his', 'cob', 'rot', 'fat', 'big', 'dog', 'hit', 'hip', 'ban', 'mob', 'cat', 'hog', 'fig', 'ham', 'six', 'mom'],
+  spellHard: ['sat', 'sit', 'lit', 'lot', 'mix', 'fix', 'fax', 'fox'],
+  pics: { bag: '👜', cat: '🐱', dog: '🐶', cob: '🌽', hog: '🐗', six: '6️⃣', ham: '🍖', mom: '👩', fox: '🦊' },
+  heart: ['a', 'said', 'he', 'be', 'me', 'from', 'to', 'do', 'of', 'see', 'the', 'I'],
+  roll: [['fat', 'big', 'am'], ['as', 'dog', 'hit'], ['hip', 'ban', 'mob'], ['cat', 'hog', 'fig'], ['cob', 'did', 'ham'], ['an', 'six', 'mom']],   // columns by die face
+  alike: { fat: ['fit', 'cat'], big: ['bag', 'dig'], am: ['an', 'ham'], as: ['at', 'an'], dog: ['dig', 'log'], hit: ['hot', 'hat'],
+    hip: ['hop', 'hit'], ban: ['bin', 'bat'], mob: ['mop', 'mom'], cat: ['cot', 'can'], hog: ['hot', 'log'], fig: ['fog', 'big'],
+    cob: ['cab', 'cot'], did: ['dad', 'dig'], ham: ['him', 'hat'], an: ['in', 'am'], six: ['sit', 'sax'], mom: ['mop', 'mob'] },
+  story: { title: 'The Big Box', paras: [[0, 2], [2, 8], [8, 10]],
+    lines: ['Nils, Jon, and Mag got a big box.', 'What is in the box?', 'Nils looks in the box.', 'Nils sees a hat in the box.',
+      'Jon looks in the box.', 'Jon sees a map in the box.', 'Mag looks in the box.', 'Mag sees a book in the box.',
+      'Next, the kids see pots and pans and bats in the box.', 'A lot is in this box!'],
+    things: [['hat', '🎩'], ['map', '🗺️'], ['book', '📖']],
+    questions: [{ q: 'What did Nils see in the box?', a: 'hat', pics: true }, { q: 'What did Jon see in the box?', a: 'map', pics: true },
+      { q: 'What did Mag see in the box?', a: 'book', pics: true }, { q: 'Who saw a hat?', a: 'Nils', words: ['Nils', 'Jon', 'Mag'] },
+      { q: 'Who saw a map?', a: 'Jon', words: ['Nils', 'Jon', 'Mag'] }, { q: 'Who saw a book?', a: 'Mag', words: ['Nils', 'Jon', 'Mag'] },
+      { q: 'How many kids looked in the box?', a: '3', words: ['2', '3', '4'] }, { q: 'Was the box big or little?', a: 'big', words: ['big', 'little'] },
+      { q: 'Is a lot in the box?', a: 'Yes', words: ['Yes', 'No'] }] },
+  questions: [['Can a cat sit on a mat?', true], ['Can a pig sit in a big box?', true], ['Can I fix the mop?', true],
+    ['Can a dog dig?', true], ['Can a fox hop?', true], ['Can a mop hop?', false], ['Is a hog a dog?', false],
+    ['Can a ham sit?', false], ['Can six cats fit in a bag?', false], ['Can a fig run?', false]],
+  animals: [['cat', '🐱'], ['dog', '🐶'], ['pig', '🐷'], ['hog', '🐗']], places: [['log', '🪵'], ['box', '📦'], ['bag', '👜']], verb: 'sat on',
+  extraNotes: [{ text: 'The pig ran from me.', right: ['🐷', '💨'], wrong: [['🐱', '💨'], ['🐷', '💤']] }],
+  note() {
+    if (Math.random() < 0.25) { const x = pick(this.extraNotes); return { text: x.text, right: x.right, scenes: shuffle([x.right, ...x.wrong]) }; }
+    return sceneNote(this.animals, this.places, this.verb);
+  },
+};
+
+/* ---------- Week of Oct 12: UFLI Lesson 39 (short u review) ----------
+   From Lesson 39 Practice: read then write the heart words (said, look, book, are, was), the
+   Roll and Read 39a grid and the story "Cub and Pup". No word-chain sheet came home this week,
+   so the chains below are made only from this week's short u words. */
+const U39_CFG = {
+  lesson: 39, prefix: 'u39', sound: 'short u', heartSpell: true,
+  chains: [['bud', 'bug', 'mug', 'hug', 'hum'], ['cub', 'cut', 'nut', 'nun', 'fun'], ['fun', 'sun', 'spun'], ['lug', 'slug', 'snug']],
+  spell: ['bud', 'cub', 'hum', 'fun', 'nun', 'dug', 'mug', 'bug', 'hub', 'lug', 'sun', 'tub', 'mud', 'pup', 'up', 'us'],
+  spellHard: ['slug', 'spun', 'dusk', 'snug', 'punt'],
+  pics: { cub: '🐻', bug: '🐛', mug: '☕', sun: '☀️', tub: '🛁', pup: '🐶' },
+  heart: ['said', 'look', 'book', 'are', 'was'], heartReview: U38_CFG.heart,
+  roll: [['bud', 'nun', 'slug'], ['us', 'dug', 'spun'], ['cub', 'mug', 'dusk'], ['hum', 'bug', 'scum'], ['up', 'hub', 'snug'], ['fun', 'lug', 'punt']],
+  alike: { bud: ['bad', 'bug'], nun: ['nut', 'run'], slug: ['plug', 'snug'], us: ['as', 'up'], dug: ['dig', 'bug'], spun: ['span', 'spin'],
+    cub: ['cab', 'cut'], mug: ['hug', 'mud'], dusk: ['desk', 'duck'], hum: ['ham', 'hug'], bug: ['big', 'bag'], scum: ['scam', 'sum'],
+    up: ['us', 'pup'], hub: ['hug', 'hut'], snug: ['snag', 'slug'], fun: ['fan', 'sun'], lug: ['log', 'lag'], punt: ['pant', 'hunt'] },
+  story: { title: 'Cub and Pup', paras: [[0, 4], [4, 9]],
+    lines: ['Cub and Pup are buds.', 'Cub and Pup have lots of fun.', 'Cub runs in the sun.', 'Pup digs in the mud.',
+      'Cub and Pup are hot and wet.', 'The fun must stop.', 'Cub and Pup must get in the tub.', 'The buds have fun in the suds.', 'The fun did not stop!'],
+    things: [['sun', '☀️', 'In the sun!'], ['mud', '🟤', 'In the mud!'], ['tub', '🛁', 'In the tub!']],
+    questions: [{ q: 'Who runs in the sun?', a: 'Cub', words: ['Cub', 'Pup'] }, { q: 'Who digs in the mud?', a: 'Pup', words: ['Cub', 'Pup'] },
+      { q: 'Where does Cub run?', a: 'sun', pics: true }, { q: 'Where does Pup dig?', a: 'mud', pics: true },
+      { q: 'What must Cub and Pup get in?', a: 'tub', pics: true }, { q: 'Are Cub and Pup buds?', a: 'Yes', words: ['Yes', 'No'] },
+      { q: 'Did the fun stop?', a: 'No', words: ['Yes', 'No'] }, { q: 'Are Cub and Pup hot and wet?', a: 'Yes', words: ['Yes', 'No'] },
+      { q: 'What do the buds have fun in?', a: 'suds', words: ['suds', 'sun', 'mud'] }] },
+  questions: [['Can a bug hum?', true], ['Can a pup dig in the mud?', true], ['Can a cub run in the sun?', true], ['Is the sun hot?', true],
+    ['Can you look at a book?', true], ['Can a duck get wet?', true], ['Can a mug run?', false], ['Can a tub hum?', false],
+    ['Is a cub a bug?', false], ['Can a pup fit in a mug?', false]],
+  animals: [['cub', '🐻'], ['pup', '🐶'], ['bug', '🐛']], places: [['tub', '🛁'], ['bus', '🚌'], ['mug', '☕'], ['sun', '☀️']], verb: 'is in',
+  note() { return sceneNote(this.animals, this.places, this.verb); },
+};
+/* ---------- Week of Oct 19: UFLI Lesson 40 (short e review) ----------
+   From Lesson 40 Practice: read then write the heart words (said, you, what, have), the Roll and
+   Read 40a grid and the story "The Pet Hen". Chains are made from this week's short e words. */
+const U40_CFG = {
+  lesson: 40, prefix: 'u40', sound: 'short e', heartSpell: true,
+  chains: [['get', 'set', 'net', 'pet', 'pen'], ['bed', 'red', 'led', 'leg', 'beg'], ['ten', 'hen', 'men', 'met', 'wet'], ['wet', 'went', 'vent'], ['pet', 'pelt', 'belt']],
+  spell: ['get', 'bed', 'hen', 'net', 'led', 'set', 'leg', 'red', 'beg', 'ten', 'men', 'pet', 'vet', 'web', 'jet', 'yes'],
+  spellHard: ['went', 'kept', 'dent', 'pelt', 'vent', 'sped', 'tend', 'rest', 'welt'],
+  pics: { bed: '🛏️', hen: '🐔', net: '🥅', leg: '🦵', ten: '🔟', jet: '✈️', web: '🕸️', red: '🔴' },
+  heart: ['said', 'you', 'what', 'have'], heartReview: U39_CFG.heart.concat(U38_CFG.heart),
+  roll: [['get', 'bed', 'went'], ['hen', 'net', 'kept'], ['led', 'set', 'dent'], ['leg', 'red', 'pelt'], ['beg', 'ten', 'vent'], ['men', 'pet', 'sped']],
+  alike: { get: ['got', 'gut'], bed: ['bad', 'bid'], went: ['want', 'wet'], hen: ['him', 'ten'], net: ['nut', 'not'], kept: ['kelp', 'pet'],
+    led: ['lid', 'bed'], set: ['sit', 'sat'], dent: ['tent', 'den'], leg: ['log', 'lag'], red: ['rod', 'rid'], pelt: ['belt', 'pet'],
+    beg: ['bag', 'big'], ten: ['tan', 'tin'], vent: ['vet', 'went'], men: ['man', 'hen'], pet: ['pit', 'pot'], sped: ['spud', 'red'] },
+  story: { title: 'The Pet Hen', paras: [[0, 4], [4, 8]],
+    lines: ['Dex has a pet hen.', 'The hen is big and red.', 'Dex let his hen run.', 'But the hen ran into a pig pen.',
+      'The hen has a big welt.', 'Dex must tend to his red hen.', '“You must rest,” Dex said.', 'He gets the hen in its bed.'],
+    things: [['hen', '🐔', 'A hen!'], ['pig pen', '🐷', 'Into a pig pen!'], ['bed', '🛏️', 'In its bed!']],
+    questions: [{ q: 'What pet does Dex have?', a: 'hen', pics: true }, { q: 'Where did the hen run?', a: 'pig pen', pics: true },
+      { q: 'Where does Dex put the hen?', a: 'bed', pics: true }, { q: 'What color is the hen?', a: 'red', words: ['red', 'tan', 'pink'] },
+      { q: 'Is the hen big?', a: 'Yes', words: ['Yes', 'No'] }, { q: 'What did the hen get?', a: 'a welt', words: ['a welt', 'a hat', 'a net'] },
+      { q: 'What must the hen do?', a: 'rest', words: ['rest', 'run', 'dig'] }, { q: 'Who has a pet hen?', a: 'Dex', words: ['Dex', 'Jon', 'Mag'] },
+      { q: 'Did Dex help his hen?', a: 'Yes', words: ['Yes', 'No'] }] },
+  questions: [['Can a hen get wet?', true], ['Can a vet help a pet?', true], ['Can you get in a bed?', true], ['Can you have a pet hen?', true],
+    ['Can a pet rest?', true], ['Can a hen sit on a bed?', true], ['Can a bed run?', false], ['Is a net a pet?', false],
+    ['Can a jet beg?', false], ['Can a hen have ten legs?', false]],
+  animals: [['hen', '🐔'], ['pup', '🐶'], ['cat', '🐱']], places: [['bed', '🛏️'], ['net', '🥅'], ['tent', '⛺'], ['jet', '✈️']], verb: 'is in',
+  note() { return sceneNote(this.animals, this.places, this.verb); },
+};
+const UFLI_WEEKS = [U38_CFG, U39_CFG, U40_CFG];
+const U38 = ufliSkills(U38_CFG), U39 = ufliSkills(U39_CFG), U40 = ufliSkills(U40_CFG);
+
+/* ================= Chapter 1 unit test practice (test on Monday, October 5, 2026) =================
+   From the teacher's review note and the review package: counting to 10 in numbers and words,
+   comparing sets (more / fewer / same, greater than / less than), counting on and back, and
+   relating numbers to 5 and 10. "8 is __ more than 5" was the one that tripped Ellie up, so
+   those questions come up in nearly every patient. */
+const T1_GROUPS = [['🐦', 'birds'], ['🐿️', 'squirrels'], ['🐻', 'bear cubs'], ['🦎', 'lizards'], ['🐯', 'tiger cubs'], ['🐺', 'wolf cubs'], ['🍃', 'leaves']];
+const T1_SETS = [['🌼', 'flowers'], ['🌹', 'roses'], ['🐰', 'bunnies'], ['🦆', 'ducks'], ['🧁', 'cupcakes'], ['🥪', 'sandwiches'], ['🥧', 'pies'], ['🍓', 'strawberries']];
+const T1 = {
+  t1five: { area: 'math', label: 'More than 5, less than 10', curric: 'Chapter 1 test – relate numbers to 5 and 10', make(l) {
+    const kind = pick(l === 1 ? ['more5', 'less10'] : ['more5', 'less10', 'more5', 'less10', 'from5', 'from10']);
+    let prompt, speak, ans, after, plain, helped, lo = 1;
+    if (kind === 'more5') {
+      const y = l === 1 ? rnd(6, 8) : rnd(6, 10); ans = y - 5;
+      prompt = y + ' is __ more than 5.'; speak = y + ' is how many more than 5?'; after = y + ' is ' + ans + ' more than 5!';
+      plain = () => track(y); helped = () => track(y, 5);
+    } else if (kind === 'less10') {
+      const x = l === 1 ? rnd(7, 9) : rnd(l === 3 ? 4 : 5, 9); ans = 10 - x;
+      prompt = x + ' is __ less than 10.'; speak = x + ' is how many less than 10?'; after = x + ' is ' + ans + ' less than 10!';
+      plain = () => track(x); helped = () => { const t = track(x); t.querySelectorAll('.dot.empty').forEach(d => d.classList.add('gap')); return t; };
+    } else if (kind === 'from5') {
+      const k = rnd(1, 4); ans = 5 + k; lo = 5;
+      prompt = k + ' more than 5 is __.'; speak = 'What is ' + k + ' more than 5?'; after = k + ' more than 5 is ' + ans + '!';
+      plain = () => track(5); helped = () => track(ans, 5);
+    } else {
+      const k = rnd(1, 4); ans = 10 - k; lo = 4;
+      prompt = k + ' less than 10 is __.'; speak = 'What is ' + k + ' less than 10?'; after = k + ' less than 10 is ' + ans + '!';
+      plain = () => track(10); helped = () => track(10, ans);
+    }
+    return {
+      prompt, speak,
+      build(box, api) {
+        // Level 1 shows the counters to count (past 5, or the gaps up to 10); later levels show them as a hint.
+        let t = l === 1 ? helped() : plain();
+        box.append(t);
+        const hint = choiceRow(box, near(ans, lo, 10).map(v => ({ label: String(v), ok: v === ans, after })), api);
+        return () => { const h = helped(); t.replaceWith(h); t = h; hint(); };
+      },
+    };
+  } },
+
+  t1same: { area: 'math', label: 'Same number', curric: 'Chapter 1 test – find 2 sets that show the same number', start: 2, make(l) {
+    const n = l === 1 ? rnd(2, 5) : rnd(2, 8), kinds = sample(T1_SETS, 4);
+    const others = sample(upto(1, l === 1 ? 6 : 9).filter(x => x !== n && (l === 1 || Math.abs(x - n) <= 3)), 2);
+    const counts = shuffle([n, n, ...others]);
+    return {
+      prompt: 'Count. Tap the 2 groups that show the same number.', speak: 'Count. Tap the 2 groups that show the same number.',
+      build(box, api) {
+        let picked = [];
+        const grid = el('div', { class: 'sets' }, counts.map((c, i) => {
+          const b = btn({ class: 'choice set', 'aria-label': c + ' ' + kinds[i][1], onclick: () => {
+            if (b.classList.contains('right') || picked.includes(b)) return;
+            sfx.tap(); b.classList.add('picked'); picked.push(b);
+            if (picked.length < 2) return;
+            const [p, q] = picked;
+            if (+p.dataset.c === +q.dataset.c) { p.classList.add('right'); q.classList.add('right'); api.win(n + ' and ' + n + ' are the same!'); }
+            else { api.miss(q, 'Those two are not the same. Count again!'); setTimeout(() => { p.classList.remove('picked'); q.classList.remove('picked'); }, 700); picked = []; }
+          } }, iconGroup(c, kinds[i][0]));
+          b.dataset.c = c;
+          return b;
+        }));
+        box.append(grid);
+        return () => [...grid.children].forEach(b => +b.dataset.c === n && b.classList.add('hint'));
+      },
+    };
+  } },
+
+  t1compare: { area: 'math', label: 'Greater than, less than', curric: 'Chapter 1 test – circle the set with more or fewer, then fill in the blanks', start: 2, make(l) {
+    const [[ia, na], [ib, nb]] = sample(T1_SETS, 2);
+    let a = rnd(2, l === 1 ? 6 : 10), b;
+    do { b = rnd(2, l === 1 ? 6 : 10); } while (b === a || (l === 1 && Math.abs(a - b) < 2));
+    const more = Math.random() < 0.5, big = Math.max(a, b), small = Math.min(a, b);
+    const target = more ? big : small, order = more ? [big, small] : [small, big];
+    const rel = more ? ' is greater than ' : ' is less than ';
+    return {
+      prompt: 'Count. Tap the group that has ' + (more ? 'more.' : 'fewer.'), speak: 'Count. Tap the group that has ' + (more ? 'more.' : 'fewer.'),
+      build(box, api) {
+        let stage = 1, at = 0;
+        const blanks = [el('span', { class: 'blank' }, '?'), el('span', { class: 'blank' }, '?')];
+        const sentence = el('div', { class: 'bigword', hidden: true }, blanks[0], rel, blanks[1], '.');
+        const tiles = el('div', { class: 'tiles', hidden: true }, shuffle([a, b, ...sample(upto(1, 10).filter(x => x !== a && x !== b), 2)]).map(v => {
+          const t = btn({ class: 'tile', onclick: () => {
+            if (stage !== 2 || at >= 2) return;
+            if (v === order[at]) { sfx.tap(); say(String(v)); blanks[at].textContent = v; blanks[at].classList.add('filled'); t.classList.add('used'); at++; if (at === 2) api.win(order[0] + rel + order[1] + '!'); }
+            else api.miss(t);
+          } }, String(v));
+          return t;
+        }));
+        const groups = el('div', { class: 'sets two' }, [[a, ia, na], [b, ib, nb]].map(([c, ic, nm]) => {
+          const g = btn({ class: 'choice set', 'aria-label': c + ' ' + nm, onclick: () => {
+            if (stage !== 1) return;
+            if (c === target) { stage = 2; g.classList.add('right'); sfx.good(); say('Now fill in the blanks.'); sentence.hidden = false; tiles.hidden = false; }
+            else api.miss(g);
+          } }, iconGroup(c, ic));
+          g.dataset.c = c;
+          return g;
+        }));
+        box.append(groups, sentence, tiles);
+        return () => {
+          if (stage === 1) [...groups.children].forEach(g => +g.dataset.c === target && g.classList.add('hint'));
+          else { const t = [...tiles.children].find(x => !x.classList.contains('used') && x.textContent === String(order[at])); if (t) t.classList.add('hint'); }
+        };
+      },
+    };
+  } },
+
+  t1write: { area: 'math', label: 'Numbers and words', curric: 'Chapter 1 test – count, then write the number and the word', start: 2, make(l) {
+    const n = l === 1 ? rnd(1, 5) : rnd(1, 10), [ic, thing] = pick(T1_GROUPS);
+    return {
+      prompt: 'Count the ' + thing + '. Tap the number, then the word.', speak: 'Count the ' + thing + '. Tap the number, then the word.',
+      build(box, api) {
+        const num = el('span', { class: 'blank' }, '?'), word = el('span', { class: 'blank wide' }, '?');
+        const label = el('div', { class: 'labelbox' }, num, el('span', null, ' – '), word, el('small', null, thing));
+        const area = el('div');
+        let stage = 1, hint;
+        const words = () => {
+          area.replaceChildren();
+          const opts = shuffle([n, ...sample(near(n, 0, 10).filter(x => x !== n), 2)]);
+          hint = choiceRow(area, opts.map(v => ({ label: NUM_WORDS[v], ok: v === n, after: 'Yes, ' + n + ' ' + thing + '!' })), {
+            win: after => { word.textContent = NUM_WORDS[n]; word.classList.add('filled'); api.win(after); }, miss: api.miss }, 'word');
+        };
+        hint = choiceRow(area, near(n, 1, 10).map(v => ({ label: String(v), ok: v === n })), {
+          win: () => { stage = 2; num.textContent = n; num.classList.add('filled'); sfx.tap(); say(String(n) + '. Now tap the word.'); setTimeout(words, 400); },
+          miss: api.miss });
+        box.append(iconGroup(n, ic), label, area);
+        return () => hint && hint();
+      },
+    };
+  } },
+};
+const TEST_UNTIL = new Date(2026, 9, 6);   // practice mode ends by itself at midnight after the test (Monday Oct 5, local time)
+const TEST_SKILLS = Object.assign({}, T1, {
+  n10moreless: N10.n10moreless, n10compare: N10.n10compare, n10next: N10.n10next, n10back: N10.n10back,
+  n10order: N10.n10order, n10count: N10.n10count, n10readword: N10.n10readword, n10wordpick: N10.n10wordpick, n10spell: N10.n10spell });
+// How often each activity comes up in test practice (higher = more often).
+const TEST_WEIGHTS = { t1five: 6, n10moreless: 2, t1compare: 3, t1write: 3, t1same: 2, n10compare: 2, n10next: 2, n10back: 2,
+  n10order: 1, n10count: 1, n10readword: 1, n10wordpick: 1, n10spell: 1 };
+
+// Editions: the base game, or a week built from Ellie's school pages. Stars, stickers,
+// decorations and pets are shared; each activity keeps its own level.
+// Week of Oct 5: UFLI 38 reading, with Numbers to 10 math (including "more than 5 / less than 10") as review.
+const W1005 = Object.assign({ n10count: N10.n10count, n10compare: N10.n10compare, n10next: N10.n10next, n10moreless: N10.n10moreless,
+  n10back: N10.n10back, n10order: N10.n10order, t1five: T1.t1five, t1compare: T1.t1compare }, U38);
+// Week of Oct 12: UFLI 39 reading, same math review.
+const W1012 = Object.assign({ n10count: N10.n10count, n10compare: N10.n10compare, n10next: N10.n10next, n10moreless: N10.n10moreless,
+  n10back: N10.n10back, n10order: N10.n10order, t1five: T1.t1five, t1compare: T1.t1compare }, U39);
+// Week of Oct 19: UFLI 40 reading comes first; a little Numbers to 10 math stays in as review.
+const W1019 = Object.assign({ n10moreless: N10.n10moreless, t1five: T1.t1five, n10compare: N10.n10compare }, U40);
+// About 9 in 10 steps are reading; the heart words and spelling come up most.
+const W1019_WEIGHTS = { u40heartspell: 4, u40spell: 4, u40heart: 3, u40roll: 3, u40story: 3, u40read: 3, u40chain: 2,
+  n10moreless: 1, t1five: 1, n10compare: 1 };
+const CURRENT_WEEK = 'w1019';
+const EDITIONS = {
+  base: { name: 'Base edition', note: 'All Grade 1 math and reading activities', skills: SKILLS },
+  w1019: { name: 'Week of Oct 19', badge: 'short e words · said, you, what, have', skills: W1019, weights: W1019_WEIGHTS,
+           note: 'Reading first (about 9 in 10 steps): UFLI Lesson 40 (short e review): read and write the heart words said, you, what, have; Roll and Read; the story "The Pet Hen"; short e spelling, chains and sentences · A little Numbers to 10 math review' },
+  w1012: { name: 'Week of Oct 12', badge: 'short u words · said, look, book, are, was', skills: W1012,
+           note: 'Reading: UFLI Lesson 39 (short u review): read and write the heart words said, look, book, are, was; Roll and Read; the story "Cub and Pup"; short u spelling, chains and sentences · Math: Numbers to 10 review' },
+  w1005: { name: 'Week of Oct 5', badge: 'short a, i, o words · heart words', skills: W1005,
+           note: 'Reading: UFLI Lesson 38 (short a, i, o review): word chains, spelling, 12 heart words, Roll and Read, the story "The Big Box" · Math: Numbers to 10 review' },
+  n10:  { name: 'Week of Sept 28', badge: 'Numbers to 10 · short o words', skills: N10,
+          note: 'Math: Numbers to 10 (counting, comparing, counting on and back) · Reading: number words, short o words and heart words (UFLI 37a/b)' },
+  test1: { name: 'Chapter 1 test practice', badge: 'Test practice: Numbers to 10', skills: TEST_SKILLS, weights: TEST_WEIGHTS, first: ['t1five', 'n10moreless'], temporary: true,
+          note: 'Only the Chapter 1 unit test topics, with extra "more than 5 / less than 10" questions. Ends by itself after Monday, October 5.' },
+};
+const ALL_SKILLS = Object.assign({}, SKILLS, N10, T1, U38, U39, U40);
+// When a new week ships, switch to it once; after that the Grown-ups corner choice sticks.
+if (S.weekSeen !== CURRENT_WEEK) { S.edition = CURRENT_WEEK; S.weekSeen = CURRENT_WEEK; save(); }
+const testOn = () => Date.now() < TEST_UNTIL && !S.testOff;
+const edition = () => testOn() ? EDITIONS.test1 : EDITIONS[S.edition] || EDITIONS.base;
+const levelOf = k => S.lvl[k] || (ALL_SKILLS[k] && ALL_SKILLS[k].start) || 1;
+const areaSkills = area => Object.keys(edition().skills).filter(k => ALL_SKILLS[k].area === area && !(ALL_SKILLS[k].needsVoice && !canSpeak));
+
+/* ================= screens ================= */
+const app = document.getElementById('app');
+let visit = null;
+
+function topBar() {
+  return el('header', { class: 'bar' },
+    el('div', { class: 'sign' }, ellie(40), S.name + "'s Animal Clinic"),
+    el('span', { class: 'spacer' }),
+    btn({ class: 'pill', 'aria-label': S.stars + ' stars, open the shop', onclick: () => showShop() }, '⭐ ', String(S.stars)),
+    btn({ class: 'iconbtn', 'aria-label': 'clinic shop', onclick: () => showShop() }, '🛍️'),
+    Object.keys(S.pets).length ? btn({ class: 'iconbtn', 'aria-label': 'my pets', onclick: () => showPets() }, '🐾') : null,
+    btn({ class: 'iconbtn', 'aria-label': 'sticker book', onclick: () => { hush(); showStickers(); } }, '📒'),
+    btn({ class: 'iconbtn', 'aria-label': 'waiting room', onclick: () => { hush(); showRoom(); } }, '🏥'));
+}
+function screen(...kids) { app.replaceChildren(...kids); window.scrollTo(0, 0); }
+
+function showTitle() {
+  visit = null;
+  const poster = el('figure', { class: 'poster' }, el('img', { src: 'art/ellie-clinic.jpg', alt: 'Dr. ' + S.name + ' at her clinic with a puppy', width: '900', height: '1200',
+    onerror: e => { e.target.closest('figure').hidden = true; } }));
+  screen(el('div', { class: 'title-wrap' }, el('div', { class: 'hero' }, poster, el('div', { class: 'title-card' },
+    el('h1', null, S.name + "'s ", el('span', null, 'Animal'), ' Clinic'),
+    el('div', { class: 'badge-doc' }, '🩺 Dr. ' + S.name + ', Veterinarian'),
+    testOn() ? el('div', { class: 'week-badge test' }, '📝 ' + edition().badge + ' · test on Monday')
+      : S.edition !== 'base' && EDITIONS[S.edition] ? el('div', { class: 'week-badge' }, '📚 This week: ' + (edition().badge || edition().name)) : null,
+    el('p', null, 'The animals need your help! Count, read and solve to make them feel better.'),
+    btn({ class: 'big', onclick: () => { sfx.good(); say('Welcome, Doctor ' + S.name + '! Your patients are waiting.'); showRoom(); } }, 'Open the clinic ▶'),
+    btn({ class: 'linkbtn', onclick: () => showParentGate() }, 'Grown-ups')))));
+}
+
+function newPatient(exclude) {
+  const healedCount = id => S.healed[id] || 0;
+  const pool = ANIMALS.filter(a => !exclude.includes(a.id));
+  const minH = Math.min(...pool.map(a => healedCount(a.id)));
+  const fresh = pool.filter(a => healedCount(a.id) === minH);
+  return { a: pick(fresh).id, ail: pick(AILMENTS).id };
+}
+function ensureQueue() {
+  if (!Array.isArray(S.queue) || S.queue.length !== 3 || S.queue.some(p => !A(p.a) || !AIL(p.ail))) {
+    S.queue = [];
+    for (let i = 0; i < 3; i++) S.queue.push(newPatient(S.queue.map(p => p.a)));
+    save();
+  }
+}
+
+function showRoom(fresh) {
+  visit = null;
+  ensureQueue();
+  fresh = typeof fresh === 'string' ? fresh : null;   // id of a just-bought decoration, to pop it in
+  if (fresh) say('The ' + DECOR.find(d => d.id === fresh).name + ' is in your clinic now!');
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'room-head' }, el('h2', null, 'Waiting room'),
+      el('div', { class: 'says' }, ellie(72), el('div', { class: 'bubble' }, el('p', null, 'Who will you help first? Tap a patient.')))),
+    clinicScene(fresh),
+    el('div', { class: 'benches' }, S.queue.map((p, i) => {
+      const a = A(p.a), ail = AIL(p.ail);
+      return el('div', { class: 'patient' },
+        pet(a, 150, { cls: 'sick', ail: ail.badge }),
+        el('h3', null, a.name),
+        el('p', { class: 'what' }, 'This ' + a.kind + ' ' + ail.says + '.'),
+        btn({ class: 'big teal small', onclick: () => { sfx.tap(); startVisit(i); } }, 'Help ' + a.name));
+    }))));
+}
+
+function planSkills() {
+  const w = edition().weights;
+  if (w) {
+    // Weighted picks (higher weight = comes up more often). An edition can name the activities its
+    // first step comes from (test practice starts with "more than 5 / less than 10"). The Grown-ups
+    // "Subjects" setting still applies.
+    const ok = k => !(ALL_SKILLS[k].needsVoice && !canSpeak) && (S.mix === 'both' || !S.mix || ALL_SKILLS[k].area === S.mix);
+    const keys = Object.keys(w).filter(ok).length >= 3 ? Object.keys(w).filter(ok) : Object.keys(w);
+    const draw = pool => { let r = Math.random() * pool.reduce((s, k) => s + w[k], 0); return pool.find(k => (r -= w[k]) < 0) || pool[0]; };
+    const firsts = (edition().first || []).filter(k => keys.includes(k));
+    const plan = [draw(firsts.length ? firsts : keys)];
+    while (plan.length < 3) plan.push(draw(keys.filter(k => !plan.includes(k))));
+    return plan;
+  }
+  const mathOn = S.mix !== 'lang', langOn = S.mix !== 'math';
+  let order;
+  if (mathOn && langOn) order = Math.random() < 0.5 ? ['math', 'lang', 'math'] : ['lang', 'math', 'lang'];
+  else order = [mathOn ? 'math' : 'lang', mathOn ? 'math' : 'lang', mathOn ? 'math' : 'lang'];
+  const used = [];
+  return order.map(area => {
+    const pool = areaSkills(area).filter(k => !used.includes(k));
+    // lean towards skills practiced least so everything gets a turn
+    const least = Math.min(...pool.map(k => (S.stats[k] || { done: 0 }).done));
+    const choice = pick(pool.filter(k => (S.stats[k] || { done: 0 }).done <= least + 1));
+    used.push(choice); return choice;
+  });
+}
+
+function startVisit(qi) {
+  const p = S.queue[qi];
+  visit = { qi, a: A(p.a), ail: AIL(p.ail), plan: planSkills(), step: 0 };
+  say(visit.a.name + ' ' + visit.ail.says + ". Let's help!");
+  drawExam(true);
+}
+
+function drawExam(isFirst) {
+  const { a, ail, plan, step } = visit;
+  const healthCls = step === 0 ? 'sick' : step < 3 ? 'better' : '';
+  const side = el('section', { class: 'table', 'aria-label': 'exam table' },
+    el('div', { class: 'mat' }, pet(a, 230, { cls: healthCls, ail: step < 3 ? ail.badge : null })),
+    el('div', { class: 'nametag' }, a.name),
+    el('p', { class: 'complaint' }, a.name + ' ' + ail.says + '.'),
+    el('div', { class: 'hearts', 'aria-label': step + ' of 3 hearts' }, '❤️'.repeat(step) + '🤍'.repeat(3 - step)),
+    el('ol', { class: 'steps' }, ail.steps.map(([tool, txt], i) => el('li', { class: i < step ? 'done' : i === step ? 'now' : null }, el('span', { class: 'tool' }, tool), txt))),
+    DECOR.some(d => d.room === 'exam' && owns(d.id)) ? el('div', { class: 'shelf', 'aria-label': 'Exam room equipment' },
+      DECOR.filter(d => d.room === 'exam' && owns(d.id)).map(d => el('span', { title: cap(d.name) }, d.emoji))) : null);
+  const skill = ALL_SKILLS[plan[step]], lvl = levelOf(plan[step]);
+  const act = skill.make(lvl, a);
+  const work = el('div', { class: 'work' }), fb = el('div', { class: 'feedback', 'aria-live': 'polite' });
+  const doc = ellie(76);
+  const react = cls => { doc.classList.remove('hop', 'tilt'); void doc.offsetWidth; doc.classList.add(cls); };
+  const card = el('section', { class: 'task' },
+    el('div', { class: 'task-top' }, el('span', { class: 'chip ' + skill.area }, (skill.area === 'math' ? 'Math · ' : 'Reading · ') + skill.label),
+      el('span', { class: 'stepno' }, ail.steps[step][0] + ' Step ' + (step + 1) + ' of 3')),
+    el('div', { class: 'prompt says' }, btn({ class: 'ellie-btn', 'aria-label': 'read it to me', onclick: () => say(act.speak || act.prompt) }, doc),
+      el('div', { class: 'bubble' }, el('p', null, act.prompt)),
+      btn({ class: 'speak', 'aria-label': 'read it to me', onclick: () => say(act.speak || act.prompt) }, '🔊')),
+    work, fb);
+  let misses = 0, done = false, hint = null;
+  const api = {
+    win(after) {
+      if (done) return; done = true;
+      const msg = typeof after === 'function' ? after() : after;
+      sfx.good(); react('hop');
+      fb.className = 'feedback'; fb.textContent = pick(PRAISE) + ' ' + '⭐';
+      const talk = say((msg ? msg + ' ' : '') + pick(PRAISE));
+      const up = record(plan[step], misses);
+      if (up) fb.textContent += '  Level up!';
+      S.stars += 1; save();
+      // Move on once the praise has been said in full (and never sooner than 1.6 s).
+      const v = visit;
+      Promise.all([talk, sleep(1600)]).then(() => sleep(500)).then(() => {
+        if (visit !== v || v.step !== step) return;   // the player has left this exam
+        v.step++; if (v.step >= 3) showHealed(); else drawExam(false);
+      });
+    },
+    miss(node, msg) {
+      if (done) return;
+      misses++; sfx.bad(); react('tilt');
+      if (node) { node.classList.remove('wobble'); void node.offsetWidth; node.classList.add('wobble'); }
+      const m = msg || pick(OOPS);
+      fb.className = 'feedback try'; fb.textContent = m; say(m);
+      if (misses >= 2 && hint) hint();
+    },
+  };
+  hint = act.build(work, api) || null;
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'exam' }, side, card),
+    el('div', null, btn({ class: 'linkbtn', onclick: () => { hush(); showRoom(); } }, '← Back to the waiting room'))));
+  // On a new patient, the first instruction waits for the "Let's help!" introduction to finish.
+  (isFirst ? sayNext : say)(ail.steps[step][1] + '. ' + (act.speak || act.prompt));
+}
+
+function record(skill, misses) {
+  const st = S.stats[skill] || (S.stats[skill] = { done: 0, first: 0 });
+  st.done++; if (!misses) st.first++;
+  const lv = levelOf(skill);
+  let up = false;
+  if (!misses) {
+    S.streak[skill] = (S.streak[skill] || 0) + 1;
+    if (S.streak[skill] >= 3 && lv < 3) { S.lvl[skill] = lv + 1; S.streak[skill] = 0; up = true; }
+  } else {
+    S.streak[skill] = 0;
+    if (misses >= 3 && lv > 1) S.lvl[skill] = lv - 1;
+  }
+  return up;
+}
+
+function showHealed() {
+  const { a, qi } = visit;
+  S.healed[a.id] = (S.healed[a.id] || 0) + 1;
+  S.stars += 2;
+  S.queue[qi] = newPatient(S.queue.map(p => p.a));
+  save();
+  sfx.fanfare();
+  say(a.name + ' feels all better! Thank you, Doctor ' + S.name + '! You earned a sticker.');
+  const conf = el('div', { class: 'confetti', 'aria-hidden': 'true' });
+  for (let i = 0; i < 40; i++) conf.append(el('i', { style: 'left:' + rnd(0, 100) + '%;animation-duration:' + (rnd(22, 45) / 10) + 's;animation-delay:' + (rnd(0, 12) / 10) + 's' }, pick(['⭐', '💖', '✨', '🎉', a.food])));
+  screen(topBar(), el('main', { class: 'healed' }, el('div', { class: 'healed-card' },
+    el('div', { class: 'duo' }, ellie(120, 'hop'), pet(a, 260, { cls: 'happy' })),
+    el('h2', null, a.name + ' feels all better!'),
+    el('p', null, 'Thank you, Dr. ' + S.name + '. ' + a.name + ' gave you a sticker for your book.'),
+    el('div', { class: 'earned' }, '⭐ +5 stars'),
+    el('div', { class: 'btnrow' },
+      btn({ class: 'big', onclick: () => { hush(); showRoom(); } }, 'Next patient ▶'),
+      btn({ class: 'big sun', onclick: () => { hush(); showStickers(); } }, 'Sticker book 📒')))), conf);
+}
+
+function showStickers() {
+  visit = null;
+  const got = ANIMALS.filter(a => S.healed[a.id]).length;
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'room-head' }, el('h2', null, 'Sticker book'),
+      el('div', { class: 'says' }, ellie(72), el('div', { class: 'bubble' }, el('p', null, 'You have helped ' + got + ' of ' + ANIMALS.length + ' kinds of animals!')))),
+    el('div', { class: 'book' }, ANIMALS.map(a => {
+      const n = S.healed[a.id] || 0;
+      return el('div', { class: 'sticker' + (n ? '' : ' locked') }, pet(a, 110), el('b', null, n ? a.name : '?'), el('small', null, n ? a.kind + (n > 1 ? ' · helped ' + n + ' times' : '') : 'Not yet'));
+    })),
+    el('div', null, btn({ class: 'big teal small', onclick: showRoom }, '← Back to the waiting room'))));
+}
+
+/* ---------- clinic shop, decorations and adopted pets ---------- */
+// Stars are spent here; stickers stay in the sticker book. Waiting-room items with `at` sit at
+// [centre x %, top %, size px] in the clinic picture; the rug, fish tank and butterflies are drawn specially.
+const DECOR = [
+  { id: 'plant',       name: 'potted plant',     emoji: '🪴', price: 10, room: 'wait', at: [6, 50, 60] },
+  { id: 'balloons',    name: 'balloons',         emoji: '🎈', price: 10, room: 'wait', at: [63, 6, 46] },
+  { id: 'butterflies', name: 'butterfly wall',   emoji: '🦋', price: 15, room: 'wait' },
+  { id: 'poster',      name: 'animal poster',    emoji: '🖼️', price: 15, room: 'wait', at: [30, 10, 48] },
+  { id: 'lamp',        name: 'exam lamp',        emoji: '💡', price: 15, room: 'exam' },
+  { id: 'toys',        name: 'toy basket',       emoji: '🧸', price: 20, room: 'wait', at: [40, 58, 44] },
+  { id: 'rug',         name: 'rainbow rug',      emoji: '🌈', price: 20, room: 'wait' },
+  { id: 'petbed',      name: 'cozy pet basket',  emoji: '🧺', price: 20, room: 'exam' },
+  { id: 'scale',       name: 'pet scale',        emoji: '⚖️', price: 20, room: 'exam' },
+  { id: 'fishtank',    name: 'fish tank',        emoji: '🐠', price: 25, room: 'wait' },
+  { id: 'couch',       name: 'comfy couch',      emoji: '🛋️', price: 30, room: 'wait', at: [18, 48, 72] },
+  { id: 'microscope',  name: 'microscope',       emoji: '🔬', price: 30, room: 'exam' },
+  { id: 'xray',        name: 'x-ray machine',    emoji: '🩻', price: 40, room: 'exam' },
+  { id: 'trophy',      name: 'best vet trophy',  emoji: '🏆', price: 45, room: 'wait', at: [48, 12, 42] },
+  { id: 'ambulance',   name: 'animal ambulance', emoji: '🚑', price: 50, room: 'wait', at: [89, 50, 66] },
+];
+const PET_PRICE = 50;
+const owns = id => S.owned.includes(id);
+const cap = t => t[0].toUpperCase() + t.slice(1);
+const starsWord = n => n + (n === 1 ? ' star' : ' stars');
+const today = () => new Date().toLocaleDateString('en-CA');   // YYYY-MM-DD in local time
+
+function clinicScene(fresh) {
+  const room = el('div', { class: 'clinic-room', role: 'img', 'aria-label': 'Your clinic' });
+  const put = (node, id) => { if (id === fresh) node.classList.add('fresh'); room.append(node); };
+  if (owns('rug')) put(el('div', { class: 'rug' }), 'rug');
+  if (owns('butterflies')) [[8, 12, 30], [24, 30, 22], [40, 6, 26], [74, 12, 28], [95, 30, 22]].forEach(([x, y, s], i) =>
+    put(el('span', { class: 'deco fly', style: `left:${x}%;top:${y}%;font-size:${s}px;animation-delay:${i * 0.5}s` }, '🦋'), 'butterflies'));
+  if (owns('fishtank')) put(el('div', { class: 'tank' }, el('span', { class: 'fish' }, '🐠'), el('span', { class: 'fish f2' }, '🐟')), 'fishtank');
+  DECOR.filter(d => d.at && owns(d.id)).forEach(d =>
+    put(el('span', { class: 'deco', style: `left:${d.at[0]}%;top:${d.at[1]}%;font-size:${d.at[2]}px` }, d.emoji), d.id));
+  const pets = Object.keys(S.pets), size = pets.length > 6 ? 52 : pets.length > 3 ? 70 : 88;
+  pets.forEach((id, i) => {
+    const x = pets.length === 1 ? 50 : 12 + i * (76 / (pets.length - 1));
+    put(btn({ class: 'room-pet', style: `left:${x}%`, 'aria-label': 'Visit ' + A(id).name, onclick: () => showPets(id) }, pet(A(id), size)), 'pet-' + id);
+  });
+  if (!S.owned.some(id => DECOR.find(d => d.id === id).room === 'wait') && !pets.length)
+    room.append(el('p', { class: 'room-empty' }, 'Your clinic is a bit bare. Visit the shop 🛍️ to decorate it!'));
+  return room;
+}
+
+function checkout(item, onBought) {
+  // item: { title, price, pic (node), intro (spoken) }
+  const layer = el('div', { class: 'modal' });
+  const close = () => { hush(); layer.remove(); };
+  let total = 0;
+  const label = el('div', { class: 'paid' });
+  const tray = el('div', { class: 'bowl bags-paid', 'aria-label': 'stars paid' });
+  const upd = () => { label.textContent = 'Paid ' + total + ' of ' + item.price + ' ⭐'; };
+  let bought = false;
+  const finish = () => {
+    if (bought || total !== item.price && S.checkoutMath) return;   // a bag was taken back during the pause
+    bought = true;
+    S.stars -= item.price; save(); sfx.fanfare();
+    layer.remove(); onBought();
+  };
+  const bag = (v, props) => btn(Object.assign({ class: 'bag', 'aria-label': v + ' star bag' }, props), el('span', null, '⭐'), el('b', null, String(v)));
+  const card = el('div', { class: 'modal-card' },
+    item.pic, el('h3', null, item.title), el('div', { class: 'pricetag' }, '⭐ ' + item.price));
+  if (S.checkoutMath) {
+    const bags = el('div', { class: 'wallet' }, [10, 5].map(v => bag(v, { onclick: () => {
+      if (total >= item.price) return;
+      total += v; sfx.tap();
+      const t = bag(v, { onclick: () => {
+        t.remove(); total -= v; upd(); say(String(total));
+        if (total === item.price) setTimeout(finish, 900);   // paid too much, then took some back
+      } });
+      tray.append(t); upd();
+      if (total === item.price) { say(String(total)); setTimeout(finish, 900); }
+      else if (total > item.price) { sfx.bad(); tray.classList.remove('wobble'); void tray.offsetWidth; tray.classList.add('wobble'); say('Too many stars! Tap a bag to take it back.'); }
+      else say(String(total));
+    } })));
+    card.append(el('p', null, 'Tap the star bags to pay. Count by tens and fives!'), bags, tray, label);
+    upd();
+    say(item.intro + ' Tap the star bags to pay.');
+  } else {
+    card.append(btn({ class: 'big teal', onclick: finish }, 'Buy for ⭐ ' + item.price));
+    say(item.intro);
+  }
+  card.append(btn({ class: 'linkbtn', onclick: close }, 'Not now'));
+  layer.append(card);
+  app.append(layer);
+}
+
+function celebrate(title, pic, spoken, buttons) {
+  const conf = el('div', { class: 'confetti', 'aria-hidden': 'true' });
+  for (let i = 0; i < 36; i++) conf.append(el('i', { style: 'left:' + rnd(0, 100) + '%;animation-duration:' + (rnd(22, 45) / 10) + 's;animation-delay:' + (rnd(0, 12) / 10) + 's' }, pick(['⭐', '💖', '✨', '🎉'])));
+  say(spoken);
+  screen(topBar(), el('main', { class: 'healed' }, el('div', { class: 'healed-card' }, pic, el('h2', null, title), el('div', { class: 'btnrow' }, buttons))), conf);
+}
+
+function needMore(price, node) {
+  const n = price - S.stars;
+  sfx.bad(); node.classList.remove('wobble'); void node.offsetWidth; node.classList.add('wobble');
+  say('You need ' + n + ' more ' + (n === 1 ? 'star' : 'stars') + '. Help more animals to earn stars!');
+}
+
+function showShop(tab, quiet) {
+  visit = null; hush();
+  tab = tab === 'pets' ? 'pets' : 'decor';
+  const card = (pic, title, sub, action) => el('div', { class: 'item' }, el('div', { class: 'item-pic' }, pic), el('b', null, title), sub ? el('small', null, sub) : null, action);
+  const priceBtn = (price, onBuy) => {
+    const b = btn({ class: 'big small' + (S.stars >= price ? ' teal' : ' dim'), onclick: () => S.stars >= price ? onBuy() : needMore(price, b) }, '⭐ ' + price);
+    return b;
+  };
+  let items;
+  if (tab === 'decor') {
+    items = DECOR.map(d => card(el('span', { class: 'item-emoji' }, d.emoji), cap(d.name), d.room === 'wait' ? 'Waiting room' : 'Exam room',
+      owns(d.id) ? el('span', { class: 'got' }, '✓ In your clinic')
+        : priceBtn(d.price, () => checkout({ title: cap(d.name), price: d.price, pic: el('span', { class: 'item-emoji big-emoji' }, d.emoji), intro: 'The ' + d.name + ' costs ' + d.price + ' stars.' }, () => {
+            S.owned.push(d.id); save();
+            celebrate('The ' + d.name + ' is in your clinic!', el('span', { class: 'item-emoji big-emoji fresh-pop' }, d.emoji), 'Thank you! The ' + d.name + ' is in your clinic now!', [
+              btn({ class: 'big', onclick: () => d.room === 'wait' ? showRoom(d.id) : showShop('decor', true) }, d.room === 'wait' ? 'See my clinic ▶' : 'Back to the shop'),
+              btn({ class: 'big sun', onclick: () => showShop('decor', true) }, 'Keep shopping 🛍️')]);
+          }))));
+  } else {
+    items = ANIMALS.map(a => {
+      if (S.pets[a.id]) return card(pet(a, 96), a.name, 'Part of the family ❤️', btn({ class: 'big sun small', onclick: () => showPets(a.id) }, 'Visit'));
+      if (!S.healed[a.id]) return el('div', { class: 'item locked', onclick: () => say('Help this animal at the clinic first.') }, el('div', { class: 'item-pic' }, pet(a, 96)), el('b', null, '?'), el('small', null, 'Help me first'));
+      return card(pet(a, 96), a.name, 'the ' + a.kind, priceBtn(PET_PRICE, () => checkout({ title: 'Adopt ' + a.name, price: PET_PRICE, pic: pet(a, 150, { cls: 'happy' }), intro: 'Adopting a pet costs 50 stars.' }, () => {
+        S.pets[a.id] = { adopted: today(), day: today(), done: [] }; save();
+        const cert = el('div', { class: 'cert' },
+          el('div', { class: 'cert-top' }, '📜 Adoption certificate'),
+          el('div', { class: 'duo' }, ellie(96, 'hop'), pet(a, 200, { cls: 'happy' })),
+          el('p', null, a.name + ' the ' + a.kind + ' is now part of Dr. ' + S.name + "'s clinic family."),
+          el('small', null, 'Adopted ' + new Date().toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' })));
+        celebrate('You adopted ' + a.name + '!', cert, 'Congratulations! You adopted ' + a.name + '! Welcome to the family, ' + a.name + '!', [
+          btn({ class: 'big', onclick: () => showPets(a.id) }, 'Say hi to ' + a.name + ' ▶')]);
+      })));
+    });
+  }
+  const tabs = el('div', { class: 'seg shop-tabs', role: 'tablist' },
+    btn({ class: tab === 'decor' ? 'on' : null, role: 'tab', onclick: () => showShop('decor', true) }, '🖼️ Decorate'),
+    btn({ class: tab === 'pets' ? 'on' : null, role: 'tab', onclick: () => showShop('pets', true) }, '🐾 Adopt a pet'));
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'room-head' }, el('h2', null, 'Clinic shop'),
+      el('div', { class: 'says' }, ellie(72), el('div', { class: 'bubble' }, el('p', null,
+        'You have ' + starsWord(S.stars) + '. ' + (tab === 'decor' ? 'What would you like?' : 'Adopting a pet costs ' + PET_PRICE + ' stars.'))))),
+    tabs, el('div', { class: 'shop' }, items),
+    el('div', null, btn({ class: 'big teal small', onclick: () => showRoom() }, '← Back to the waiting room'))));
+  if (!quiet) say('Welcome to the clinic shop! You have ' + starsWord(S.stars) + '. What would you like?');
+}
+
+function showPets(id) {
+  visit = null; hush();
+  const ids = Object.keys(S.pets);
+  if (!ids.length) return showShop('pets');
+  id = S.pets[id] ? id : ids[0];
+  const a = A(id), p = S.pets[id];
+  let greet = 'Say hi to ' + a.name + '!';
+  if (p.day !== today()) {
+    if (p.day && (new Date(today()) - new Date(p.day)) / 864e5 >= 2) greet = a.name + ' missed you!';
+    p.day = today(); p.done = []; save();
+  }
+  const hearts = el('div', { class: 'hearts' });
+  const drawHearts = () => { hearts.textContent = '❤️'.repeat(p.done.length) + '🤍'.repeat(3 - p.done.length); };
+  const stage = el('div', { class: 'pet-stage' }, pet(a, 240, { cls: p.done.length === 3 ? 'happy' : '' }));
+  const float = (emoji, cls) => { const f = el('span', { class: 'floaty ' + cls }, emoji); stage.append(f); setTimeout(() => f.remove(), 1500); };
+  const ACTIONS = [
+    ['feed', a.food, 'Feed', a.name + ' loves the food!'],
+    ['pat', '✋', 'Pat', a.name + ' loves pats!'],
+    ['play', '🎾', 'Play', a.name + ' loves to play!'],
+  ];
+  const acts = el('div', { class: 'btnrow' }, ACTIONS.map(([key, emoji, label, line]) => {
+    const b = btn({ class: 'big small care' + (p.done.includes(key) ? ' did' : ''), onclick: () => {
+      float(key === 'pat' ? '💕' : emoji, key);
+      if (p.done.includes(key)) return say(p.done.length === 3 ? a.name + ' is so happy! Come back tomorrow.' : line);
+      p.done.push(key); save(); b.classList.add('did'); drawHearts(); sfx.good();
+      if (p.done.length === 3) { stage.firstChild.classList.add('happy'); say(line + ' ' + a.name + ' is so happy! Come back tomorrow.'); }
+      else say(line);
+    } }, emoji + ' ' + label);
+    return b;
+  }));
+  drawHearts();
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'room-head' }, el('h2', null, 'My pets'),
+      el('div', { class: 'says' }, ellie(72), el('div', { class: 'bubble' }, el('p', null, 'Feed, pat and play to fill ' + a.name + "'s hearts.")))),
+    el('div', { class: 'pet-home' },
+      el('section', { class: 'table' }, el('div', { class: 'mat' }, stage), el('div', { class: 'nametag' }, a.name), hearts, acts),
+      ids.length > 1 ? el('div', { class: 'pet-list' }, ids.map(k => btn({ class: 'pet-pick' + (k === id ? ' on' : ''), 'aria-label': A(k).name, onclick: () => showPets(k) }, pet(A(k), 64)))) : null),
+    el('div', { class: 'btnrow', style: 'justify-content:flex-start' },
+      btn({ class: 'big teal small', onclick: () => showRoom() }, '← Back to the waiting room'),
+      btn({ class: 'big sun small', onclick: () => showShop('pets') }, '🛍️ Adopt another'))));
+  say(greet);
+}
+
+/* ---------- grown-ups ---------- */
+function showParentGate() {
+  visit = null;
+  let t = null;
+  const hold = btn({ class: 'big teal hold' }, el('span', { class: 'fill' }), 'Hold for 2 seconds');
+  const start = e => { e.preventDefault(); hold.classList.add('go'); t = setTimeout(showParent, 1700); };
+  const stop = () => { hold.classList.remove('go'); clearTimeout(t); };
+  hold.addEventListener('pointerdown', start); ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => hold.addEventListener(ev, stop));
+  screen(el('main', { class: 'title-wrap' }, el('div', { class: 'title-card' },
+    el('h2', { style: 'font-size:36px' }, 'Grown-ups only'), el('p', null, 'Press and hold the button to open the settings.'), hold,
+    btn({ class: 'linkbtn', onclick: showTitle }, '← Back'))));
+}
+function showParent() {
+  const seg = (opts, cur, onPick) => el('div', { class: 'seg', role: 'group' }, opts.map(([v, lab]) => btn({ class: v === cur ? 'on' : null, onclick: () => { onPick(v); save(); showParent(); } }, lab)));
+  let armed = false;
+  const reset = btn({ class: 'big small', onclick: () => {
+    if (!armed) { armed = true; reset.textContent = 'Tap again to erase all progress'; return; }
+    const keep = { name: S.name, voice: S.voice, mix: S.mix, checkoutMath: S.checkoutMath, edition: S.edition };
+    Object.keys(S).forEach(k => delete S[k]);
+    Object.assign(S, { stars: 0, healed: {}, lvl: {}, streak: {}, stats: {}, queue: null, owned: [], pets: {} }, keep); save(); showParent();
+  } }, 'Reset progress');
+  const nameIn = el('input', { type: 'text', id: 'kid-name', value: S.name, maxlength: '16', 'aria-label': "Child's name" });
+  nameIn.addEventListener('change', () => { S.name = nameIn.value.trim() || 'Ellie'; save(); });
+  const rows = Object.entries(edition().skills).map(([k, sk]) => {
+    const st = S.stats[k] || { done: 0, first: 0 }, lv = levelOf(k);
+    const setLv = d => { S.lvl[k] = Math.min(3, Math.max(1, lv + d)); S.streak[k] = 0; save(); showParent(); };
+    return el('tr', null,
+      el('td', null, el('span', { class: 'chip ' + sk.area }, sk.area === 'math' ? 'Math' : 'Language')),
+      el('td', null, el('b', null, sk.label), el('br'), el('span', { style: 'color:var(--ink-soft)' }, sk.curric)),
+      el('td', null, el('div', { class: 'lv' }, btn({ 'aria-label': 'easier', onclick: () => setLv(-1) }, '−'), el('span', null, 'Level ' + lv), btn({ 'aria-label': 'harder', onclick: () => setLv(1) }, '+'))),
+      el('td', { class: 'n' }, String(st.done)),
+      el('td', { class: 'n' }, st.done ? Math.round(100 * st.first / st.done) + '%' : '–'));
+  });
+  screen(el('main', { class: 'screen' }, el('section', { class: 'parent' },
+    el('h2', null, 'Grown-ups corner'),
+    Date.now() < TEST_UNTIL ? el('div', { class: 'editions' }, el('h3', null, '📝 Chapter 1 test practice'),
+      el('p', null, EDITIONS.test1.note + ' While it is on, it replaces the edition below.'),
+      el('div', { class: 'settings' }, el('span', null, 'Test practice'),
+        el('div', { class: 'seg', role: 'group' }, [[false, 'On'], [true, 'Off']].map(([v, lab]) =>
+          btn({ class: !!S.testOff === v ? 'on' : null, onclick: () => { S.testOff = v; save(); showParent(); } }, lab))))) : null,
+    el('div', { class: 'editions' }, el('h3', null, 'Edition'),
+      el('div', { class: 'edition-pick' }, Object.entries(EDITIONS).filter(([, ed]) => !ed.temporary).map(([id, ed]) => {
+        const on = (EDITIONS[S.edition] || EDITIONS.base) === ed;
+        return btn({ class: 'edition' + (on ? ' on' : ''), onclick: () => { S.edition = id; save(); showParent(); } },
+          el('b', null, (on ? '✓ ' : '') + ed.name), el('small', null, ed.note));
+      }))),
+    el('p', null, 'The skill table below shows the activities in the edition you picked. Stars, stickers, decorations and pets are shared by all editions.'),
+    el('p', null, 'Every patient needs three treatment steps. Each step is a short activity from the Ontario Grade 1 Mathematics (2020) and Language (2023) curriculum. Levels go up by themselves after three first-try answers in a row, and go down after a struggle. You can also set them by hand below.'),
+    el('div', { class: 'settings' },
+      el('label', { for: 'kid-name' }, 'Name', nameIn),
+      el('span', null, 'Voice'), seg([[true, 'On'], [false, 'Off']], S.voice, v => { S.voice = v; }),
+      el('span', null, 'Subjects'), seg([['both', 'Math + Reading'], ['math', 'Math only'], ['lang', 'Reading only']], S.mix, v => { S.mix = v; }),
+      el('span', null, 'Shop checkout'), seg([[true, 'Count star bags'], [false, 'One-tap buy']], S.checkoutMath, v => { S.checkoutMath = v; })),
+    el('p', null, 'Stars (5 per patient) are spent in the clinic shop, on decorations and on adopting animals ' + S.name + ' has already helped. With "Count star bags", she pays by tapping 10-star and 5-star bags while the narrator counts along. Adopted pets never get sick or sad; after a couple of days away they just say they missed her.'),
+    el('p', null, 'Stars now: ' + S.stars + ' · Decorations: ' + S.owned.length + ' of ' + DECOR.length + ' · Pets adopted: ' + Object.keys(S.pets).length),
+    !canSpeak ? el('p', null, 'This browser cannot read aloud, so the "find the word you hear" activity is turned off.') : null,
+    el('div', { class: 'tablewrap' }, el('table', null,
+      el('thead', null, el('tr', null, ['Subject', 'Skill', 'Level', 'Done', 'First try'].map(h => el('th', null, h)))),
+      el('tbody', null, rows))),
+    el('p', null, 'Level guide for number work: level 1 uses numbers to 10, level 2 to 20, level 3 to 50. Skip counting goes 10s → 5s → 2s. Coins go from naming coins to paying with nickels and dimes, then quarters.'),
+    el('h3', { style: 'font-size:22px' }, 'Photo credits'),
+    el('p', null, 'Animal photos are from Wikimedia Commons, with backgrounds removed. Tap a name to see the original photo.'),
+    el('ul', { class: 'credits' }, PHOTO_CREDITS.filter(c => photoOK[c[0]]).map(([id, who, lic, url]) =>
+      el('li', null, el('a', { href: url, target: '_blank', rel: 'noopener' }, A(id).name + ' the ' + A(id).kind), ' · ' + who + ' · ' + lic))),
+    el('div', { class: 'btnrow', style: 'justify-content:flex-start' }, btn({ class: 'big teal small', onclick: showTitle }, 'Done'), reset))));
+}
+
+window.__T={ALL_SKILLS,U38,U39,U40,ANIMALS,planSkills,edition,chainStep,UFLI_WEEKS,S,EDITIONS};showTitle();
+})();
+</script>
+
+</body>
+</html>
