@@ -71,8 +71,8 @@ recording its new lines.
 The **🏷️ Spelling test** button on the title screen (also 🏷️ in the top bar)
 opens a mode that is only a spelling test, with no patients. Dr. Ellie says
 each word ("said. Spell said."), and Ellie stamps it onto a pet's dog tag with
-a big a–z keyboard, then taps **Stamp it**. Each letter is read aloud as she
-taps it, ⌫ rubs one out, and Ellie's face or 🔊 repeats the word. Words are only
+a big a–z keyboard, then taps **Stamp it**. Each tap makes a little click, ⌫
+rubs a letter out, and Ellie's face or 🔊 repeats the word. Words are only
 marked after stamping, like a real test: a right word turns the tag gold, and a
 wrong one shows her letters next to the right spelling while the narrator
 spells it out. At the end she sees all her tags, earns a star per right word,

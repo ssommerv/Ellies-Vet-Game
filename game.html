@@ -2398,7 +2398,7 @@ function spellWord(t) {
   const fb = el('div', { class: 'feedback' });
   const after = el('div', { class: 'btnrow' });
   const draw = () => { stamp.replaceChildren(...[...typed].map(ch => el('span', null, ch)), ...(done ? [] : [el('span', { class: 'caret' })])); go.disabled = !typed.length || done; };
-  const type = ch => { if (done || typed.length >= 12) return; typed += ch; sfx.tap(); say(ch); draw(); };
+  const type = ch => { if (done || typed.length >= 12) return; typed += ch; sfx.tap(); draw(); };
   const keys = el('div', { class: 'keys', 'aria-label': 'letters' },
     ['abcdefg', 'hijklmn', 'opqrstu', 'vwxyz'].map((row, r) => el('div', { class: 'keyrow' }, [...row].map(ch => btn({ class: 'key', onclick: () => type(ch) }, ch)),
       r === 3 ? btn({ class: 'key wide', 'aria-label': 'rub out a letter', onclick: () => { if (done) return; typed = typed.slice(0, -1); draw(); } }, '⌫') : null)));
