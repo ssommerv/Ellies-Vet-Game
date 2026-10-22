@@ -329,6 +329,49 @@ button.slot.chainslot.picked{background:#FFF3CF;color:var(--coral)}
   .matchrow{grid-auto-columns:32px;font-size:28px}
 }
 
+/* ---------- dog tag spelling test ---------- */
+.spellhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.spellhead h2{font-size:32px}
+.spellhead .stepno{margin-left:0}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dots i{width:16px;height:16px;border-radius:50%;background:var(--line);display:block}
+.dots i.done{background:var(--good)} .dots i.miss{background:var(--coral)} .dots i.now{background:var(--sun-deep);box-shadow:0 0 0 3px #FFE7A6}
+.spelltest{display:grid;grid-template-columns:minmax(260px,2fr) 3fr;gap:18px;align-items:start}
+.table.tagside{gap:0;flex-direction:column;flex-wrap:nowrap}
+.tagside .pet{margin-bottom:-8px}
+.collar{width:min(240px,80%);height:24px;border-radius:12px;background:linear-gradient(#E8695A,#B8402F);box-shadow:inset 0 -4px 0 rgba(0,0,0,.15),0 3px 0 rgba(0,0,0,.08);position:relative;z-index:1}
+.ring{width:30px;height:30px;border:6px solid #AEB8C1;border-radius:50%;margin-top:-10px;box-sizing:border-box;background:transparent;position:relative;z-index:2}
+.tag{min-width:230px;max-width:100%;min-height:128px;box-sizing:border-box;padding:30px 30px 18px;margin-top:-10px;border-radius:64px;
+  background:radial-gradient(circle at 30% 25%,#FFFFFF,#D6DDE3 55%,#A9B4BD);box-shadow:0 7px 0 #8794A0,inset 0 0 0 5px rgba(255,255,255,.55);
+  display:flex;align-items:center;justify-content:center;position:relative;transition:background .3s}
+.tag::before{content:'';position:absolute;top:10px;left:50%;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--card);box-shadow:inset 0 2px 3px rgba(0,0,0,.35)}
+.stamp{font:700 64px/1 var(--read);color:#56636E;letter-spacing:.06em;text-shadow:0 2px 0 #fff,0 -1px 0 rgba(0,0,0,.35);min-height:66px;display:flex;align-items:center;flex-wrap:wrap;justify-content:center}
+.stamp .caret{width:4px;height:54px;background:var(--teal);margin-left:4px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.tag.gold{background:radial-gradient(circle at 30% 25%,#FFF7DA,#F4CC55 55%,#C99A28);box-shadow:0 7px 0 #A57C14,inset 0 0 0 5px rgba(255,255,255,.5)}
+.tag.gold .stamp{color:#7A5B0E}
+.tagside .feedback{margin-top:16px;min-height:0}
+.cmp{font:700 26px var(--read);color:var(--ink)}
+.cmp span.ok{color:var(--good)}
+.cmp span.bad{color:var(--coral-deep);text-decoration:underline wavy}
+.cmp b{font-size:34px;color:var(--teal-deep);letter-spacing:.06em}
+.tagkeys{min-height:0}
+.keys{display:flex;flex-direction:column;gap:8px;align-items:center}
+.keyrow{display:flex;gap:7px;justify-content:center}
+.key{width:60px;height:64px;border-radius:14px;border:3px solid var(--line);background:var(--card);font:700 34px/1 var(--read);box-shadow:0 5px 0 var(--line);padding:0}
+.key:active{transform:translateY(3px);box-shadow:none}
+.key.wide{width:96px;font-size:28px}
+.big:disabled{opacity:.45}
+.resultgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.minitag{border-radius:40px;padding:16px 12px;text-align:center;display:flex;flex-direction:column;gap:2px;
+  background:radial-gradient(circle at 30% 25%,#FFFFFF,#D6DDE3 60%,#B4BEC6);box-shadow:0 5px 0 #8794A0}
+.minitag b{font:700 26px var(--read);color:var(--coral-deep)}
+.minitag small{color:var(--ink-soft);font-size:15px}
+.minitag.gold{background:radial-gradient(circle at 30% 25%,#FFF7DA,#F4CC55 60%,#D2A436);box-shadow:0 5px 0 #A57C14}
+.minitag.gold b{color:#5E460A}
+@media (max-width:860px){ .spelltest{grid-template-columns:1fr} .tagside .pet{--s:120px!important} }
+@media (max-width:520px){ .key{width:41px;height:54px;font-size:26px;border-radius:10px} .keyrow{gap:5px} .key.wide{width:62px} .stamp{font-size:46px} .tag{min-width:180px;padding:26px 20px 14px} }
+
 /* ---------- clinic picture (waiting room) ---------- */
 .clinic-room{position:relative;height:190px;border-radius:26px;overflow:hidden;border:4px solid var(--line);box-shadow:0 8px 0 var(--line);
   background:linear-gradient(#FBF6EE 0 56%,#CDEBE5 56% 64%,#A9DBCF 64%)}
@@ -1921,11 +1964,11 @@ const W1019_WEIGHTS = { u40heartspell: 4, u40spell: 4, u40heart: 3, u40roll: 3, 
 const CURRENT_WEEK = 'w1019';
 const EDITIONS = {
   base: { name: 'Base edition', note: 'All Grade 1 math and reading activities', skills: SKILLS },
-  w1019: { name: 'Week of Oct 19', badge: 'short e words · said, you, what, have', skills: W1019, weights: W1019_WEIGHTS,
+  w1019: { name: 'Week of Oct 19', badge: 'short e words · said, you, what, have', skills: W1019, weights: W1019_WEIGHTS, ufli: U40_CFG,
            note: 'Reading first (about 9 in 10 steps): UFLI Lesson 40 (short e review): read and write the heart words said, you, what, have; Roll and Read; the story "The Pet Hen"; short e spelling, chains and sentences · A little Numbers to 10 math review' },
-  w1012: { name: 'Week of Oct 12', badge: 'short u words · said, look, book, are, was', skills: W1012,
+  w1012: { name: 'Week of Oct 12', badge: 'short u words · said, look, book, are, was', skills: W1012, ufli: U39_CFG,
            note: 'Reading: UFLI Lesson 39 (short u review): read and write the heart words said, look, book, are, was; Roll and Read; the story "Cub and Pup"; short u spelling, chains and sentences · Math: Numbers to 10 review' },
-  w1005: { name: 'Week of Oct 5', badge: 'short a, i, o words · heart words', skills: W1005,
+  w1005: { name: 'Week of Oct 5', badge: 'short a, i, o words · heart words', skills: W1005, ufli: U38_CFG,
            note: 'Reading: UFLI Lesson 38 (short a, i, o review): word chains, spelling, 12 heart words, Roll and Read, the story "The Big Box" · Math: Numbers to 10 review' },
   n10:  { name: 'Week of Sept 28', badge: 'Numbers to 10 · short o words', skills: N10,
           note: 'Math: Numbers to 10 (counting, comparing, counting on and back) · Reading: number words, short o words and heart words (UFLI 37a/b)' },
@@ -1951,6 +1994,7 @@ function topBar() {
     btn({ class: 'pill', 'aria-label': S.stars + ' stars, open the shop', onclick: () => showShop() }, '⭐ ', String(S.stars)),
     btn({ class: 'iconbtn', 'aria-label': 'clinic shop', onclick: () => showShop() }, '🛍️'),
     Object.keys(S.pets).length ? btn({ class: 'iconbtn', 'aria-label': 'my pets', onclick: () => showPets() }, '🐾') : null,
+    btn({ class: 'iconbtn', 'aria-label': 'spelling test', onclick: () => showSpellTest() }, '🏷️'),
     btn({ class: 'iconbtn', 'aria-label': 'sticker book', onclick: () => { hush(); showStickers(); } }, '📒'),
     btn({ class: 'iconbtn', 'aria-label': 'waiting room', onclick: () => { hush(); showRoom(); } }, '🏥'));
 }
@@ -1966,7 +2010,9 @@ function showTitle() {
     testOn() ? el('div', { class: 'week-badge test' }, '📝 ' + edition().badge + ' · test on Monday')
       : S.edition !== 'base' && EDITIONS[S.edition] ? el('div', { class: 'week-badge' }, '📚 This week: ' + (edition().badge || edition().name)) : null,
     el('p', null, 'The animals need your help! Count, read and solve to make them feel better.'),
-    btn({ class: 'big', onclick: () => { sfx.good(); say('Welcome, Doctor ' + S.name + '! Your patients are waiting.'); showRoom(); } }, 'Open the clinic ▶'),
+    el('div', { class: 'btnrow', style: 'justify-content:flex-start' },
+      btn({ class: 'big', onclick: () => { sfx.good(); say('Welcome, Doctor ' + S.name + '! Your patients are waiting.'); showRoom(); } }, 'Open the clinic ▶'),
+      btn({ class: 'big sun', onclick: () => { sfx.good(); showSpellTest(); } }, '🏷️ Spelling test')),
     btn({ class: 'linkbtn', onclick: () => showParentGate() }, 'Grown-ups')))));
 }
 
@@ -2335,6 +2381,108 @@ function showPets(id) {
   say(greet);
 }
 
+/* ---------- dog tag spelling test ----------
+   Its own mode (title screen and top bar), separate from treating patients. Dr. Ellie says the
+   word; Ellie stamps it onto a pet's dog tag with an a–z keyboard and taps "Stamp it". Words are
+   checked only after stamping, like a real test. Missed words can be practised again at the end. */
+const TAG_TEST_SIZE = 10;
+const tagWeek = () => (EDITIONS[S.edition] && EDITIONS[S.edition].ufli) ? S.edition : CURRENT_WEEK;
+const tagCfg = () => EDITIONS[tagWeek()].ufli;
+function tagWords() {
+  const custom = (S.testWords || {})[tagWeek()];
+  if (custom && custom.length) return custom.slice(0, 15);
+  // this week's heart words always, then the week's spelling words (two of them harder ones)
+  const c = tagCfg(), heart = sample(c.heart, Math.min(5, c.heart.length)), hard = sample(c.spellHard, 2);
+  const rest = sample(c.spell.filter(w => !heart.includes(w)), TAG_TEST_SIZE - heart.length - hard.length);
+  return shuffle([...heart, ...rest, ...hard]);
+}
+const spelledOut = w => w.split('').join(', ');
+
+function showSpellTest(words, practice) {
+  visit = null; hush();
+  const pets = [...new Set([...shuffle(Object.keys(S.pets)), ...shuffle(ANIMALS.map(a => a.id))])];
+  spellWord({ words: words || tagWords(), i: 0, results: [], practice: !!practice, pets, intro: true });
+}
+
+function spellWord(t) {
+  const w = t.words[t.i], a = A(t.pets[t.i % t.pets.length]), n = t.words.length;
+  let typed = '', done = false;
+  const stamp = el('div', { class: 'stamp', 'aria-live': 'polite' });
+  const tag = el('div', { class: 'tag', 'aria-label': 'dog tag' }, stamp);
+  const animal = pet(a, 160);
+  const fb = el('div', { class: 'feedback' });
+  const after = el('div', { class: 'btnrow' });
+  const draw = () => { stamp.replaceChildren(...[...typed].map(ch => el('span', null, ch)), ...(done ? [] : [el('span', { class: 'caret' })])); go.disabled = !typed.length || done; };
+  const type = ch => { if (done || typed.length >= 12) return; typed += ch; sfx.tap(); say(ch); draw(); };
+  const keys = el('div', { class: 'keys', 'aria-label': 'letters' },
+    ['abcdefg', 'hijklmn', 'opqrstu', 'vwxyz'].map((row, r) => el('div', { class: 'keyrow' }, [...row].map(ch => btn({ class: 'key', onclick: () => type(ch) }, ch)),
+      r === 3 ? btn({ class: 'key wide', 'aria-label': 'rub out a letter', onclick: () => { if (done) return; typed = typed.slice(0, -1); draw(); } }, '⌫') : null)));
+  const hear = () => say(w + '. Spell ' + w + '.');
+  const go = btn({ class: 'big teal', disabled: true, onclick: () => {
+    if (done || !typed) return;
+    done = true; draw();
+    const right = typed.toLowerCase() === w.toLowerCase();
+    t.results.push({ w, typed, right });
+    if (right) {
+      tag.classList.add('gold'); animal.classList.add('happy'); sfx.good();
+      fb.className = 'feedback'; fb.textContent = '⭐ ' + pick(PRAISE);
+      const talk = say('You spelled ' + w + '! ' + pick(PRAISE));
+      Promise.all([talk, sleep(1400)]).then(() => sleep(400)).then(() => { if (app.contains(tag)) next(); });
+    } else {
+      sfx.bad(); tag.classList.add('wobble'); go.hidden = true;
+      fb.className = 'feedback try';
+      fb.replaceChildren(el('div', { class: 'cmp' }, 'You stamped: ', [...typed].map((ch, i) => el('span', { class: ch.toLowerCase() === (w[i] || '').toLowerCase() ? 'ok' : 'bad' }, ch))),
+        el('div', { class: 'cmp' }, 'The word is: ', el('b', null, w)));
+      say('Nice try! ' + w + ' is spelled ' + spelledOut(w) + '.');
+      after.replaceChildren(...[
+        t.practice ? btn({ class: 'big sun', onclick: () => { t.results.pop(); spellWord(t); } }, 'Try it again ↺') : null,
+        btn({ class: 'big', onclick: next }, t.i + 1 < n ? 'Next word ▶' : 'See my tags ▶')].filter(Boolean));
+    }
+  } }, 'Stamp it ✓');
+  function next() { t.i++; t.intro = false; if (t.i < n) spellWord(t); else showTagResults(t); }
+  const dots = el('div', { class: 'dots', 'aria-label': 'word ' + (t.i + 1) + ' of ' + n }, t.words.map((x, i) =>
+    el('i', { class: i < t.results.length ? (t.results[i].right ? 'done' : 'miss') : i === t.i ? 'now' : null })));
+  draw();
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'spellhead' }, el('h2', null, t.practice ? '🏷️ Tricky words' : '🏷️ Spelling test'),
+      el('span', { class: 'stepno' }, 'Word ' + (t.i + 1) + ' of ' + n), dots),
+    el('div', { class: 'spelltest' },
+      el('section', { class: 'table tagside' }, animal, el('div', { class: 'collar' }), el('div', { class: 'ring' }), tag, fb),
+      el('section', { class: 'task tagkeys' },
+        el('div', { class: 'prompt says' }, btn({ class: 'ellie-btn', 'aria-label': 'hear the word', onclick: hear }, ellie(72)),
+          el('div', { class: 'bubble' }, el('p', null, 'Listen, then stamp the word on ' + a.name + "'s tag.")),
+          btn({ class: 'speak', 'aria-label': 'hear the word', onclick: hear }, '🔊')),
+        keys, el('div', { class: 'btnrow' }, go), after)),
+    el('div', null, btn({ class: 'linkbtn', onclick: () => { hush(); showTitle(); } }, '← Stop the test'))));
+  const lead = t.intro ? (t.practice ? "Let's try the tricky ones again. " : 'Spelling test! Listen to the word, then stamp it on the tag. ') : '';
+  say(lead + (t.practice ? '' : 'Word ' + (t.i + 1) + '. ') + w + '. Spell ' + w + '.');
+}
+
+function showTagResults(t) {
+  const score = t.results.filter(r => r.right).length, n = t.results.length;
+  const missed = [...new Set(t.results.filter(r => !r.right).map(r => r.w))];
+  if (!t.practice) {
+    S.stars += score;
+    S.spellTests = [{ date: today(), week: tagWeek(), score, n, missed }, ...(S.spellTests || [])].slice(0, 20);
+    save();
+  }
+  sfx.fanfare();
+  say(t.practice ? 'All done! ' + pick(PRAISE)
+    : 'You got ' + score + ' right! ' + (missed.length ? "Let's try the tricky ones again." : 'Great spelling, Doctor ' + S.name + '!'));
+  const conf = el('div', { class: 'confetti', 'aria-hidden': 'true' });
+  if (!missed.length) for (let i = 0; i < 30; i++) conf.append(el('i', { style: 'left:' + rnd(0, 100) + '%;animation-duration:' + (rnd(22, 45) / 10) + 's;animation-delay:' + (rnd(0, 12) / 10) + 's' }, pick(['⭐', '🏷️', '✨'])));
+  screen(topBar(), el('main', { class: 'screen' },
+    el('div', { class: 'room-head' }, el('h2', null, t.practice ? 'Tricky words practised!' : 'Spelling test done!'),
+      el('div', { class: 'says' }, ellie(72), el('div', { class: 'bubble' }, el('p', null,
+        t.practice ? 'Great practice!' : 'You spelled ' + score + ' out of ' + n + ' words!' + (score ? ' ⭐ +' + score + ' stars' : ''))))),
+    el('div', { class: 'resultgrid' }, t.results.map(r => el('div', { class: 'minitag' + (r.right ? ' gold' : '') },
+      el('b', null, r.right ? '✓ ' + r.w : '✗ ' + r.w), r.right ? null : el('small', null, 'you stamped “' + r.typed + '”')))),
+    el('div', { class: 'btnrow', style: 'justify-content:flex-start' },
+      missed.length ? btn({ class: 'big sun', onclick: () => showSpellTest(shuffle(missed), true) }, 'Practice the tricky words ↺') : null,
+      btn({ class: 'big teal', onclick: () => showSpellTest() }, 'New test 🏷️'),
+      btn({ class: 'big', onclick: () => { hush(); showRoom(); } }, 'Back to the clinic ▶'))), conf);
+}
+
 /* ---------- grown-ups ---------- */
 function showParentGate() {
   visit = null;
@@ -2356,6 +2504,11 @@ function showParent() {
     Object.keys(S).forEach(k => delete S[k]);
     Object.assign(S, { stars: 0, healed: {}, lvl: {}, streak: {}, stats: {}, queue: null, owned: [], pets: {} }, keep); save(); showParent();
   } }, 'Reset progress');
+  const testIn = el('input', { type: 'text', id: 'test-words', style: 'width:min(28em,100%)', value: ((S.testWords || {})[tagWeek()] || []).join(', '), placeholder: 'e.g. said, you, what, have, bed, hen', 'aria-label': 'Spelling test words' });
+  testIn.addEventListener('change', () => {
+    const words = (testIn.value.match(/[A-Za-z']+/g) || []).map(w => w === 'I' ? w : w.toLowerCase());
+    S.testWords = Object.assign({}, S.testWords, { [tagWeek()]: words }); save();
+  });
   const nameIn = el('input', { type: 'text', id: 'kid-name', value: S.name, maxlength: '16', 'aria-label': "Child's name" });
   nameIn.addEventListener('change', () => { S.name = nameIn.value.trim() || 'Ellie'; save(); });
   const rows = Object.entries(edition().skills).map(([k, sk]) => {
@@ -2395,6 +2548,14 @@ function showParent() {
       el('thead', null, el('tr', null, ['Subject', 'Skill', 'Level', 'Done', 'First try'].map(h => el('th', null, h)))),
       el('tbody', null, rows))),
     el('p', null, 'Level guide for number work: level 1 uses numbers to 10, level 2 to 20, level 3 to 50. Skip counting goes 10s → 5s → 2s. Coins go from naming coins to paying with nickels and dimes, then quarters.'),
+    el('h3', { style: 'font-size:22px' }, '🏷️ Spelling test'),
+    el('p', null, 'The spelling test uses ' + EDITIONS[tagWeek()].name + ': its heart words (' + tagCfg().heart.join(', ') + ') plus ' +
+      TAG_TEST_SIZE + ' words in all from that week\'s list. To practise the exact words from school, type them here (separated by commas or spaces). Clear the box to go back to the automatic list. Typed words not in the week\'s list are read by the device voice.'),
+    el('div', { class: 'settings' }, el('label', { for: 'test-words' }, 'Test words', testIn)),
+    el('div', { class: 'tablewrap' }, (S.spellTests || []).length ? el('table', null,
+      el('thead', null, el('tr', null, ['Date', 'Week', 'Score', 'Missed'].map(h => el('th', null, h)))),
+      el('tbody', null, S.spellTests.slice(0, 8).map(r => el('tr', null, el('td', null, r.date), el('td', null, (EDITIONS[r.week] || { name: r.week }).name),
+        el('td', { class: 'n' }, r.score + ' / ' + r.n), el('td', null, r.missed.join(', ') || '–'))))) : el('p', null, 'No spelling tests taken yet.')),
     el('h3', { style: 'font-size:22px' }, 'Photo credits'),
     el('p', null, 'Animal photos are from Wikimedia Commons, with backgrounds removed. Tap a name to see the original photo.'),
     el('ul', { class: 'credits' }, PHOTO_CREDITS.filter(c => photoOK[c[0]]).map(([id, who, lic, url]) =>

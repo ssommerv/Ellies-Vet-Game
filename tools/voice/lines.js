@@ -185,6 +185,14 @@ window.voiceLines = function (T) {
     c.animals.forEach(([a]) => c.places.forEach(([p]) => add('The ' + a + ' ' + c.verb + ' the ' + p + '.')));
   });
 
+  // Dog tag spelling test (recorded for the latest week; older weeks fall back to the device voice)
+  add('Spelling test!', 'Listen to the word, then stamp it on the tag.', "Let's try the tricky ones again.", 'Nice try!', 'All done!',
+    'Great spelling, Doctor ' + name + '!');
+  range(1, 15).forEach(n => add('Word ' + n + '.'));
+  range(0, 15).forEach(k => add('You got ' + k + ' right!'));
+  T.UFLI_WEEKS.slice(-1).forEach(c => [...new Set([...c.heart, ...c.spell, ...c.spellHard])].forEach(w =>
+    add(w + '.', 'Spell ' + w + '.', 'You spelled ' + w + '!', w + ' is spelled ' + w.split('').join(', ') + '.')));
+
   // Chapter 1 test practice
   range(6, 10).forEach(y => add(y + ' is how many more than 5?', y + ' is ' + (y - 5) + ' more than 5!'));
   range(4, 9).forEach(x => add(x + ' is how many less than 10?', x + ' is ' + (10 - x) + ' less than 10!'));

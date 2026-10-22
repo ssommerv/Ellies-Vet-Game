@@ -66,6 +66,24 @@ Each UFLI week is one config object (`U38_CFG`, `U39_CFG`, ...) that
 reads the same configs, so adding a week is a config, an `EDITIONS` entry and
 recording its new lines.
 
+## Spelling test
+
+The **🏷️ Spelling test** button on the title screen (also 🏷️ in the top bar)
+opens a mode that is only a spelling test, with no patients. Dr. Ellie says
+each word ("said. Spell said."), and Ellie stamps it onto a pet's dog tag with
+a big a–z keyboard, then taps **Stamp it**. Each letter is read aloud as she
+taps it, ⌫ rubs one out, and Ellie's face or 🔊 repeats the word. Words are only
+marked after stamping, like a real test: a right word turns the tag gold, and a
+wrong one shows her letters next to the right spelling while the narrator
+spells it out. At the end she sees all her tags, earns a star per right word,
+and can practise just the words she missed.
+
+A test is 10 words in a mixed order from the current week's UFLI list: the
+heart words, then that week's spelling words, two of them harder ones. In the Grown-ups
+corner you can type the exact list from the school sheet instead (up to 15
+words), and see the scores of the last tests. Only the current week's words
+are pre-recorded, so new custom words use the device voice until recorded.
+
 ### Chapter 1 test practice (until Monday, October 5, 2026)
 
 For the Chapter 1 unit test, a temporary **test practice** mode replaces the
