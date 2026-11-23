@@ -398,10 +398,12 @@ button.slot.chainslot.picked{background:#FFF3CF;color:var(--coral)}
 .trainrow{display:flex;align-items:center;gap:12px}
 .trainrow .train{padding-top:0}
 .tlabel{min-width:28px;text-align:right;font:700 34px var(--read)}
-.tape{display:grid;grid-template-columns:repeat(10,minmax(0,50px));max-width:100%;margin-top:34px;border:3px solid #9B8A2E;border-radius:6px;background:#FFFBD6}
+.tape{display:grid;grid-template-columns:repeat(10,minmax(0,50px));max-width:100%;margin:52px 0 30px;border:3px solid #9B8A2E;border-radius:6px;background:#FFFBD6}
 .tbox{position:relative;height:54px;padding:0;display:grid;place-items:center;font:700 26px var(--read);color:var(--ink);background:none;border:none;border-left:2px solid #C9BB62}
 .tbox:first-child{border-left:none}
 .tbox.start{background:#F6E27A}
+.tbox.here::after{content:'↑ Start here';position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);white-space:nowrap;font:700 15px var(--read);color:var(--coral-deep)}
+.tbox .hopn{position:absolute;left:0;bottom:calc(100% + 26px);transform:translateX(-50%);font:700 16px/1 var(--read);font-style:normal;color:var(--coral-deep)}
 .tbox.hop::before{content:'';position:absolute;bottom:calc(100% + 5px);right:50%;width:100%;height:20px;box-sizing:border-box;border:3px solid var(--coral-deep);border-bottom:none;border-radius:50% 50% 0 0}
 .tbox.hop::after{content:'';position:absolute;bottom:calc(100% - 1px);left:calc(50% - 6px);border:6px solid transparent;border-top-color:var(--coral-deep)}
 .bond{position:relative;flex:none;width:190px;height:150px}
@@ -434,6 +436,10 @@ button.slot.chainslot.picked{background:#FFF3CF;color:var(--coral)}
 .z-tree::before{content:'🌳';position:absolute;left:6px;top:8px;font-size:40px}
 .z-room{background:#FFF3DD;border:4px solid #F1D9A8}
 .z-door{background:#FFF8EA;border:4px dashed #E4C383}
+.z-mat{background:#F4FAF8;border:3px solid var(--line)}
+.bean{display:inline-block;width:1.15em;height:.72em;margin:.1em;border-radius:50% 50% 45% 55%/60% 60% 40% 40%;transform:rotate(-14deg);box-shadow:inset -3px -4px 0 rgba(0,0,0,.12)}
+.bean.yellow{background:radial-gradient(circle at 35% 30%,#FFF3A0,#E8C21E)}
+.bean.green{background:radial-gradient(circle at 35% 30%,#C4E68A,#4E8F1E)}
 .joinarrow{align-self:center;font:700 40px var(--display);color:var(--teal)}
 .zone.joining span{animation:walkin 1.1s ease-out both}
 .zone.joining span:nth-child(2){animation-delay:.15s} .zone.joining span:nth-child(3){animation-delay:.3s} .zone.joining span:nth-child(4){animation-delay:.45s}
@@ -2062,9 +2068,23 @@ const C3_STORIES = [
     W: 'There are # turtles in all.', Q: 'How many turtles are there in all?' },
   { ic: '🐶', za: 'room', zb: 'door', join: true, A: ['# puppy is in the waiting room.', '# puppies are in the waiting room.'], B: ['# puppy comes in.', '# puppies come in.'],
     W: 'There are # puppies in all.', Q: 'How many puppies are there in all?' },
+  { ic: '.bean yellow', icB: '.bean green', za: 'mat', zb: 'mat', A: ['There is # yellow bean.', 'There are # yellow beans.'], B: ['There is # green bean.', 'There are # green beans.'],
+    W: 'There are # beans in all.', Q: 'How many beans are there in all?' },
 ];
-// Real-world problems (Lesson 3): the book's, plus a few at the clinic.
+// Real-world problems (Lesson 3): the book's, plus a few at the clinic. none: the first part is
+// always 0 ("Yuhan has no apples"); zeroB: the second part is sometimes 0; big2: the greater number
+// comes second ("2 children are dancing. 7 children join them.").
 const C3_PROBLEMS = [
+  { ic: ['🍎', '🍎'], none: true, A: 'Yuhan has no apples on her plate.', B: ["Tara puts # apple on Yuhan's plate.", "Tara puts # apples on Yuhan's plate."],
+    Q: 'How many apples does Yuhan have now?', W: ['Yuhan has # apple now.', 'Yuhan has # apples now.'] },
+  { ic: ['🖍️', '🖊️'], A: ['Megan has # red marker.', 'Megan has # red markers.'], B: ['She has # blue marker.', 'She has # blue markers.'],
+    Q: 'How many markers does she have in all?', W: 'Megan has # markers in all.' },
+  { ic: [['👧', '👦', '🧒'], ['🧒', '👧', '👦']], big2: true, A: ['# child is dancing.', '# children are dancing.'], B: ['# child joins them.', '# children join them.'],
+    Q: 'How many children are dancing now?', W: '# children are dancing now.' },
+  { ic: [['🔴', '🔵', '🟢', '🟡', '🟣'], ['🟣', '🟡', '🔴', '🔵', '🟢']], zeroB: true, A: ['Jar A has # marble.', 'Jar A has # marbles.'], B: ['Jar B has # marble.', 'Jar B has # marbles.'],
+    Q: 'How many marbles are there in all?', W: 'There are # marbles in all.' },
+  { ic: [['🌟', '🦄', '🌈', '💖'], ['🌈', '💖', '🌟', '🦄']], A: ['Kelly has # sticker.', 'Kelly has # stickers.'], B: ['Her friend gives her # sticker.', 'Her friend gives her # stickers.'],
+    Q: 'How many stickers does Kelly have now?', W: 'Kelly has # stickers now.' },
   { ic: ['👧', '👦'], A: ['# girl is playing.', '# girls are playing.'], B: ['# boy is playing with them.', '# boys are playing with them.'],
     Q: 'How many children are playing in all?', W: '# children are playing in all.' },
   { ic: ['⚾', '🏈'], A: ['John has # baseball card.', 'John has # baseball cards.'], B: ['He has # football card.', 'He has # football cards.'],
@@ -2134,14 +2154,17 @@ function cubeFrame(n, k, c1, c2, opts) {
   extra.forEach((c, i) => cells[rows ? 5 + i : n + i].append(c));
   return { extra, node: el('div', { class: 'frame cubeframe' }, cells) };
 }
-// The book's counting tape (boxes 1 to 10). The boxes up to `start` are shaded; `hops` draws the
-// jumps after it; with tap, the boxes after start are buttons.
+// The book's counting tape (boxes 1 to 10). The boxes up to `start` are shaded, with "Start here"
+// under the last one; `hops` draws the numbered jumps after it; with tap, the boxes after start are buttons.
+const hopTo = (cell, k) => { cell.classList.add('hop'); cell.append(el('i', { class: 'hopn' }, String(k))); };
 function tapeEl(start, opts) {
   opts = opts || {};
   const cells = upto(1, 10).map(i => {
-    const cls = 'tbox' + (i <= start ? ' start' : '') + (opts.hops && i > start && i <= start + opts.hops ? ' hop' : '');
+    const cls = 'tbox' + (i < start ? ' start' : i === start ? ' start here' : '');
     if (opts.tap && i > start) { const b = btn({ class: cls, 'aria-label': String(i), onclick: () => opts.tap(i, b) }, String(i)); return b; }
-    return el('span', { class: cls }, String(i));
+    const c = el('span', { class: cls }, String(i));
+    if (opts.hops && i > start && i <= start + opts.hops) hopTo(c, i - start);
+    return c;
   });
   return { cells, node: el('div', { class: 'tape' }, cells) };
 }
@@ -2168,7 +2191,8 @@ const CH3 = {
     const small = l === 1 ? rnd(1, 2) : rnd(1, l === 2 ? 3 : 4);
     const big = rnd(Math.max(small + 1, l === 1 ? 4 : 3), 10 - small), sum = big + small;
     const first = l === 1 || Math.random() < 0.5 ? big : small, second = first === big ? small : big;
-    const startLine = 'Start at ' + big + '. ' + (l < 3 ? 'Tap the treats to count on.' : 'Fill in the missing numbers.');
+    const view = l === 1 ? 'cup' : pick(['cup', 'tape']);   // the wrap-up page counts on with the counting tape
+    const startLine = 'Start at ' + big + '. ' + (view === 'tape' ? 'Tap the boxes to count on.' : l < 3 ? 'Tap the treats to count on.' : 'Fill in the missing numbers.');
     return {
       prompt: first + ' + ' + second + ' = ?',
       speak: 'What is ' + first + ' plus ' + second + '? Count on from the greater number. ' + (l === 1 ? startLine : 'Which number do you count on from?'),
@@ -2200,10 +2224,22 @@ const CH3 = {
           if (l === 3) hint = padFill(stage, api, cl.boxes, i => [big + i + 1], null, () => { treats.forEach(t => t.classList.add('in')); finish(); });
           else hint = () => { const t = treats.find(x => !x.classList.contains('in')); if (t) t.classList.add('hint'); };
         };
+        const tapeStage = () => {
+          const cl = countLine(big, small);
+          let counted = 0;
+          const t = tapeEl(big, { tap: (i, cell) => {
+            if (counted >= small) return;
+            if (i !== big + counted + 1) return api.miss(cell, 'Count on from ' + (big + counted) + '. Tap the next box.');
+            counted++; hopTo(cell, counted); fillAns(cl.boxes[counted - 1], big + counted); sfx.tap(); say(String(big + counted));
+            if (counted === small) setTimeout(finish, 600);
+          } });
+          stage.replaceChildren(t.node, cl.node);
+          hint = () => { const c = t.cells[big + counted]; if (c && counted < small) c.classList.add('hint'); };
+        };
         if (l === 1) cupStage();
         else {
           stage.append(el('p', { class: 'ask' }, 'Which number do you count on from?'));
-          hint = stageChoices(stage, [first, second], big, api, () => { cupStage(); say(startLine); });
+          hint = stageChoices(stage, [first, second], big, api, () => { (view === 'tape' ? tapeStage : cupStage)(); say(startLine); });
         }
         return () => hint && hint();
       },
@@ -2238,7 +2274,7 @@ const CH3 = {
           const t = tapeEl(n, { tap: (i, cell) => {
             if (counted >= k) return;
             if (i !== n + counted + 1) return api.miss(cell, 'Count on from ' + (n + counted) + '. Tap the next box.');
-            cell.classList.add('hop'); step();
+            hopTo(cell, counted + 1); step();
           } });
           pic = t.node;
           hint = () => { const c = t.cells[n + counted]; if (c && counted < k) c.classList.add('hint'); };
@@ -2368,7 +2404,7 @@ const CH3 = {
     const book = [[4, 2], [6, 1], [2, 3], [7, 3], [3, 5], [2, 8]].filter(([p, q]) => Math.min(p, q) <= (l === 1 ? 2 : 3));
     if (Math.random() < 0.3) [x, y] = pick(book);
     else {
-      const small = l === 1 ? rnd(1, 2) : l === 2 ? rnd(1, 3) : rnd(0, 5), big = rnd(Math.max(small, 1), 10 - small);
+      const small = l === 1 ? rnd(1, 2) : l === 2 ? rnd(0, 3) : rnd(0, 5), big = rnd(Math.max(small, 1), 10 - small);
       [x, y] = Math.random() < 0.5 ? [big, small] : [small, big];
     }
     const sum = x + y;
@@ -2393,7 +2429,8 @@ const CH3 = {
       prompt: l === 1 ? st.Q : 'Tell an addition story.',
       speak: told + ' ' + (l === 1 ? c3say(st.A, x) + ' ' + c3say(st.B, y) + ' ' + st.Q : 'Fill in the blanks.'),
       build(box, api) {
-        const zone = (kind, n, ic, cls) => el('div', { class: 'zone z-' + kind + (cls ? ' ' + cls : '') }, upto(1, n).map(() => el('span', null, ic)));
+        const zone = (kind, n, ic, cls) => el('div', { class: 'zone z-' + kind + (cls ? ' ' + cls : '') },
+          upto(1, n).map(() => ic[0] === '.' ? el('span', { class: ic.slice(1).replace('.', ' ') }) : el('span', null, ic)));
         box.append(el('div', { class: 'scene', role: 'img', 'aria-label': 'picture' }, zone(st.za, x, st.ic),
           st.join ? el('span', { class: 'joinarrow', 'aria-hidden': 'true' }, '⬅') : null,
           zone(st.zb, y, st.icB || st.ic, (st.smallB ? 'sm' : '') + (st.join ? ' joining' : ''))));
@@ -2415,7 +2452,12 @@ const CH3 = {
   } },
 
   c3word: { area: 'math', label: 'Word problems', curric: 'Chapter 3 Lesson 3 – real-world problems: addition', make(l) {
-    const pr = pick(C3_PROBLEMS), x = rnd(l === 1 ? 1 : 2, l === 1 ? 5 : 7), y = rnd(1, Math.min(5, 10 - x)), s = x + y;
+    const pr = pick(C3_PROBLEMS);
+    let x = rnd(l === 1 ? 1 : 2, l === 1 ? 5 : 7), y = rnd(1, Math.min(5, 10 - x));
+    if (pr.none) { x = 0; y = rnd(1, l === 1 ? 5 : 9); }
+    else if (pr.big2) { x = rnd(1, 3); y = rnd(4, (l === 1 ? 7 : 10) - x); }
+    else if (pr.zeroB && Math.random() < 0.4) { x = Math.max(x, 2); y = 0; }
+    const s = x + y;
     const lines = [c3say(pr.A, x), c3say(pr.B, y)], q = c3tpl(pr.Q);
     return {
       prompt: 'Solve.', speak: lines.join(' ') + ' ' + q,

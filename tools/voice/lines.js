@@ -202,7 +202,7 @@ window.voiceLines = function (T) {
   T.T1_GROUPS.forEach(([, t]) => { add('Count the ' + t + '.'); range(1, 10).forEach(n => add('Yes, ' + n + ' ' + t + '!')); });
 
   // Chapter 3: Addition Facts to 10 (same ranges as the activities in game.html)
-  add('Count on from the greater number.', 'Which number do you count on from?', 'Tap the treats to count on.', 'Tap the next box.',
+  add('Count on from the greater number.', 'Which number do you count on from?', 'Tap the treats to count on.', 'Tap the boxes to count on.', 'Tap the next box.',
     'Complete the number bond.', 'Complete the addition sentence.', 'You can add in any order.', 'Fill in the blanks.',
     'Look at the picture.', 'Tell an addition story.', 'Count the flowers.', 'How many flowers are there?');
   range(2, 9).forEach(n => add('Start at ' + n + '.', 'Count on from ' + n + '.'));
@@ -224,11 +224,11 @@ window.voiceLines = function (T) {
     range(0, 4).forEach(n => add(c3(st.B, n)));
     range(2, 10).forEach(n => add(c3(st.W, n)));
   });
-  T.C3_PROBLEMS.forEach(pr => {
+  T.C3_PROBLEMS.forEach(pr => {   // number ranges as in the c3word activity
     add(c3(pr.Q));
-    range(1, 7).forEach(n => add(c3(pr.A, n)));
-    range(1, 5).forEach(n => add(c3(pr.B, n)));
-    range(2, 10).forEach(n => add(c3(pr.W, n)));
+    (pr.none ? [0] : pr.big2 ? range(1, 3) : range(1, 7)).forEach(n => add(c3(pr.A, n)));
+    (pr.none ? range(1, 9) : pr.big2 ? range(4, 9) : range(pr.zeroB ? 0 : 1, 5)).forEach(n => add(c3(pr.B, n)));
+    range(pr.none ? 1 : 2, 10).forEach(n => add(c3(pr.W, n)));
   });
 
   // adopted pets

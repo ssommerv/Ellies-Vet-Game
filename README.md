@@ -28,11 +28,12 @@ The Grown-ups corner has an **Edition** picker:
 
 - **Base edition**: every Grade 1 math and reading activity above.
 - **Chapter 3: Addition Facts to 10** (the current edition, from 23 November):
-  only Chapter 3 math, built from the textbook pages 43–60, until a grown-up
+  only Chapter 3 math, built from the textbook pages 43–65, until a grown-up
   picks another edition. Nine activities, every sum within 10, using the book's
   wording:
-  - counting on from the greater number with the cup of treats ("6, 7, 8"),
-    choosing which number to start from when the smaller one comes first;
+  - counting on from the greater number with the cup of treats ("6, 7, 8") or
+    the counting tape ("Start here", hops 1, 2), choosing which number to start
+    from when the smaller one comes first;
   - "What is 2 more than 7?" on cube trains, ten frames and the counting tape
     ("9 is 2 more than 7. 2 added to 7 is 9.");
   - number bonds (part, part, whole), including "5 and 2 make 7. What other
@@ -41,9 +42,11 @@ The Grown-ups corner has an **Edition** picker:
   - adding in any order (3 + 2 = 2 + 3);
   - practice facts like the "Let's Practise" page;
   - addition stories about pictures (ducks in a pond, teddy bears, apples on
-    plates including 0, girls playing, birds, bicycles, turtles);
-  - word problems (the tug-of-war, John's cards, Isa's stickers, and a few at
-    the clinic);
+    plates including 0, girls playing, birds, bicycles, turtles, yellow and
+    green beans);
+  - word problems (the tug-of-war, John's cards, Isa's stickers, Yuhan's
+    empty plate, Megan's markers, the dancing children, the marble jars with
+    0, Kelly's stickers, and a few at the clinic);
   - counting and "1 more than".
 
   It is a *focus* edition: while it is on, the spelling test button is hidden
