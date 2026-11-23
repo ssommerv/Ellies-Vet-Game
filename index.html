@@ -371,6 +371,108 @@ button.slot.chainslot.picked{background:#FFF3CF;color:var(--coral)}
 .minitag.gold b{color:#5E460A}
 @media (max-width:860px){ .spelltest{grid-template-columns:1fr} .tagside .pet{--s:120px!important} }
 @media (max-width:520px){ .key{width:41px;height:54px;font-size:26px;border-radius:10px} .keyrow{gap:5px} .key.wide{width:62px} .stamp{font-size:46px} .tag{min-width:180px;padding:26px 20px 14px} }
+/* Chapter 3: addition facts to 10 */
+.stage{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+.stage:empty{display:none}
+.ask{margin:0;font:700 26px var(--read)}
+.ans{display:inline-grid;place-items:center;min-width:70px;height:58px;padding:0 10px;box-sizing:border-box;border-radius:18px;background:#C9E39B;color:var(--ink);font:700 40px/1 var(--read);vertical-align:middle;transition:background .2s}
+.ans.filled{background:#EAF6D6}
+.ans.now{background:#DCEFB8;box-shadow:0 0 0 4px var(--sun-deep)}
+.eqn{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;font:700 44px var(--read)}
+.eqn .op{min-width:26px;text-align:center;color:var(--ink-soft)}
+.eqn .words{font-size:32px}
+.ncard{display:inline-grid;place-items:center;min-width:64px;height:76px;padding:0 8px;box-sizing:border-box;border:3px solid #8A9AA5;border-radius:10px;background:#FFFDF5;box-shadow:2px 3px 0 #C9D2D8}
+.numpad{display:grid;grid-template-columns:repeat(6,64px);gap:10px;justify-content:center}
+.numpad.done{display:none}
+.nkey{height:64px;padding:0;border-radius:16px;border:4px solid var(--lilac);background:#F4F0FF;font:700 34px var(--read);box-shadow:0 5px 0 var(--lilac)}
+.nkey:active{transform:translateY(3px);box-shadow:none}
+.countline{display:flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:6px;font:700 40px var(--read);background:var(--card);border:3px solid var(--line);border-radius:22px;padding:8px 18px}
+.cupzone{display:flex;align-items:flex-end;justify-content:center;gap:22px;flex-wrap:wrap}
+.cup{width:120px;height:136px;display:grid;place-items:center;font:700 64px/1 var(--display);color:#FFD43B;text-shadow:0 3px 0 #B8326A;
+  background:linear-gradient(90deg,#E9548D,#FF8DB8 45%,#E2558C);clip-path:polygon(0 0,100% 0,86% 100%,14% 100%)}
+.cup.gulp{animation:gulp .35s}
+@keyframes gulp{50%{transform:scale(1.08)}}
+.treats{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.treat{min-width:76px;min-height:76px;padding:8px;font-size:48px;line-height:1;background:#FFF6E0;border:3px dashed var(--sun-deep);border-radius:18px}
+.treat.in{animation:dropin .4s forwards;pointer-events:none}
+@keyframes dropin{to{transform:translateY(-30px) scale(.2);opacity:0}}
+.train{display:flex;align-items:flex-end;gap:3px;padding-top:42px;max-width:100%}
+.grp{display:flex;gap:3px;position:relative}
+.grp>em{position:absolute;left:3px;right:3px;bottom:calc(100% + 8px);height:12px;border:3px solid var(--ink-soft);border-bottom:none;border-radius:8px 8px 0 0}
+.grp>em b{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);padding:0 6px;background:var(--card);font:700 26px/1 var(--read)}
+.cube{display:block;position:relative;width:44px;height:44px;padding:0;border:none;border-radius:6px;box-shadow:inset 0 -6px 0 rgba(0,0,0,.2),inset 0 0 0 2px rgba(0,0,0,.12)}
+.cube::after{content:'';position:absolute;left:50%;top:44%;width:13px;height:13px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(0,0,0,.33)}
+.k-red{background:#E5483B} .k-blue{background:#2F5FD0} .k-green{background:#7DBB3C} .k-yellow{background:#FFC53D} .k-orange{background:#FF8F2E} .k-teal{background:#16A08E}
+.cube.tap{outline:3px dashed var(--ink-soft);outline-offset:3px}
+.cube .num{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);font:700 24px/1 var(--read);color:var(--coral-deep)}
+.cubeframe{grid-template-columns:repeat(5,54px);grid-auto-rows:54px}
+.cubeframe .cube{width:40px;height:40px}
+.trains{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.trainrow{display:flex;align-items:center;gap:12px}
+.trainrow .train{padding-top:0}
+.tlabel{min-width:28px;text-align:right;font:700 34px var(--read)}
+.tape{display:grid;grid-template-columns:repeat(10,minmax(0,50px));max-width:100%;margin-top:34px;border:3px solid #9B8A2E;border-radius:6px;background:#FFFBD6}
+.tbox{position:relative;height:54px;padding:0;display:grid;place-items:center;font:700 26px var(--read);color:var(--ink);background:none;border:none;border-left:2px solid #C9BB62}
+.tbox:first-child{border-left:none}
+.tbox.start{background:#F6E27A}
+.tbox.hop::before{content:'';position:absolute;bottom:calc(100% + 5px);right:50%;width:100%;height:20px;box-sizing:border-box;border:3px solid var(--coral-deep);border-bottom:none;border-radius:50% 50% 0 0}
+.tbox.hop::after{content:'';position:absolute;bottom:calc(100% - 1px);left:calc(50% - 6px);border:6px solid transparent;border-top-color:var(--coral-deep)}
+.bond{position:relative;flex:none;width:190px;height:150px}
+.bond.labeled{margin:14px 0 0 56px}
+.bondlines,.bondlines svg{position:absolute;inset:0;width:100%;height:100%}
+.bondlines line{stroke:#8C979E;stroke-width:4}
+.bc{position:absolute;width:64px;height:64px;box-sizing:border-box;border-radius:50%;border:5px solid #2F5FD0;background:#fff;display:grid;place-items:center;font:700 32px/1 var(--read)}
+.bc.p1{left:6px;top:4px} .bc.p2{left:6px;top:82px} .bc.w{left:120px;top:43px;border-color:#C9302C}
+.bc.q{color:var(--coral-deep)}
+.bc.filled{background:#EAF6D6}
+.bl{position:absolute;font:700 18px var(--read);color:var(--ink-soft)}
+.bl.p1{left:-50px;top:24px} .bl.p2{left:-50px;top:102px} .bl.w{left:128px;top:14px}
+.bonds{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 30px}
+.twogroups{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:18px}
+.twogroups .group{font-size:36px}
+.twogroups .group:empty{min-width:60px;min-height:56px}
+.solve{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:20px}
+.scene{display:flex;align-items:stretch;justify-content:center;flex-wrap:wrap;gap:10px;width:100%}
+.zone{position:relative;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:4px;min-width:140px;max-width:270px;min-height:110px;padding:14px;box-sizing:border-box;border-radius:26px;font-size:42px;line-height:1}
+.zone.sm{font-size:26px}
+.z-pond{background:radial-gradient(ellipse at 50% 45%,#9ED9F7,#3F98D4);box-shadow:0 0 0 7px #A6D883}
+.z-grass{background:#C5E8A1}
+.z-rocks{background:radial-gradient(circle at 35% 30%,#E7E9EC,#A9B0B8)}
+.z-water{background:linear-gradient(#A2DBF7,#4AA2DB)}
+.z-table{background:linear-gradient(#F7D394,#E7B567);border-bottom:12px solid #B07B33;border-radius:12px 12px 4px 4px}
+.z-plate{width:170px;height:170px;min-width:0;padding:30px;font-size:32px;border-radius:50%;background:radial-gradient(circle,#fff 0 50%,#E2E6EB 51% 57%,#fff 58%);box-shadow:0 5px 0 #C3CAD2,inset 0 0 0 3px #D5DBE1}
+.z-nest{background:radial-gradient(ellipse 75% 45% at 50% 100%,#A9733E 97%,transparent 100%),#DDF1FF}
+.z-sky{background:#DDF1FF}
+.z-tree{background:linear-gradient(#DDF1FF 0 40%,#C5E8A1 40%);padding-left:52px}
+.z-tree::before{content:'🌳';position:absolute;left:6px;top:8px;font-size:40px}
+.z-room{background:#FFF3DD;border:4px solid #F1D9A8}
+.z-door{background:#FFF8EA;border:4px dashed #E4C383}
+.joinarrow{align-self:center;font:700 40px var(--display);color:var(--teal)}
+.zone.joining span{animation:walkin 1.1s ease-out both}
+.zone.joining span:nth-child(2){animation-delay:.15s} .zone.joining span:nth-child(3){animation-delay:.3s} .zone.joining span:nth-child(4){animation-delay:.45s}
+@keyframes walkin{from{transform:translateX(60px);opacity:0}}
+.tale{display:flex;flex-direction:column;gap:8px;max-width:100%;box-sizing:border-box;padding:12px 20px;background:#FFFBEA;border:3px dashed var(--sun-deep);border-radius:18px;font:700 26px/1.3 var(--read)}
+.tale p{margin:0;line-height:1.9}
+.tale .ans{min-width:58px;height:46px;margin:0 2px;font-size:30px;border-radius:14px}
+.tale .eqn{justify-content:flex-start;font-size:30px}
+.tale .q{color:var(--teal-deep)}
+.tale.prob{background:var(--card);border-style:solid;border-color:var(--line)}
+.tale.prob p{line-height:1.35}
+.flowers{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:520px;font-size:48px;line-height:1}
+@media (max-width:520px){
+  .numpad{grid-template-columns:repeat(6,46px);gap:7px} .nkey{height:52px;font-size:28px}
+  .cube{width:28px;height:28px;border-radius:4px} .cube::after{width:9px;height:9px}
+  .train,.grp{gap:2px}
+  .cubeframe{grid-template-columns:repeat(5,40px);grid-auto-rows:40px} .cubeframe .cube{width:30px;height:30px}
+  .tbox{height:44px;font-size:20px}
+  .eqn{gap:6px;font-size:34px} .eqn .words{font-size:26px} .ncard{min-width:48px;height:60px} .ans{min-width:54px;height:48px;font-size:32px}
+  .countline{font-size:32px} .countline .ans{min-width:46px}
+  .tale .ans{min-width:46px;height:38px;font-size:24px}
+  .tale{padding:10px 12px;font-size:21px}
+  .zone{min-width:120px;font-size:34px}
+  .z-plate{width:140px;height:140px;padding:24px;font-size:22px}
+  .cup{width:96px;height:110px;font-size:52px}
+}
 
 /* ---------- clinic picture (waiting room) ---------- */
 .clinic-room{position:relative;height:190px;border-radius:26px;overflow:hidden;border:4px solid var(--line);box-shadow:0 8px 0 var(--line);
@@ -1948,6 +2050,446 @@ const TEST_SKILLS = Object.assign({}, T1, {
 const TEST_WEIGHTS = { t1five: 6, n10moreless: 2, t1compare: 3, t1write: 3, t1same: 2, n10compare: 2, n10next: 2, n10back: 2,
   n10order: 1, n10count: 1, n10readword: 1, n10wordpick: 1, n10spell: 1 };
 
+/* ================= Chapter 3: Addition Facts to 10 =================
+   Made from Ellie's Chapter 3 pages (43-60): counting and 1 more, number bonds (part, part,
+   whole), adding by counting on from the greater number (the cup, cube trains, ten frames and
+   the counting tape), "What is 2 more than 7?", addition sentences, adding in any order,
+   addition stories about pictures (adding 0 too) and real-world problems. Every sum stays
+   within 10, and the wording follows the book. */
+const C3_PAIRS = [['🍎', '🍏', 'apples'], ['❤️', '💙', 'hearts'], ['🔴', '🔵', 'counters'], ['⚽', '🎾', 'balls'], ['🌼', '🌷', 'flowers'], ['🐶', '🐱', 'pets']];
+const C3_COLOURS = ['red', 'blue', 'green', 'yellow', 'orange', 'teal'];
+const C3_FLOWERS = ['🌺', '🌷', '🌼', '🌹', '🌻', '🌸', '🏵️'];
+// Addition stories (Lesson 2): where each group is (za, zb), and whether the second group comes to join the first.
+const C3_STORIES = [
+  { ic: '🦆', za: 'pond', zb: 'grass', join: true, A: ['# duck is in a pond.', '# ducks are in a pond.'], B: ['# duck joins them.', '# ducks join them.'],
+    W: 'There are # ducks in all.', Q: 'How many ducks are there in all?' },
+  { ic: '🧸', za: 'table', zb: 'table', smallB: true, A: ['# big teddy bear is on the table.', '# big teddy bears are on the table.'],
+    B: ['# small teddy bear is on the table.', '# small teddy bears are on the table.'], W: 'There are # teddy bears in all.', Q: 'How many teddy bears are there in all?' },
+  { ic: '🍎', za: 'plate', zb: 'plate', zero: true, A: ['One plate has # apple.', 'One plate has # apples.'], B: ['The other plate has # apple.', 'The other plate has # apples.'],
+    W: 'There are # apples in all.', Q: 'How many apples are there in all?' },
+  { ic: '👧', za: 'grass', zb: 'grass', join: true, A: ['# girl is playing.', '# girls are playing.'], B: ['# girl joins them.', '# girls join them.'],
+    W: 'There are # girls in all.', Q: 'How many girls are there in all?' },
+  { ic: '🐤', icB: '🐦', za: 'nest', zb: 'sky', join: true, A: ['# bird is in the nest.', '# birds are in the nest.'], B: ['# bird flies to the nest.', '# birds fly to the nest.'],
+    W: 'There are # birds in all.', Q: 'How many birds are there in all?' },
+  { ic: '🚲', za: 'tree', zb: 'grass', A: ['# bicycle is by the tree.', '# bicycles are by the tree.'], B: ['# bicycle is on the grass.', '# bicycles are on the grass.'],
+    W: 'There are # bicycles in all.', Q: 'How many bicycles are there in all?' },
+  { ic: '🐢', za: 'rocks', zb: 'water', A: ['# turtle is on the rocks.', '# turtles are on the rocks.'], B: ['# turtle is in the water.', '# turtles are in the water.'],
+    W: 'There are # turtles in all.', Q: 'How many turtles are there in all?' },
+  { ic: '🐶', za: 'room', zb: 'door', join: true, A: ['# puppy is in the waiting room.', '# puppies are in the waiting room.'], B: ['# puppy comes in.', '# puppies come in.'],
+    W: 'There are # puppies in all.', Q: 'How many puppies are there in all?' },
+];
+// Real-world problems (Lesson 3): the book's, plus a few at the clinic.
+const C3_PROBLEMS = [
+  { ic: ['👧', '👦'], A: ['# girl is playing.', '# girls are playing.'], B: ['# boy is playing with them.', '# boys are playing with them.'],
+    Q: 'How many children are playing in all?', W: '# children are playing in all.' },
+  { ic: ['⚾', '🏈'], A: ['John has # baseball card.', 'John has # baseball cards.'], B: ['He has # football card.', 'He has # football cards.'],
+    Q: 'How many cards does John have in all?', W: 'John has # cards in all.' },
+  { ic: [['🦒', '🦜', '🐊', '🐘', '🐢', '🦋', '🐙'], ['🦁', '🐻', '🐘', '🦓', '🐒']], A: ['Isa has # animal sticker.', 'Isa has # animal stickers.'],
+    B: ['He receives # more animal sticker.', 'He receives # more animal stickers.'], Q: 'How many animal stickers does he have now?', W: 'Isa has # animal stickers now.' },
+  { ic: ['🩹', '🩹'], A: ['Doctor {name} has # bandage.', 'Doctor {name} has # bandages.'], B: ['She gets # more bandage.', 'She gets # more bandages.'],
+    Q: 'How many bandages does she have now?', W: 'Doctor {name} has # bandages now.' },
+  { ic: ['🦴', '🦴'], A: ['Biscuit has # bone.', 'Biscuit has # bones.'], B: ['Doctor {name} gives Biscuit # more bone.', 'Doctor {name} gives Biscuit # more bones.'],
+    Q: 'How many bones does Biscuit have now?', W: 'Biscuit has # bones now.' },
+  { ic: ['🐶', '🐱'], A: ['# puppy is in the waiting room.', '# puppies are in the waiting room.'], B: ['# kitten comes in.', '# kittens come in.'],
+    Q: 'How many pets are in the waiting room now?', W: 'There are # pets in the waiting room now.' },
+];
+// A story or problem line: the singular form for 1, with # standing for the number.
+const c3tpl = (t, n) => (Array.isArray(t) ? t[n === 1 ? 0 : 1] : t).replace('{name}', S.name);
+const c3say = (t, n) => c3tpl(t, n).replace('#', n);
+const exclaim = t => t.replace(/\.$/, '!');
+const c3line = (t, n, slot) => { const [x, y] = c3tpl(t, n).split('#'); return el('p', null, x, slot, y); };
+
+// The book's green answer boxes, and its boxed numbers.
+const ans = v => el('span', { class: 'ans' + (v == null ? '' : ' filled') }, v == null ? '' : String(v));
+const fillAns = (p, v) => { p.textContent = v; p.classList.add('filled'); p.classList.remove('now'); };
+// "4 + 2 = __": numbers become boxed number cards; answer boxes and '+' / '=' go in as they are.
+const eqn = (...xs) => el('div', { class: 'eqn' }, xs.map(x => typeof x === 'number' ? el('span', { class: 'ncard' }, String(x))
+  : x === '+' || x === '=' ? el('span', { class: 'op' }, x) : x));
+const twoGroups = (x, y, ia, ib) => el('div', { class: 'twogroups' }, iconGroup(x, ia), iconGroup(y, ib));
+const iconsOf = (n, ic) => Array.isArray(ic) ? upto(0, n - 1).map(i => ic[i % ic.length]) : upto(1, n).map(() => ic);
+
+// Fill the answer boxes in order with a 0-10 number pad. want(i, got) lists the numbers that fit
+// box i (a box can take either part first); onFill can return a line to say instead of the number.
+function padFill(box, api, boxes, want, onFill, onDone) {
+  const got = [];
+  const mark = () => boxes.forEach((p, i) => p.classList.toggle('now', i === got.length));
+  const pad = el('div', { class: 'numpad' }, upto(0, 10).map(v => {
+    const k = btn({ class: 'nkey', onclick: () => {
+      const at = got.length;
+      if (at >= boxes.length) return;
+      if (!want(at, got).includes(v)) return api.miss(k);
+      [...pad.children].forEach(x => x.classList.remove('hint'));
+      sfx.tap(); fillAns(boxes[at], v); got.push(v); mark();
+      if (got.length === boxes.length) { pad.classList.add('done'); onDone(got); return; }
+      say((onFill && onFill(at, v, got)) || String(v));
+    } }, String(v));
+    return k;
+  }));
+  mark(); box.append(pad);
+  return () => { const w = want(got.length, got); [...pad.children].forEach(k => w.includes(+k.textContent) && k.classList.add('hint')); };
+}
+// A choice row for one stage of a longer activity: a right answer calls next() instead of finishing.
+const stageChoices = (box, nums, ok, api, next) => choiceRow(box, nums.map(v => ({ label: String(v), ok: v === ok })), { win: next, miss: api.miss });
+
+// Linking cubes, cube trains and ten frames of cubes. With tap, the second part's cubes are buttons.
+const cubeEl = (colour, tap) => tap ? btn({ class: 'cube k-' + colour + ' tap', 'aria-label': colour + ' cube', onclick: tap }) : el('i', { class: 'cube k-' + colour });
+function cubeTrain(n, k, c1, c2, opts) {
+  opts = opts || {};
+  const extra = upto(1, k).map(() => cubeEl(c2, opts.tap));
+  return { extra, node: el('div', { class: 'train' },
+    el('span', { class: 'grp' }, opts.label ? el('em', null, el('b', null, String(n))) : null, upto(1, n).map(() => cubeEl(c1))),
+    k ? el('span', { class: 'grp' }, extra) : null) };
+}
+function cubeFrame(n, k, c1, c2, opts) {
+  opts = opts || {};
+  const cells = upto(1, 10).map(() => el('span')), extra = upto(1, k).map(() => cubeEl(c2, opts.tap));
+  // The book puts two small groups on their own rows (3 red on top, 4 blue below); otherwise the second part follows on.
+  const rows = opts.rows && n <= 5 && k <= 5;
+  upto(0, n - 1).forEach(i => cells[i].append(cubeEl(c1)));
+  extra.forEach((c, i) => cells[rows ? 5 + i : n + i].append(c));
+  return { extra, node: el('div', { class: 'frame cubeframe' }, cells) };
+}
+// The book's counting tape (boxes 1 to 10). The boxes up to `start` are shaded; `hops` draws the
+// jumps after it; with tap, the boxes after start are buttons.
+function tapeEl(start, opts) {
+  opts = opts || {};
+  const cells = upto(1, 10).map(i => {
+    const cls = 'tbox' + (i <= start ? ' start' : '') + (opts.hops && i > start && i <= start + opts.hops ? ' hop' : '');
+    if (opts.tap && i > start) { const b = btn({ class: cls, 'aria-label': String(i), onclick: () => opts.tap(i, b) }, String(i)); return b; }
+    return el('span', { class: cls }, String(i));
+  });
+  return { cells, node: el('div', { class: 'tape' }, cells) };
+}
+// "5, _, _, _": the start number, then an answer box for each number counted on.
+function countLine(first, k) {
+  const boxes = upto(1, k).map(() => ans());
+  return { boxes, node: el('div', { class: 'countline' }, first.map ? first.map(String).join(', ') : String(first), boxes.map(p => [', ', p])) };
+}
+// A number bond like the book's: two blue part circles joined to a red whole circle.
+// Each value is a number, '?' or null (an empty circle).
+function bondEl(p, q, w, labels) {
+  const c = (v, cls) => el('span', { class: 'bc ' + cls + (v === '?' ? ' q' : '') }, v == null ? '' : String(v));
+  const circles = [c(p, 'p1'), c(q, 'p2'), c(w, 'w')];
+  return { circles, node: el('div', { class: 'bond' + (labels ? ' labeled' : ''), 'aria-label': 'number bond' },
+    el('span', { class: 'bondlines', html: '<svg viewBox="0 0 190 150" aria-hidden="true"><line x1="38" y1="36" x2="152" y2="75"/><line x1="38" y1="114" x2="152" y2="75"/></svg>' }),
+    labels ? [el('small', { class: 'bl p1' }, 'part'), el('small', { class: 'bl p2' }, 'part'), el('small', { class: 'bl w' }, 'whole')] : null,
+    circles) };
+}
+const fillCircle = (c, v) => { c.textContent = v; c.classList.remove('q'); c.classList.add('filled'); };
+const plusEq = (x, y) => x + ' plus ' + y + ' is equal to ' + (x + y) + '.';
+
+const CH3 = {
+  c3counton: { area: 'math', label: 'Count on to add', curric: 'Chapter 3 Lesson 1 – add by counting on from the greater number', make(l, a) {
+    const small = l === 1 ? rnd(1, 2) : rnd(1, l === 2 ? 3 : 4);
+    const big = rnd(Math.max(small + 1, l === 1 ? 4 : 3), 10 - small), sum = big + small;
+    const first = l === 1 || Math.random() < 0.5 ? big : small, second = first === big ? small : big;
+    const startLine = 'Start at ' + big + '. ' + (l < 3 ? 'Tap the treats to count on.' : 'Fill in the missing numbers.');
+    return {
+      prompt: first + ' + ' + second + ' = ?',
+      speak: 'What is ' + first + ' plus ' + second + '? Count on from the greater number. ' + (l === 1 ? startLine : 'Which number do you count on from?'),
+      build(box, api) {
+        const total = ans(), stage = el('div', { class: 'stage' });
+        let hint = null;
+        box.append(eqn(first, '+', second, '=', total), stage);
+        const finish = () => {
+          const opts = el('div', { class: 'stage' });
+          stage.append(opts);
+          hint = stageChoices(opts, near(sum, 1, 10), sum, api, () => { fillAns(total, sum); api.win(first + ' plus ' + second + ' is ' + sum + '!'); });
+          sayNext('What is ' + first + ' plus ' + second + '?');
+        };
+        const cupStage = () => {
+          // The cup already holds the greater number; the treats beside it are counted on, like the book's 6, 7, 8.
+          const cup = el('div', { class: 'cup', 'aria-label': big + ' in the cup' }, el('b', null, String(big)));
+          const cl = countLine(big, small);
+          let counted = 0;
+          const treats = upto(1, small).map(() => {
+            const t = btn({ class: 'treat', 'aria-label': 'treat', onclick: () => {
+              if (l === 3 || t.classList.contains('in') || counted >= small) return;
+              t.classList.add('in'); cup.classList.remove('gulp'); void cup.offsetWidth; cup.classList.add('gulp');
+              counted++; fillAns(cl.boxes[counted - 1], big + counted); sfx.tap(); say(String(big + counted));
+              if (counted === small) setTimeout(finish, 600);
+            } }, a.food);
+            return t;
+          });
+          stage.replaceChildren(el('div', { class: 'cupzone' }, cup, el('div', { class: 'treats' }, treats)), cl.node);
+          if (l === 3) hint = padFill(stage, api, cl.boxes, i => [big + i + 1], null, () => { treats.forEach(t => t.classList.add('in')); finish(); });
+          else hint = () => { const t = treats.find(x => !x.classList.contains('in')); if (t) t.classList.add('hint'); };
+        };
+        if (l === 1) cupStage();
+        else {
+          stage.append(el('p', { class: 'ask' }, 'Which number do you count on from?'));
+          hint = stageChoices(stage, [first, second], big, api, () => { cupStage(); say(startLine); });
+        }
+        return () => hint && hint();
+      },
+    };
+  } },
+
+  c3more: { area: 'math', label: 'More than', curric: 'Chapter 3 Lesson 1 – count on to find how many more ("What is 2 more than 7?")', make(l) {
+    const k = l === 1 ? rnd(1, 2) : l === 2 ? rnd(1, 3) : rnd(2, 4);
+    const n = rnd(l === 1 ? 3 : 2, Math.min(8, 10 - k)), sum = n + k;
+    const view = pick(l === 1 ? ['tape', 'train'] : ['tape', 'train', 'frame']);
+    const ask = 'What is ' + k + ' more than ' + n + '?';
+    return {
+      prompt: ask, speak: ask + ' Count on from ' + n + '. Tap to count ' + k + ' more.',
+      build(box, api) {
+        const cl = countLine(n, k), stage = el('div', { class: 'stage' });
+        let counted = 0, hint = null;
+        const answer = () => {
+          const p = ans();
+          stage.append(el('div', { class: 'eqn' }, p, el('span', { class: 'words' }, 'is ' + k + ' more than ' + n + '.')));
+          hint = stageChoices(stage, near(sum, 1, 10), sum, api, () => { fillAns(p, sum); api.win(sum + ' is ' + k + ' more than ' + n + '! ' + k + ' added to ' + n + ' is ' + sum + '.'); });
+          sayNext(ask);
+        };
+        const step = (node, label) => {
+          if (counted >= k) return;
+          counted++;
+          if (node) { node.classList.remove('tap'); if (label) node.append(el('b', { class: 'num' }, String(n + counted))); }
+          fillAns(cl.boxes[counted - 1], n + counted); sfx.tap(); say(String(n + counted));
+          if (counted === k) setTimeout(answer, 600);
+        };
+        let pic;
+        if (view === 'tape') {
+          const t = tapeEl(n, { tap: (i, cell) => {
+            if (counted >= k) return;
+            if (i !== n + counted + 1) return api.miss(cell, 'Count on from ' + (n + counted) + '. Tap the next box.');
+            cell.classList.add('hop'); step();
+          } });
+          pic = t.node;
+          hint = () => { const c = t.cells[n + counted]; if (c && counted < k) c.classList.add('hint'); };
+        } else {
+          const [c1, c2] = sample(C3_COLOURS, 2);
+          const g = view === 'train' ? cubeTrain(n, k, c1, c2, { label: true, tap: () => step(g.extra[counted], true) })
+            : cubeFrame(n, k, c1, c2, { tap: () => step(g.extra[counted]) });
+          pic = g.node;
+          hint = () => { const c = g.extra[counted]; if (c) c.classList.add('hint'); };
+        }
+        box.append(pic, cl.node, stage);
+        return () => hint && hint();
+      },
+    };
+  } },
+
+  c3bond: { area: 'math', label: 'Number bonds', curric: 'Chapter 3 – number bonds: part, part, whole ("What other numbers make 7?")', make(l) {
+    const kind = l === 1 ? 'whole' : l === 2 ? pick(['whole', 'part', 'part']) : pick(['part', 'pair', 'pair']);
+    if (kind === 'pair') {
+      // "5 and 2 make 7. What other numbers make 7?"
+      const w = rnd(4, 10), g = rnd(1, w - 1), given = [Math.max(g, w - g), Math.min(g, w - g)];
+      const [x, y] = pick(upto(1, w - 1).filter(v => !given.includes(v)).map(v => [v, w - v]));
+      const wrong = sample(uniq([[x + 1, y], [x, y + 1], [x - 1, y], [x, y - 1], [x + 2, y], [x, y - 2]]
+        .filter(([u, v]) => u >= 0 && v >= 0 && u + v !== w && u + v <= 10).map(String)), 2).map(s => s.split(',').map(Number));
+      const ask = 'What other numbers make ' + w + '?';
+      return {
+        prompt: given[0] + ' and ' + given[1] + ' make ' + w + '. ' + ask, speak: given[0] + ' and ' + given[1] + ' make ' + w + '. ' + ask,
+        build(box, api) {
+          const b = bondEl(null, null, w);
+          box.append(b.node);
+          return choiceRow(box, shuffle([[x, y], ...wrong]).map(([u, v]) => ({ label: u + ' and ' + v, ok: u === x && v === y,
+            after: () => { fillCircle(b.circles[0], x); fillCircle(b.circles[1], y); return x + ' and ' + y + ' make ' + w + '!'; } })), api, 'word');
+        },
+      };
+    }
+    const w = l === 1 ? rnd(2, 6) : rnd(3, 10), p = rnd(l === 3 ? 0 : 1, l === 3 ? w : w - 1), q = w - p;
+    const [ia, ib] = pick(C3_PAIRS);
+    if (kind === 'whole') {
+      return {
+        prompt: p + ' and ' + q + ' make __.', speak: 'Complete the number bond. ' + p + ' and ' + q + ' make how many?',
+        build(box, api) {
+          const b = bondEl(p, q, '?');
+          box.append(twoGroups(p, q, ia, ib), b.node);
+          return choiceRow(box, near(w, 1, 10).map(v => ({ label: String(v), ok: v === w, after: () => { fillCircle(b.circles[2], w); return p + ' and ' + q + ' make ' + w + '!'; } })), api);
+        },
+      };
+    }
+    const top = Math.random() < 0.5;   // which part is missing
+    return {
+      prompt: p + ' and __ make ' + w + '.', speak: 'Complete the number bond. ' + p + ' and what make ' + w + '?',
+      build(box, api) {
+        const b = top ? bondEl('?', p, w) : bondEl(p, '?', w), gap = b.circles[top ? 0 : 1];
+        box.append(b.node);
+        const hint = choiceRow(box, near(q, 0, 10).map(v => ({ label: String(v), ok: v === q, after: () => { fillCircle(gap, q); return p + ' and ' + q + ' make ' + w + '!'; } })), api);
+        // the hint also shows the whole as two groups
+        let shown = false;
+        return () => { if (!shown) b.node.after(twoGroups(p, q, ia, ib)); shown = true; hint(); };
+      },
+    };
+  } },
+
+  c3sentence: { area: 'math', label: 'Addition sentences', curric: 'Chapter 3 Lesson 1 – complete addition sentences (part + part = whole)', make(l) {
+    const s = rnd(l === 1 ? 3 : 5, l === 1 ? 6 : l === 2 ? 9 : 10), x = rnd(1, s - 1), y = s - x;
+    const view = pick(['train', 'frame', 'things']);
+    return {
+      prompt: 'Complete the addition sentence.', speak: 'Count on from the greater number. Complete the addition sentence.',
+      build(box, api) {
+        const [c1, c2] = sample(C3_COLOURS, 2), [ia, ib] = pick(C3_PAIRS);
+        const trainRow = (n, c) => el('div', { class: 'trainrow' }, el('b', { class: 'tlabel' }, l === 1 ? String(n) : ''), cubeTrain(n, 0, c).node);
+        box.append(view === 'train' ? el('div', { class: 'trains' }, trainRow(x, c1), trainRow(y, c2))
+          : view === 'frame' ? cubeFrame(x, y, c1, c2, { rows: true }).node : twoGroups(x, y, ia, ib));
+        const boxes = l === 1 ? [ans()] : [ans(), ans(), ans()];
+        box.append(l === 1 ? eqn(x, '+', y, '=', boxes[0]) : eqn(boxes[0], '+', boxes[1], '=', boxes[2]));
+        const want = l === 1 ? () => [s] : (i, got) => i === 0 ? [x, y] : i === 1 ? [s - got[0]] : [s];
+        return padFill(box, api, boxes, want, null, got => api.win(l === 1 ? plusEq(x, y) : plusEq(got[0], got[1])));
+      },
+    };
+  } },
+
+  c3order: { area: 'math', label: 'Add in any order', curric: 'Chapter 3 Lesson 1 – you can add in any order (3 + 2 = 2 + 3)', make(l) {
+    let x, y;
+    do { const s = rnd(3, l === 1 ? 7 : 10); x = rnd(1, s - 1); y = s - x; } while (x === y);
+    const s = x + y, kind = l === 1 ? 'sum' : l === 2 ? 'swap' : pick(['swap', 'one']);
+    const swapped = x + ' plus ' + y + ' is equal to ' + y + ' plus ' + x + '!';
+    const asks = {
+      sum: [x + ' + ' + y + ' = ' + s + '. So ' + y + ' + ' + x + ' = ?', plusEq(x, y) + ' What is ' + y + ' plus ' + x + '?'],
+      swap: ['You can add in any order. Fill in the blanks.', 'You can add in any order. Fill in the blanks.'],
+      one: [x + ' + ' + y + ' = ' + y + ' + __', x + ' plus ' + y + ' is equal to ' + y + ' plus what?'],
+    }[kind];
+    return {
+      prompt: asks[0], speak: asks[1],
+      build(box, api) {
+        const [ia, ib] = pick(C3_PAIRS);
+        box.append(twoGroups(x, y, ia, ib));
+        if (kind !== 'one') box.append(el('div', { class: 'bonds' }, bondEl(x, y, s, true).node, bondEl(y, x, s, true).node));
+        if (kind === 'swap') {
+          const boxes = [ans(), ans()];
+          box.append(eqn(x, '+', y, '=', boxes[0], '+', boxes[1]));
+          return padFill(box, api, boxes, i => [i ? x : y], null, () => api.win(swapped));
+        }
+        const p = ans();
+        box.append(kind === 'sum' ? eqn(y, '+', x, '=', p) : eqn(x, '+', y, '=', y, '+', p));
+        const ok = kind === 'sum' ? s : x;
+        return choiceRow(box, near(ok, 1, 10).map(v => ({ label: String(v), ok: v === ok,
+          after: () => { fillAns(p, ok); return kind === 'sum' ? y + ' plus ' + x + ' is ' + s + '! You can add in any order.' : swapped; } })), api);
+      },
+    };
+  } },
+
+  c3facts: { area: 'math', label: "Let's practise adding", curric: 'Chapter 3 Lesson 1 – addition facts to 10 (count on from the greater number)', make(l) {
+    if (l >= 2 && Math.random() < 0.3) {
+      // the practice page's "What is 4 more than 5?"
+      const [k, n] = Math.random() < 0.5 ? pick([[4, 5], [3, 6], [2, 7]]) : (k => [k, rnd(2, 10 - k)])(rnd(1, l === 2 ? 3 : 4)), sum = n + k;
+      const ask = 'What is ' + k + ' more than ' + n + '?';
+      return {
+        prompt: ask, speak: ask,
+        build(box, api) {
+          const p = ans();
+          box.append(el('div', { class: 'eqn' }, el('span', { class: 'words' }, ask), p));
+          const hint = choiceRow(box, near(sum, 1, 10).map(v => ({ label: String(v), ok: v === sum, after: () => { fillAns(p, sum); return k + ' more than ' + n + ' is ' + sum + '!'; } })), api);
+          let shown = false;
+          return () => { if (!shown) box.firstChild.after(tapeEl(n, { hops: k }).node); shown = true; hint(); };
+        },
+      };
+    }
+    let x, y;
+    const book = [[4, 2], [6, 1], [2, 3], [7, 3], [3, 5], [2, 8]].filter(([p, q]) => Math.min(p, q) <= (l === 1 ? 2 : 3));
+    if (Math.random() < 0.3) [x, y] = pick(book);
+    else {
+      const small = l === 1 ? rnd(1, 2) : l === 2 ? rnd(1, 3) : rnd(0, 5), big = rnd(Math.max(small, 1), 10 - small);
+      [x, y] = Math.random() < 0.5 ? [big, small] : [small, big];
+    }
+    const sum = x + y;
+    return {
+      prompt: x + ' + ' + y + ' = ?', speak: 'What is ' + x + ' plus ' + y + '?',
+      build(box, api) {
+        const p = ans();
+        box.append(eqn(x, '+', y, '=', p));
+        const hint = choiceRow(box, near(sum, 0, 10).map(v => ({ label: String(v), ok: v === sum, after: () => { fillAns(p, sum); return x + ' plus ' + y + ' is ' + sum + '!'; } })), api);
+        // the hint counts on from the greater number on the counting tape
+        let shown = false;
+        return () => { if (!shown) box.firstChild.after(tapeEl(Math.max(x, y), { hops: Math.min(x, y) }).node); shown = true; hint(); };
+      },
+    };
+  } },
+
+  c3story: { area: 'math', label: 'Addition stories', curric: 'Chapter 3 Lesson 2 – tell addition stories about pictures', make(l) {
+    const st = pick(C3_STORIES), x = rnd(l === 1 ? 1 : 2, l === 1 ? 4 : l === 2 ? 6 : 7);
+    const y = st.zero && l > 1 && Math.random() < 0.35 ? 0 : rnd(1, Math.min(4, (l === 1 ? 6 : 10) - x)), s = x + y;
+    const told = 'Look at the picture. Tell an addition story.';
+    return {
+      prompt: l === 1 ? st.Q : 'Tell an addition story.',
+      speak: told + ' ' + (l === 1 ? c3say(st.A, x) + ' ' + c3say(st.B, y) + ' ' + st.Q : 'Fill in the blanks.'),
+      build(box, api) {
+        const zone = (kind, n, ic, cls) => el('div', { class: 'zone z-' + kind + (cls ? ' ' + cls : '') }, upto(1, n).map(() => el('span', null, ic)));
+        box.append(el('div', { class: 'scene', role: 'img', 'aria-label': 'picture' }, zone(st.za, x, st.ic),
+          st.join ? el('span', { class: 'joinarrow', 'aria-hidden': 'true' }, '⬅') : null,
+          zone(st.zb, y, st.icB || st.ic, (st.smallB ? 'sm' : '') + (st.join ? ' joining' : ''))));
+        const after = exclaim(c3say(st.W, s));
+        if (l === 1) {
+          const p = ans();
+          box.append(el('div', { class: 'tale' }, el('p', null, c3say(st.A, x)), el('p', null, c3say(st.B, y)), c3line(st.W, s, p)));
+          return choiceRow(box, near(s, 1, 10).map(v => ({ label: String(v), ok: v === s, after: () => { fillAns(p, s); return after; } })), api);
+        }
+        const [pa, pb, pw] = [ans(), ans(), ans()], sumBoxes = l === 3 ? [ans(), ans(), ans()] : [];
+        box.append(el('div', { class: 'tale' }, c3line(st.A, x, pa), c3line(st.B, y, pb),
+          l === 3 ? eqn(sumBoxes[0], '+', sumBoxes[1], '=', sumBoxes[2]) : null, c3line(st.W, s, pw)));
+        const boxes = [pa, pb, ...sumBoxes, pw];
+        const want = (i, got) => i === 0 ? [x] : i === 1 ? [y] : i === boxes.length - 1 ? [s] : i === 2 ? [x, y] : i === 3 ? [s - got[2]] : [s];
+        const said = (i, v, got) => i === 0 ? c3say(st.A, x) : i === 1 ? c3say(st.B, y) : i === 4 && l === 3 ? plusEq(got[2], got[3]) : null;
+        return padFill(box, api, boxes, want, said, () => api.win(after));
+      },
+    };
+  } },
+
+  c3word: { area: 'math', label: 'Word problems', curric: 'Chapter 3 Lesson 3 – real-world problems: addition', make(l) {
+    const pr = pick(C3_PROBLEMS), x = rnd(l === 1 ? 1 : 2, l === 1 ? 5 : 7), y = rnd(1, Math.min(5, 10 - x)), s = x + y;
+    const lines = [c3say(pr.A, x), c3say(pr.B, y)], q = c3tpl(pr.Q);
+    return {
+      prompt: 'Solve.', speak: lines.join(' ') + ' ' + q,
+      build(box, api) {
+        const pics = el('div', { class: 'twogroups' }, el('div', { class: 'group' }, iconsOf(x, pr.ic[0]).map(i => el('span', null, i))),
+          el('div', { class: 'group' }, iconsOf(y, pr.ic[1]).map(i => el('span', null, i))));
+        const card = el('div', { class: 'tale prob' }, lines.map(t => el('p', null, t)), el('p', { class: 'q' }, q));
+        const p = ans();
+        box.append(card);
+        if (l < 3) box.append(pics);
+        if (l === 1) {
+          box.append(el('div', { class: 'tale' }, c3line(pr.W, s, p)));
+          return choiceRow(box, near(s, 1, 10).map(v => ({ label: String(v), ok: v === s, after: () => { fillAns(p, s); return exclaim(c3say(pr.W, s)); } })), api);
+        }
+        // Like the book: the addition sentence fills in the number bond, then the answer.
+        const b = bondEl(null, null, '?'), e = [ans(), ans(), ans()];
+        box.append(el('div', { class: 'solve' }, eqn(e[0], '+', e[1], '=', e[2]), b.node), el('div', { class: 'tale' }, c3line(pr.W, s, p)));
+        const hint = padFill(box, api, [...e, p], (i, got) => i === 0 ? [x, y] : i === 1 ? [s - got[0]] : [s],
+          (i, v, got) => { fillCircle(b.circles[i], v); return i === 2 ? plusEq(got[0], got[1]) : null; },
+          () => api.win(exclaim(c3say(pr.W, s))));
+        return () => { if (l === 3 && !pics.isConnected) card.after(pics); hint(); };
+      },
+    };
+  } },
+
+  c3count: { area: 'math', label: 'Counting and 1 more', curric: 'Chapter 3 – recall: counting, and 1 more than a number', make(l) {
+    if (Math.random() < 0.35) {
+      const start = l === 1 ? 1 : rnd(1, 4), seq = upto(start, start + 5);
+      return {
+        prompt: 'Count. Fill in the missing numbers.', speak: 'Count. Fill in the missing numbers.',
+        build(box, api) {
+          const cl = countLine(seq.slice(0, 3), 3);
+          box.append(cl.node);
+          return padFill(box, api, cl.boxes, i => [seq[3 + i]], null, () => api.win(seq.join(', ') + '!'));
+        },
+      };
+    }
+    const n = rnd(l === 1 ? 3 : 4, l === 1 ? 6 : 9), flowers = upto(0, n - 1).map(i => C3_FLOWERS[i % C3_FLOWERS.length]);
+    return {
+      prompt: 'Count the flowers.', speak: 'Count the flowers. How many flowers are there?',
+      build(box, api) {
+        const p = ans(), more = ans(), stage = el('div', { class: 'stage' });
+        let hint;
+        box.append(el('div', { class: 'flowers' }, shuffle(flowers).map(f => el('span', null, f))), el('div', { class: 'tale' }, c3line('There are # flowers.', n, p)), stage);
+        hint = stageChoices(stage, near(n, 1, 10), n, api, () => {
+          fillAns(p, n); say('There are ' + n + ' flowers.');
+          // the book's next step: a train of n cubes and 1 more
+          stage.replaceChildren(cubeTrain(n, 1, 'red', 'blue', { label: true }).node, el('div', { class: 'eqn' }, el('span', { class: 'words' }, '1 more than ' + n + ' is'), more));
+          hint = stageChoices(stage, near(n + 1, 1, 10), n + 1, api, () => { fillAns(more, n + 1); api.win('1 more than ' + n + ' is ' + (n + 1) + '!'); });
+          sayNext('What is 1 more than ' + n + '?');
+        });
+        return () => hint && hint();
+      },
+    };
+  } },
+};
+// How often each Chapter 3 activity comes up (higher = more often).
+const CH3_WEIGHTS = { c3counton: 3, c3more: 3, c3bond: 3, c3sentence: 3, c3facts: 3, c3story: 3, c3word: 3, c3order: 2, c3count: 1 };
+
 // Editions: the base game, or a week built from Ellie's school pages. Stars, stickers,
 // decorations and pets are shared; each activity keeps its own level.
 // Week of Oct 5: UFLI 38 reading, with Numbers to 10 math (including "more than 5 / less than 10") as review.
@@ -1961,9 +2503,12 @@ const W1019 = Object.assign({ n10moreless: N10.n10moreless, t1five: T1.t1five, n
 // About 9 in 10 steps are reading; the heart words and spelling come up most.
 const W1019_WEIGHTS = { u40heartspell: 4, u40spell: 4, u40heart: 3, u40roll: 3, u40story: 3, u40read: 3, u40chain: 2,
   n10moreless: 1, t1five: 1, n10compare: 1 };
-const CURRENT_WEEK = 'w1019';
+const CURRENT_WEEK = 'ch3';
 const EDITIONS = {
   base: { name: 'Base edition', note: 'All Grade 1 math and reading activities', skills: SKILLS },
+  // A focus edition is the only thing Ellie sees: no spelling test button, and one-tap shop checkout.
+  ch3: { name: 'Chapter 3: Addition Facts to 10', badge: 'Chapter 3 · Addition Facts to 10', skills: CH3, weights: CH3_WEIGHTS, focus: true,
+         note: 'Only Chapter 3 math (pages 43-60): counting on from the greater number, "What is 2 more than 7?", number bonds, addition sentences, adding in any order, addition stories and word problems. While it is on, the spelling test is hidden and the shop checkout is one tap.' },
   w1019: { name: 'Week of Oct 19', badge: 'short e words · said, you, what, have', skills: W1019, weights: W1019_WEIGHTS, ufli: U40_CFG,
            note: 'Reading first (about 9 in 10 steps): UFLI Lesson 40 (short e review): read and write the heart words said, you, what, have; Roll and Read; the story "The Pet Hen"; short e spelling, chains and sentences · A little Numbers to 10 math review' },
   w1012: { name: 'Week of Oct 12', badge: 'short u words · said, look, book, are, was', skills: W1012, ufli: U39_CFG,
@@ -1975,11 +2520,12 @@ const EDITIONS = {
   test1: { name: 'Chapter 1 test practice', badge: 'Test practice: Numbers to 10', skills: TEST_SKILLS, weights: TEST_WEIGHTS, first: ['t1five', 'n10moreless'], temporary: true,
           note: 'Only the Chapter 1 unit test topics, with extra "more than 5 / less than 10" questions. Ends by itself after Monday, October 5.' },
 };
-const ALL_SKILLS = Object.assign({}, SKILLS, N10, T1, U38, U39, U40);
+const ALL_SKILLS = Object.assign({}, SKILLS, N10, T1, U38, U39, U40, CH3);
 // When a new week ships, switch to it once; after that the Grown-ups corner choice sticks.
 if (S.weekSeen !== CURRENT_WEEK) { S.edition = CURRENT_WEEK; S.weekSeen = CURRENT_WEEK; save(); }
 const testOn = () => Date.now() < TEST_UNTIL && !S.testOff;
 const edition = () => testOn() ? EDITIONS.test1 : EDITIONS[S.edition] || EDITIONS.base;
+const focusOn = () => !testOn() && !!edition().focus;
 const levelOf = k => S.lvl[k] || (ALL_SKILLS[k] && ALL_SKILLS[k].start) || 1;
 const areaSkills = area => Object.keys(edition().skills).filter(k => ALL_SKILLS[k].area === area && !(ALL_SKILLS[k].needsVoice && !canSpeak));
 
@@ -1994,7 +2540,7 @@ function topBar() {
     btn({ class: 'pill', 'aria-label': S.stars + ' stars, open the shop', onclick: () => showShop() }, '⭐ ', String(S.stars)),
     btn({ class: 'iconbtn', 'aria-label': 'clinic shop', onclick: () => showShop() }, '🛍️'),
     Object.keys(S.pets).length ? btn({ class: 'iconbtn', 'aria-label': 'my pets', onclick: () => showPets() }, '🐾') : null,
-    btn({ class: 'iconbtn', 'aria-label': 'spelling test', onclick: () => showSpellTest() }, '🏷️'),
+    focusOn() ? null : btn({ class: 'iconbtn', 'aria-label': 'spelling test', onclick: () => showSpellTest() }, '🏷️'),
     btn({ class: 'iconbtn', 'aria-label': 'sticker book', onclick: () => { hush(); showStickers(); } }, '📒'),
     btn({ class: 'iconbtn', 'aria-label': 'waiting room', onclick: () => { hush(); showRoom(); } }, '🏥'));
 }
@@ -2008,11 +2554,11 @@ function showTitle() {
     el('h1', null, S.name + "'s ", el('span', null, 'Animal'), ' Clinic'),
     el('div', { class: 'badge-doc' }, '🩺 Dr. ' + S.name + ', Veterinarian'),
     testOn() ? el('div', { class: 'week-badge test' }, '📝 ' + edition().badge + ' · test on Monday')
-      : S.edition !== 'base' && EDITIONS[S.edition] ? el('div', { class: 'week-badge' }, '📚 This week: ' + (edition().badge || edition().name)) : null,
-    el('p', null, 'The animals need your help! Count, read and solve to make them feel better.'),
+      : S.edition !== 'base' && EDITIONS[S.edition] ? el('div', { class: 'week-badge' }, '📚 ' + (focusOn() ? 'Now learning: ' : 'This week: ') + (edition().badge || edition().name)) : null,
+    el('p', null, focusOn() ? 'The animals need your help! Add and count on to make them feel better.' : 'The animals need your help! Count, read and solve to make them feel better.'),
     el('div', { class: 'btnrow', style: 'justify-content:flex-start' },
       btn({ class: 'big', onclick: () => { sfx.good(); say('Welcome, Doctor ' + S.name + '! Your patients are waiting.'); showRoom(); } }, 'Open the clinic ▶'),
-      btn({ class: 'big sun', onclick: () => { sfx.good(); showSpellTest(); } }, '🏷️ Spelling test')),
+      focusOn() ? null : btn({ class: 'big sun', onclick: () => { sfx.good(); showSpellTest(); } }, '🏷️ Spelling test')),
     btn({ class: 'linkbtn', onclick: () => showParentGate() }, 'Grown-ups')))));
 }
 
@@ -2241,12 +2787,13 @@ function checkout(item, onBought) {
   const layer = el('div', { class: 'modal' });
   const close = () => { hush(); layer.remove(); };
   let total = 0;
+  const countBags = S.checkoutMath && !focusOn();   // a focus edition keeps all the counting practice to its own chapter
   const label = el('div', { class: 'paid' });
   const tray = el('div', { class: 'bowl bags-paid', 'aria-label': 'stars paid' });
   const upd = () => { label.textContent = 'Paid ' + total + ' of ' + item.price + ' ⭐'; };
   let bought = false;
   const finish = () => {
-    if (bought || total !== item.price && S.checkoutMath) return;   // a bag was taken back during the pause
+    if (bought || total !== item.price && countBags) return;   // a bag was taken back during the pause
     bought = true;
     S.stars -= item.price; save(); sfx.fanfare();
     layer.remove(); onBought();
@@ -2254,7 +2801,7 @@ function checkout(item, onBought) {
   const bag = (v, props) => btn(Object.assign({ class: 'bag', 'aria-label': v + ' star bag' }, props), el('span', null, '⭐'), el('b', null, String(v)));
   const card = el('div', { class: 'modal-card' },
     item.pic, el('h3', null, item.title), el('div', { class: 'pricetag' }, '⭐ ' + item.price));
-  if (S.checkoutMath) {
+  if (countBags) {
     const bags = el('div', { class: 'wallet' }, [10, 5].map(v => bag(v, { onclick: () => {
       if (total >= item.price) return;
       total += v; sfx.tap();
@@ -2386,7 +2933,8 @@ function showPets(id) {
    word; Ellie stamps it onto a pet's dog tag with an a–z keyboard and taps "Stamp it". Words are
    checked only after stamping, like a real test. Missed words can be practised again at the end. */
 const TAG_TEST_SIZE = 10;
-const tagWeek = () => (EDITIONS[S.edition] && EDITIONS[S.edition].ufli) ? S.edition : CURRENT_WEEK;
+// the week picked in the Grown-ups corner, or else the newest UFLI week
+const tagWeek = () => (EDITIONS[S.edition] && EDITIONS[S.edition].ufli) ? S.edition : Object.keys(EDITIONS).find(k => EDITIONS[k].ufli);
 const tagCfg = () => EDITIONS[tagWeek()].ufli;
 function tagWords() {
   const custom = (S.testWords || {})[tagWeek()];
@@ -2541,15 +3089,17 @@ function showParent() {
       el('span', null, 'Voice'), seg([[true, 'On'], [false, 'Off']], S.voice, v => { S.voice = v; }),
       el('span', null, 'Subjects'), seg([['both', 'Math + Reading'], ['math', 'Math only'], ['lang', 'Reading only']], S.mix, v => { S.mix = v; }),
       el('span', null, 'Shop checkout'), seg([[true, 'Count star bags'], [false, 'One-tap buy']], S.checkoutMath, v => { S.checkoutMath = v; })),
-    el('p', null, 'Stars (5 per patient) are spent in the clinic shop, on decorations and on adopting animals ' + S.name + ' has already helped. With "Count star bags", she pays by tapping 10-star and 5-star bags while the narrator counts along. Adopted pets never get sick or sad; after a couple of days away they just say they missed her.'),
+    el('p', null, 'Stars (5 per patient) are spent in the clinic shop, on decorations and on adopting animals ' + S.name + ' has already helped. With "Count star bags", she pays by tapping 10-star and 5-star bags while the narrator counts along. Adopted pets never get sick or sad; after a couple of days away they just say they missed her.' +
+      (focusOn() ? ' While Chapter 3 is on, buying is one tap, so all of her counting practice is Chapter 3.' : '')),
     el('p', null, 'Stars now: ' + S.stars + ' · Decorations: ' + S.owned.length + ' of ' + DECOR.length + ' · Pets adopted: ' + Object.keys(S.pets).length),
     !canSpeak ? el('p', null, 'This browser cannot read aloud, so the "find the word you hear" activity is turned off.') : null,
     el('div', { class: 'tablewrap' }, el('table', null,
       el('thead', null, el('tr', null, ['Subject', 'Skill', 'Level', 'Done', 'First try'].map(h => el('th', null, h)))),
       el('tbody', null, rows))),
-    el('p', null, 'Level guide for number work: level 1 uses numbers to 10, level 2 to 20, level 3 to 50. Skip counting goes 10s → 5s → 2s. Coins go from naming coins to paying with nickels and dimes, then quarters.'),
+    el('p', null, focusOn() ? 'Level guide for Chapter 3: every level stays within 10. Higher levels add bigger jumps (up to 4 more), choosing the greater number to count on from, filling in every blank, and word problems without pictures.'
+      : 'Level guide for number work: level 1 uses numbers to 10, level 2 to 20, level 3 to 50. Skip counting goes 10s → 5s → 2s. Coins go from naming coins to paying with nickels and dimes, then quarters.'),
     el('h3', { style: 'font-size:22px' }, '🏷️ Spelling test'),
-    el('p', null, 'The spelling test uses ' + EDITIONS[tagWeek()].name + ': its heart words (' + tagCfg().heart.join(', ') + ') plus ' +
+    el('p', null, (focusOn() ? 'While Chapter 3 is on, the spelling test button is hidden from ' + S.name + '. ' : '') + 'The spelling test uses ' + EDITIONS[tagWeek()].name + ': its heart words (' + tagCfg().heart.join(', ') + ') plus ' +
       TAG_TEST_SIZE + ' words in all from that week\'s list. To practise the exact words from school, type them here (separated by commas or spaces). Clear the box to go back to the automatic list. Typed words not in the week\'s list are read by the device voice.'),
     el('div', { class: 'settings' }, el('label', { for: 'test-words' }, 'Test words', testIn)),
     el('div', { class: 'tablewrap' }, (S.spellTests || []).length ? el('table', null,

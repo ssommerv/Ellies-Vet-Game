@@ -201,6 +201,36 @@ window.voiceLines = function (T) {
     'Tap the group that has more.', 'Tap the group that has fewer.', 'Now fill in the blanks.', 'Tap the number, then the word.', 'Now tap the word.');
   T.T1_GROUPS.forEach(([, t]) => { add('Count the ' + t + '.'); range(1, 10).forEach(n => add('Yes, ' + n + ' ' + t + '!')); });
 
+  // Chapter 3: Addition Facts to 10 (same ranges as the activities in game.html)
+  add('Count on from the greater number.', 'Which number do you count on from?', 'Tap the treats to count on.', 'Tap the next box.',
+    'Complete the number bond.', 'Complete the addition sentence.', 'You can add in any order.', 'Fill in the blanks.',
+    'Look at the picture.', 'Tell an addition story.', 'Count the flowers.', 'How many flowers are there?');
+  range(2, 9).forEach(n => add('Start at ' + n + '.', 'Count on from ' + n + '.'));
+  range(1, 4).forEach(k => add('Tap to count ' + k + ' more.'));
+  range(3, 9).forEach(n => add('There are ' + n + ' flowers.'));
+  range(1, 4).forEach(s => add(range(s, s + 5).join(', ') + '!'));
+  range(0, 10).forEach(x => range(0, 10 - x).forEach(y => {
+    const s = x + y;
+    if (s) add('What is ' + x + ' plus ' + y + '?', x + ' plus ' + y + ' is ' + s + '!', x + ' plus ' + y + ' is equal to ' + s + '.',
+      x + ' and ' + y + ' make ' + s + '!', x + ' and ' + y + ' make how many?', x + ' and what make ' + s + '?');
+    if (x && y && x !== y) add(x + ' plus ' + y + ' is equal to ' + y + ' plus ' + x + '!', x + ' plus ' + y + ' is equal to ' + y + ' plus what?');
+    if (x && y && y <= 4) add(y + ' added to ' + x + ' is ' + s + '.');
+  }));
+  range(4, 10).forEach(w => add('What other numbers make ' + w + '?'));
+  const c3 = (t, n) => (Array.isArray(t) ? t[n === 1 ? 0 : 1] : t).replace('{name}', name).replace('#', n);
+  T.C3_STORIES.forEach(st => {
+    add(st.Q);
+    range(1, 7).forEach(n => add(c3(st.A, n)));
+    range(0, 4).forEach(n => add(c3(st.B, n)));
+    range(2, 10).forEach(n => add(c3(st.W, n)));
+  });
+  T.C3_PROBLEMS.forEach(pr => {
+    add(c3(pr.Q));
+    range(1, 7).forEach(n => add(c3(pr.A, n)));
+    range(1, 5).forEach(n => add(c3(pr.B, n)));
+    range(2, 10).forEach(n => add(c3(pr.W, n)));
+  });
+
   // adopted pets
   A.forEach(a => add('You adopted ' + a.name + '!', 'Welcome to the family, ' + a.name + '!', 'Say hi to ' + a.name + '!',
     a.name + ' missed you!', a.name + ' loves the food!', a.name + ' loves pats!', a.name + ' loves to play!', a.name + ' is so happy!'));

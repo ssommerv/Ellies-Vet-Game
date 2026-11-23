@@ -27,6 +27,28 @@ skill and lets you change levels, the name, voice and subjects.
 The Grown-ups corner has an **Edition** picker:
 
 - **Base edition**: every Grade 1 math and reading activity above.
+- **Chapter 3: Addition Facts to 10** (the current edition, from 23 November):
+  only Chapter 3 math, built from the textbook pages 43–60, until a grown-up
+  picks another edition. Nine activities, every sum within 10, using the book's
+  wording:
+  - counting on from the greater number with the cup of treats ("6, 7, 8"),
+    choosing which number to start from when the smaller one comes first;
+  - "What is 2 more than 7?" on cube trains, ten frames and the counting tape
+    ("9 is 2 more than 7. 2 added to 7 is 9.");
+  - number bonds (part, part, whole), including "5 and 2 make 7. What other
+    numbers make 7?";
+  - completing addition sentences from cube trains, ten frames and pictures;
+  - adding in any order (3 + 2 = 2 + 3);
+  - practice facts like the "Let's Practise" page;
+  - addition stories about pictures (ducks in a pond, teddy bears, apples on
+    plates including 0, girls playing, birds, bicycles, turtles);
+  - word problems (the tug-of-war, John's cards, Isa's stickers, and a few at
+    the clinic);
+  - counting and "1 more than".
+
+  It is a *focus* edition: while it is on, the spelling test button is hidden
+  and shop checkout is one tap, so everything Ellie practises is Chapter 3.
+  Picking another edition in the Grown-ups corner brings everything back.
 - **Numbers to 10** (week of 28 September): built from the Chapter 1 worksheets
   (Online Workbook 1A / Revisit 1A). Nine activities, all within 0–10: counting
   to 10, more/fewer/same and greater/less than, what comes next, 1–4 more or
@@ -41,7 +63,7 @@ Stars, stickers, decorations and pets are shared by all editions; each activity
 keeps its own level. A new week is a new entry in `EDITIONS` in `game.html`
 plus its lines in `tools/voice/lines.js`.
 
-- **Week of Oct 19** (the current week): reading first, about 9 in 10 steps.
+- **Week of Oct 19**: reading first, about 9 in 10 steps.
   UFLI Lesson 40 (short e review): read and then write the heart words said,
   you, what and have, Roll and Read 40a, the story "The Pet Hen", short e
   spelling, sentences and chains made from the week's words. A little Numbers
@@ -68,8 +90,8 @@ recording its new lines.
 
 ## Spelling test
 
-The **🏷️ Spelling test** button on the title screen (also 🏷️ in the top bar)
-opens a mode that is only a spelling test, with no patients. Dr. Ellie says
+The **🏷️ Spelling test** button on the title screen (also 🏷️ in the top bar;
+both are hidden while a focus edition such as Chapter 3 is on) opens a mode that is only a spelling test, with no patients. Dr. Ellie says
 each word ("said. Spell said."), and Ellie stamps it onto a pet's dog tag with
 a big a–z keyboard, then taps **Stamp it**. Each tap makes a little click, ⌫
 rubs a letter out, and Ellie's face or 🔊 repeats the word. Words are only
